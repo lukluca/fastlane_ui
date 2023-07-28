@@ -1,0 +1,613 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */; };
+		4A51E7312A6AC03600813308 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7302A6AC03600813308 /* ContentView.swift */; };
+		4A51E7332A6AC03700813308 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A51E7322A6AC03700813308 /* Assets.xcassets */; };
+		4A51E7362A6AC03700813308 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A51E7352A6AC03700813308 /* Preview Assets.xcassets */; };
+		4A51E7412A6AC03700813308 /* Fastlane_UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7402A6AC03700813308 /* Fastlane_UITests.swift */; };
+		4A51E74B2A6AC03700813308 /* Fastlane_UIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E74A2A6AC03700813308 /* Fastlane_UIUITests.swift */; };
+		4A51E74D2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */; };
+		4A51E75A2A6AC09300813308 /* BashCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7592A6AC09300813308 /* BashCommand.swift */; };
+		4A51E75E2A6AC40900813308 /* Bash_cd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75D2A6AC40900813308 /* Bash_cd.swift */; };
+		4A51E7602A6AC8A000813308 /* Fastlane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75F2A6AC8A000813308 /* Fastlane.swift */; };
+		4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4A51E73D2A6AC03700813308 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4A51E7232A6AC03600813308 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4A51E72A2A6AC03600813308;
+			remoteInfo = "Fastlane-UI";
+		};
+		4A51E7472A6AC03700813308 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4A51E7232A6AC03600813308 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4A51E72A2A6AC03600813308;
+			remoteInfo = "Fastlane-UI";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4A51E72B2A6AC03600813308 /* Fastlane-UI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fastlane-UI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIApp.swift; sourceTree = "<group>"; };
+		4A51E7302A6AC03600813308 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4A51E7322A6AC03700813308 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4A51E7352A6AC03700813308 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4A51E7372A6AC03700813308 /* Fastlane_UI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fastlane_UI.entitlements; sourceTree = "<group>"; };
+		4A51E73C2A6AC03700813308 /* Fastlane-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Fastlane-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A51E7402A6AC03700813308 /* Fastlane_UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UITests.swift; sourceTree = "<group>"; };
+		4A51E7462A6AC03700813308 /* Fastlane-UIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Fastlane-UIUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A51E74A2A6AC03700813308 /* Fastlane_UIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIUITests.swift; sourceTree = "<group>"; };
+		4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4A51E7592A6AC09300813308 /* BashCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BashCommand.swift; sourceTree = "<group>"; };
+		4A51E75D2A6AC40900813308 /* Bash_cd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bash_cd.swift; sourceTree = "<group>"; };
+		4A51E75F2A6AC8A000813308 /* Fastlane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane.swift; sourceTree = "<group>"; };
+		4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4A51E7282A6AC03600813308 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A51E7392A6AC03700813308 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A51E7432A6AC03700813308 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4A51E7222A6AC03600813308 = {
+			isa = PBXGroup;
+			children = (
+				4A51E72D2A6AC03600813308 /* Fastlane-UI */,
+				4A51E73F2A6AC03700813308 /* Fastlane-UITests */,
+				4A51E7492A6AC03700813308 /* Fastlane-UIUITests */,
+				4A51E72C2A6AC03600813308 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4A51E72C2A6AC03600813308 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4A51E72B2A6AC03600813308 /* Fastlane-UI.app */,
+				4A51E73C2A6AC03700813308 /* Fastlane-UITests.xctest */,
+				4A51E7462A6AC03700813308 /* Fastlane-UIUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4A51E72D2A6AC03600813308 /* Fastlane-UI */ = {
+			isa = PBXGroup;
+			children = (
+				4A51E75B2A6AC3AC00813308 /* Bash */,
+				4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */,
+				4A51E7302A6AC03600813308 /* ContentView.swift */,
+				4A51E7322A6AC03700813308 /* Assets.xcassets */,
+				4A51E7372A6AC03700813308 /* Fastlane_UI.entitlements */,
+				4A51E7342A6AC03700813308 /* Preview Content */,
+				4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */,
+			);
+			path = "Fastlane-UI";
+			sourceTree = "<group>";
+		};
+		4A51E7342A6AC03700813308 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4A51E7352A6AC03700813308 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4A51E73F2A6AC03700813308 /* Fastlane-UITests */ = {
+			isa = PBXGroup;
+			children = (
+				4A51E7402A6AC03700813308 /* Fastlane_UITests.swift */,
+			);
+			path = "Fastlane-UITests";
+			sourceTree = "<group>";
+		};
+		4A51E7492A6AC03700813308 /* Fastlane-UIUITests */ = {
+			isa = PBXGroup;
+			children = (
+				4A51E74A2A6AC03700813308 /* Fastlane_UIUITests.swift */,
+				4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */,
+			);
+			path = "Fastlane-UIUITests";
+			sourceTree = "<group>";
+		};
+		4A51E75B2A6AC3AC00813308 /* Bash */ = {
+			isa = PBXGroup;
+			children = (
+				4A51E75C2A6AC3B500813308 /* Commands */,
+				4A51E7592A6AC09300813308 /* BashCommand.swift */,
+			);
+			path = Bash;
+			sourceTree = "<group>";
+		};
+		4A51E75C2A6AC3B500813308 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				4A51E75D2A6AC40900813308 /* Bash_cd.swift */,
+				4A51E75F2A6AC8A000813308 /* Fastlane.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4A51E72A2A6AC03600813308 /* Fastlane-UI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A51E7502A6AC03700813308 /* Build configuration list for PBXNativeTarget "Fastlane-UI" */;
+			buildPhases = (
+				4A51E7272A6AC03600813308 /* Sources */,
+				4A51E7282A6AC03600813308 /* Frameworks */,
+				4A51E7292A6AC03600813308 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Fastlane-UI";
+			productName = "Fastlane-UI";
+			productReference = 4A51E72B2A6AC03600813308 /* Fastlane-UI.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4A51E73B2A6AC03700813308 /* Fastlane-UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A51E7532A6AC03700813308 /* Build configuration list for PBXNativeTarget "Fastlane-UITests" */;
+			buildPhases = (
+				4A51E7382A6AC03700813308 /* Sources */,
+				4A51E7392A6AC03700813308 /* Frameworks */,
+				4A51E73A2A6AC03700813308 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4A51E73E2A6AC03700813308 /* PBXTargetDependency */,
+			);
+			name = "Fastlane-UITests";
+			productName = "Fastlane-UITests";
+			productReference = 4A51E73C2A6AC03700813308 /* Fastlane-UITests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4A51E7452A6AC03700813308 /* Fastlane-UIUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A51E7562A6AC03700813308 /* Build configuration list for PBXNativeTarget "Fastlane-UIUITests" */;
+			buildPhases = (
+				4A51E7422A6AC03700813308 /* Sources */,
+				4A51E7432A6AC03700813308 /* Frameworks */,
+				4A51E7442A6AC03700813308 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4A51E7482A6AC03700813308 /* PBXTargetDependency */,
+			);
+			name = "Fastlane-UIUITests";
+			productName = "Fastlane-UIUITests";
+			productReference = 4A51E7462A6AC03700813308 /* Fastlane-UIUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4A51E7232A6AC03600813308 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					4A51E72A2A6AC03600813308 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+					4A51E73B2A6AC03700813308 = {
+						CreatedOnToolsVersion = 14.3.1;
+						TestTargetID = 4A51E72A2A6AC03600813308;
+					};
+					4A51E7452A6AC03700813308 = {
+						CreatedOnToolsVersion = 14.3.1;
+						TestTargetID = 4A51E72A2A6AC03600813308;
+					};
+				};
+			};
+			buildConfigurationList = 4A51E7262A6AC03600813308 /* Build configuration list for PBXProject "Fastlane-UI" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4A51E7222A6AC03600813308;
+			productRefGroup = 4A51E72C2A6AC03600813308 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4A51E72A2A6AC03600813308 /* Fastlane-UI */,
+				4A51E73B2A6AC03700813308 /* Fastlane-UITests */,
+				4A51E7452A6AC03700813308 /* Fastlane-UIUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4A51E7292A6AC03600813308 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A51E7362A6AC03700813308 /* Preview Assets.xcassets in Resources */,
+				4A51E7332A6AC03700813308 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A51E73A2A6AC03700813308 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A51E7442A6AC03700813308 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4A51E7272A6AC03600813308 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A51E75E2A6AC40900813308 /* Bash_cd.swift in Sources */,
+				4A51E7602A6AC8A000813308 /* Fastlane.swift in Sources */,
+				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
+				4A51E75A2A6AC09300813308 /* BashCommand.swift in Sources */,
+				4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */,
+				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A51E7382A6AC03700813308 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A51E7412A6AC03700813308 /* Fastlane_UITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A51E7422A6AC03700813308 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A51E74D2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift in Sources */,
+				4A51E74B2A6AC03700813308 /* Fastlane_UIUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4A51E73E2A6AC03700813308 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4A51E72A2A6AC03600813308 /* Fastlane-UI */;
+			targetProxy = 4A51E73D2A6AC03700813308 /* PBXContainerItemProxy */;
+		};
+		4A51E7482A6AC03700813308 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4A51E72A2A6AC03600813308 /* Fastlane-UI */;
+			targetProxy = 4A51E7472A6AC03700813308 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4A51E74E2A6AC03700813308 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4A51E74F2A6AC03700813308 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		4A51E7512A6AC03700813308 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Fastlane-UI/Fastlane_UI.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Fastlane-UI/Preview Content\"";
+				DEVELOPMENT_TEAM = G58Y4PZ34Q;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "it.lukluca.Fastlane-UI";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4A51E7522A6AC03700813308 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Fastlane-UI/Fastlane_UI.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Fastlane-UI/Preview Content\"";
+				DEVELOPMENT_TEAM = G58Y4PZ34Q;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "it.lukluca.Fastlane-UI";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		4A51E7542A6AC03700813308 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G58Y4PZ34Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "it.lukluca.Fastlane-UITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fastlane-UI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fastlane-UI";
+			};
+			name = Debug;
+		};
+		4A51E7552A6AC03700813308 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G58Y4PZ34Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "it.lukluca.Fastlane-UITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fastlane-UI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fastlane-UI";
+			};
+			name = Release;
+		};
+		4A51E7572A6AC03700813308 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G58Y4PZ34Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "it.lukluca.Fastlane-UIUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Fastlane-UI";
+			};
+			name = Debug;
+		};
+		4A51E7582A6AC03700813308 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G58Y4PZ34Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "it.lukluca.Fastlane-UIUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Fastlane-UI";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4A51E7262A6AC03600813308 /* Build configuration list for PBXProject "Fastlane-UI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A51E74E2A6AC03700813308 /* Debug */,
+				4A51E74F2A6AC03700813308 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4A51E7502A6AC03700813308 /* Build configuration list for PBXNativeTarget "Fastlane-UI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A51E7512A6AC03700813308 /* Debug */,
+				4A51E7522A6AC03700813308 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4A51E7532A6AC03700813308 /* Build configuration list for PBXNativeTarget "Fastlane-UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A51E7542A6AC03700813308 /* Debug */,
+				4A51E7552A6AC03700813308 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4A51E7562A6AC03700813308 /* Build configuration list for PBXNativeTarget "Fastlane-UIUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A51E7572A6AC03700813308 /* Debug */,
+				4A51E7582A6AC03700813308 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4A51E7232A6AC03600813308 /* Project object */;
+}
