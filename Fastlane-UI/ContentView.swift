@@ -13,8 +13,6 @@ struct ContentView: View {
     
     let userDefault = UserDefaults.standard
     
-    @State private var filename = ""
-    
     let pub = NotificationCenter.default
         .publisher(for: Process.didTerminateNotification)
     
@@ -24,9 +22,13 @@ struct ContentView: View {
     @State private var branchName = defaultBranchName
     @State private var releaseNotes = ""
     @State private var pushOnGit = true
-    @State private var debug = true
+    @State private var uploadToFirebase = true
+    @State private var useSlack = true
+    @State private var makeReleaseNotesFromJira = true
     @State private var selectedEnvironment: Environment = .test
     @State private var result = ""
+    
+    @State private var fastlaneCommand = ""
     
     var body: some View {
         VStack(spacing: 10) {
@@ -62,17 +64,39 @@ struct ContentView: View {
                 TextField("Enter your release notes (optional)", text: $releaseNotes)
             }
             
-            PushOnGitRadioButton(pushOnGit: $pushOnGit)
-            
-            DebugRadioButton(debug: $debug)
-            
-            Button("Build app") {
-                result = execute()
+            VStack(spacing: 10) {
+                PushOnGitRadioButton(value: $pushOnGit)
+                
+                UploadToFirebaseRadioButton(value: $uploadToFirebase)
+                
+                UseSlackRadioButton(value: $useSlack)
+                
+                MakeRelaseNotesFromJiraRadioButton(value: $makeReleaseNotesFromJira)
             }
-            .disabled(projectFolder.isEmpty ||
-                      versionNumber.isEmpty ||
-                      buildNumber.isEmpty ||
-                      branchName.isEmpty)
+            
+            VStack(spacing: 10) {
+                Button("Build app") {
+                    result = execute()
+                }
+                .disabled(projectFolder.isEmpty ||
+                          versionNumber.isEmpty ||
+                          buildNumber.isEmpty ||
+                          branchName.isEmpty)
+                Button("Make fastlane command") {
+                    fastlaneCommand = makeFastlaneCommand()
+                }
+                .disabled(projectFolder.isEmpty ||
+                          versionNumber.isEmpty ||
+                          buildNumber.isEmpty ||
+                          branchName.isEmpty)
+            }
+            
+            if !fastlaneCommand.isEmpty {
+                HStack {
+                    Text("Fastalane command: ")
+                    TextField("", text: $fastlaneCommand, axis: .vertical)
+                }
+            }
             
             //TODO open new screen with results
             Text(result)
@@ -82,21 +106,54 @@ struct ContentView: View {
             versionNumber = userDefault.versionNumber ?? ""
             buildNumber = userDefault.buildNumber ?? ""
             branchName = userDefault.branchName ?? defaultBranchName
+            pushOnGit = userDefault.pushOnGit ?? true
+            uploadToFirebase = userDefault.uploadToFirebase ?? true
+            useSlack = userDefault.useSlack ?? true
+            makeReleaseNotesFromJira = userDefault.makeReleaseNotesFromJira ?? true
         }
         .onReceive(pub) { output in
             print(output)
         }
-        .onChange(of: filename) { newValue in
-            projectFolder = newValue
+        .onChange(of: projectFolder) { newValue in
+            userDefault.projectFolder = newValue
         }
         .onChange(of: versionNumber) { newValue in
             userDefault.versionNumber = newValue
+            
+            updateFastlaneCommand()
         }
         .onChange(of: buildNumber) { newValue in
             userDefault.buildNumber = newValue
+            
+            updateFastlaneCommand()
         }
         .onChange(of: branchName) { newValue in
             userDefault.branchName = newValue
+            
+            updateFastlaneCommand()
+        }
+        .onChange(of: releaseNotes) { newValue in
+            updateFastlaneCommand()
+        }
+        .onChange(of: pushOnGit) { newValue in
+            userDefault.pushOnGit = newValue
+            
+            updateFastlaneCommand()
+        }
+        .onChange(of: uploadToFirebase) { newValue in
+            userDefault.uploadToFirebase = newValue
+            
+            updateFastlaneCommand()
+        }
+        .onChange(of: useSlack) { newValue in
+            userDefault.useSlack = newValue
+            
+            updateFastlaneCommand()
+        }
+        .onChange(of: makeReleaseNotesFromJira) { newValue in
+            userDefault.makeReleaseNotesFromJira = newValue
+            
+            updateFastlaneCommand()
         }
         .padding()
     }
@@ -110,58 +167,72 @@ extension ContentView {
         
         @Binding var selectedEnvironment: Environment
         
-       var body: some View {
-          Picker("Environment:", selection: $selectedEnvironment) {
-             ForEach(Environment.allCases) { environment in
-                  Text(environment.rawValue).tag(environment)
+        var body: some View {
+            Picker("Environment:", selection: $selectedEnvironment) {
+                ForEach(Environment.allCases) { environment in
+                    Text(environment.rawValue).tag(environment)
+                }
             }
-          }
-          .onChange(of: selectedEnvironment) { newValue in
-              userDefault.environment = newValue
-          }
-          .onAppear {
-              selectedEnvironment = userDefault.environment ?? .test
-          }
+            .onChange(of: selectedEnvironment) { newValue in
+                userDefault.environment = newValue
+            }
+            .onAppear {
+                selectedEnvironment = userDefault.environment ?? .test
+            }
         }
     }
 }
+
+//MARK: - Radio buttons
 
 extension ContentView {
     struct PushOnGitRadioButton: View {
         
-        let userDefault = UserDefaults.standard
-        
-        @Binding var pushOnGit: Bool
+        @Binding var value: Bool
         
         var body: some View {
-            ContentView.BooleanRadioButton(text: "Push on Git: ",
-                               isYes: $pushOnGit)
-            .onChange(of: pushOnGit) { newValue in
-                userDefault.pushOnGit = newValue
-            }
-            .onAppear {
-                pushOnGit = userDefault.pushOnGit ?? true
-            }
+            ContentView.BooleanRadioButton(
+                text: "Push on Git: ",
+                isYes: $value)
         }
     }
 }
 
 extension ContentView {
-    struct DebugRadioButton: View {
+    struct UploadToFirebaseRadioButton: View {
         
-        let userDefault = UserDefaults.standard
-        
-        @Binding var debug: Bool
+        @Binding var value: Bool
         
         var body: some View {
-            ContentView.BooleanRadioButton(text: "Debug mode: ",
-                               isYes: $debug)
-            .onChange(of: debug) { newValue in
-                userDefault.debugMode = newValue
-            }
-            .onAppear {
-                debug = userDefault.debugMode ?? true
-            }
+            ContentView.BooleanRadioButton(
+                text: "Upload to Firebase: ",
+                isYes: $value)
+        }
+    }
+}
+
+extension ContentView {
+    struct UseSlackRadioButton: View {
+        
+        @Binding var value: Bool
+        
+        var body: some View {
+            ContentView.BooleanRadioButton(
+                text: "Use Slack: ",
+                isYes: $value)
+        }
+    }
+}
+
+extension ContentView {
+    struct MakeRelaseNotesFromJiraRadioButton: View {
+        
+        @Binding var value: Bool
+        
+        var body: some View {
+            ContentView.BooleanRadioButton(
+                text: "Make relese notes from Jira: ",
+                isYes: $value)
         }
     }
 }
@@ -183,12 +254,27 @@ extension ContentView {
 }
 
 private extension ContentView {
+    
+    var fastlaneArguments: FastlaneArguments {
+        FastlaneArguments(
+            environment: selectedEnvironment,
+            versionNumber: versionNumber,
+            buildNumber: buildNumber,
+            branchName: branchName,
+            releaseNotes: releaseNotes,
+            pushOnGit: pushOnGit,
+            uploadToFirebase: uploadToFirebase,
+            useSlack: useSlack,
+            makeReleaseNotesFromJira: makeReleaseNotesFromJira
+        )
+    }
+    
     func openFileDialog() {
         let panel = NSOpenPanel()
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         if panel.runModal() == .OK {
-            filename = panel.url?.relativePath ?? ""
+            projectFolder = panel.url?.relativePath ?? ""
         }
     }
     
@@ -201,14 +287,7 @@ private extension ContentView {
         do {
             let cdResult = try bash.cd(folder: projectFolder)
             results.append(cdResult)
-            let arguments = FastlaneArguments(
-                environment: selectedEnvironment,
-                versionNumber: versionNumber,
-                buildNumber: buildNumber,
-                branchName: branchName,
-                releaseNotes: releaseNotes
-            )
-            let fastlaneResult = try bash.fastlane(arguments: arguments)
+            let fastlaneResult = try bash.fastlane(arguments: fastlaneArguments)
             results.append(fastlaneResult)
             
         } catch {
@@ -217,6 +296,17 @@ private extension ContentView {
         
         return results.joined(separator: "\n")
     }
+    
+    func makeFastlaneCommand() -> String {
+        bundleCommand + " " + fastlaneArguments.toArray.joined(separator: " ")
+    }
+    
+    func updateFastlaneCommand() {
+        if !fastlaneCommand.isEmpty {
+            fastlaneCommand = ""
+            fastlaneCommand = makeFastlaneCommand()
+        }
+    }
 }
 
 enum Environment: String, CaseIterable, Identifiable {
@@ -224,7 +314,7 @@ enum Environment: String, CaseIterable, Identifiable {
     case quality = "QUALITY"
     case qualityCRM = "QUALITYCRM"
     case production = "PRODUCTION"
-
+    
     var id: Environment { self }
 }
 

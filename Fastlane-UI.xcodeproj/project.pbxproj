@@ -173,6 +173,8 @@
 			dependencies = (
 			);
 			name = "Fastlane-UI";
+			packageProductDependencies = (
+			);
 			productName = "Fastlane-UI";
 			productReference = 4A51E72B2A6AC03600813308 /* Fastlane-UI.app */;
 			productType = "com.apple.product-type.application";
@@ -245,6 +247,8 @@
 				Base,
 			);
 			mainGroup = 4A51E7222A6AC03600813308;
+			packageReferences = (
+			);
 			productRefGroup = 4A51E72C2A6AC03600813308 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

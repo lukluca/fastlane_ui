@@ -16,7 +16,9 @@ extension UserDefaults {
         case buildNumber
         case branchName
         case pushOnGit
-        case debugMode
+        case uploadToFirebase
+        case useSlack
+        case makeReleaseNotesFromJira
     }
     
     var projectFolder: String? {
@@ -76,12 +78,30 @@ extension UserDefaults {
         }
     }
     
-    var debugMode: Bool? {
+    var uploadToFirebase: Bool? {
         get {
-            boolValue(for: .debugMode)
+            boolValue(for: .uploadToFirebase)
         }
         set {
-            set(newValue, for: .debugMode)
+            set(newValue, for: .uploadToFirebase)
+        }
+    }
+    
+    var useSlack: Bool? {
+        get {
+            boolValue(for: .useSlack)
+        }
+        set {
+            set(newValue, for: .useSlack)
+        }
+    }
+    
+    var makeReleaseNotesFromJira: Bool? {
+        get {
+            boolValue(for: .makeReleaseNotesFromJira)
+        }
+        set {
+            set(newValue, for: .makeReleaseNotesFromJira)
         }
     }
     
