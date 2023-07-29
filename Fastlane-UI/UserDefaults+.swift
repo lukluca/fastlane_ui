@@ -14,71 +14,78 @@ extension UserDefaults {
         case environment
         case versionNumber
         case buildNumber
-        case branch
+        case branchName
         case pushOnGit
         case debugMode
     }
     
-    func setProjectFolder(_ value: String) {
-        set(value, for: .projectFolder)
-    }
-    
     var projectFolder: String? {
-        string(for: .projectFolder)
-    }
-    
-    func setEnvironment(_ value: Environment) {
-        set(value.rawValue, for: .environment)
+        get {
+            string(for: .projectFolder)
+        }
+        set {
+            set(newValue, for: .projectFolder)
+        }
     }
     
     var environment: Environment? {
-        guard let value = string(for: .environment) else {
-            return nil
+        get {
+            guard let value = string(for: .environment) else {
+                return nil
+            }
+            return Environment(rawValue: value)
         }
-        return Environment(rawValue: value)
-    }
-    
-    func setVersionNumber(_ value: String) {
-        set(value, for: .versionNumber)
+        set {
+            set(newValue?.rawValue, for: .environment)
+        }
     }
     
     var versionNumber: String? {
-        string(for: .versionNumber)
-    }
-    
-    func setBuildNumber(_ value: String) {
-        set(value, for: .buildNumber)
+        get {
+            string(for: .versionNumber)
+        }
+        set {
+            set(newValue, for: .versionNumber)
+        }
     }
     
     var buildNumber: String? {
-        string(for: .buildNumber)
+        get {
+            string(for: .buildNumber)
+        }
+        set {
+            set(newValue, for: .buildNumber)
+        }
     }
     
-    func setBranch(_ value: String) {
-        set(value, for: .branch)
-    }
-    
-    var branch: String? {
-        string(for: .branch)
-    }
-    
-    func setPushOnGit(_ value: Bool) {
-        set(value, for: .pushOnGit)
+    var branchName: String? {
+        get {
+            string(for: .branchName)
+        }
+        set {
+            set(newValue, for: .branchName)
+        }
     }
     
     var pushOnGit: Bool? {
-        boolValue(for: .pushOnGit)
-    }
-    
-    func setDebugMode(_ value: Bool) {
-        set(value, for: .debugMode)
+        get {
+            boolValue(for: .pushOnGit)
+        }
+        set {
+            set(newValue, for: .pushOnGit)
+        }
     }
     
     var debugMode: Bool? {
-        boolValue(for: .debugMode)
+        get {
+            boolValue(for: .debugMode)
+        }
+        set {
+            set(newValue, for: .debugMode)
+        }
     }
     
-    private func set(_ value: Any, for key: Key) {
+    private func set(_ value: Any?, for key: Key) {
         set(value, forKey: key.rawValue)
     }
     

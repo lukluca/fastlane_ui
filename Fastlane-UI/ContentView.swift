@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+private let defaultBranchName = "develop"
+
 struct ContentView: View {
     
     let userDefault = UserDefaults.standard
@@ -19,7 +21,7 @@ struct ContentView: View {
     @State private var projectFolder = ""
     @State private var versionNumber = ""
     @State private var buildNumber = ""
-    @State private var branchName = "develop"
+    @State private var branchName = defaultBranchName
     @State private var releaseNotes = ""
     @State private var pushOnGit = true
     @State private var debug = true
@@ -79,9 +81,7 @@ struct ContentView: View {
             projectFolder = userDefault.projectFolder ?? ""
             versionNumber = userDefault.versionNumber ?? ""
             buildNumber = userDefault.buildNumber ?? ""
-            if let branch = userDefault.branch, !branch.isEmpty {
-                branchName = branch
-            }
+            branchName = userDefault.branchName ?? defaultBranchName
         }
         .onReceive(pub) { output in
             print(output)
@@ -89,38 +89,16 @@ struct ContentView: View {
         .onChange(of: filename) { newValue in
             projectFolder = newValue
         }
-        .padding()
-    }
-    
-    private func execute() -> String {
-        
-        userDefault.setProjectFolder(projectFolder)
-        userDefault.setVersionNumber(versionNumber)
-        userDefault.setBuildNumber(buildNumber)
-        userDefault.setBranch(branchName)
-        
-        let bash: CommandExecuting = Bash()
-        
-        var results = [String]()
-        
-        do {
-            let cdResult = try bash.cd(folder: projectFolder)
-            results.append(cdResult)
-            let arguments = FastlaneArguments(
-                environment: selectedEnvironment,
-                versionNumber: versionNumber,
-                buildNumber: buildNumber,
-                branchName: branchName,
-                releaseNotes: releaseNotes
-            )
-            let fastlaneResult = try bash.fastlane(arguments: arguments)
-            results.append(fastlaneResult)
-            
-        } catch {
-            results.append(error.localizedDescription)
+        .onChange(of: versionNumber) { newValue in
+            userDefault.versionNumber = newValue
         }
-        
-        return results.joined(separator: "\n")
+        .onChange(of: buildNumber) { newValue in
+            userDefault.buildNumber = newValue
+        }
+        .onChange(of: branchName) { newValue in
+            userDefault.branchName = newValue
+        }
+        .padding()
     }
 }
 
@@ -139,7 +117,7 @@ extension ContentView {
             }
           }
           .onChange(of: selectedEnvironment) { newValue in
-              userDefault.setEnvironment(newValue)
+              userDefault.environment = newValue
           }
           .onAppear {
               selectedEnvironment = userDefault.environment ?? .test
@@ -159,7 +137,7 @@ extension ContentView {
             ContentView.BooleanRadioButton(text: "Push on Git: ",
                                isYes: $pushOnGit)
             .onChange(of: pushOnGit) { newValue in
-                userDefault.setPushOnGit(newValue)
+                userDefault.pushOnGit = newValue
             }
             .onAppear {
                 pushOnGit = userDefault.pushOnGit ?? true
@@ -179,7 +157,7 @@ extension ContentView {
             ContentView.BooleanRadioButton(text: "Debug mode: ",
                                isYes: $debug)
             .onChange(of: debug) { newValue in
-                userDefault.setDebugMode(newValue)
+                userDefault.debugMode = newValue
             }
             .onAppear {
                 debug = userDefault.debugMode ?? true
@@ -212,6 +190,32 @@ private extension ContentView {
         if panel.runModal() == .OK {
             filename = panel.url?.relativePath ?? ""
         }
+    }
+    
+    func execute() -> String {
+        
+        let bash: CommandExecuting = Bash()
+        
+        var results = [String]()
+        
+        do {
+            let cdResult = try bash.cd(folder: projectFolder)
+            results.append(cdResult)
+            let arguments = FastlaneArguments(
+                environment: selectedEnvironment,
+                versionNumber: versionNumber,
+                buildNumber: buildNumber,
+                branchName: branchName,
+                releaseNotes: releaseNotes
+            )
+            let fastlaneResult = try bash.fastlane(arguments: arguments)
+            results.append(fastlaneResult)
+            
+        } catch {
+            results.append(error.localizedDescription)
+        }
+        
+        return results.joined(separator: "\n")
     }
 }
 
