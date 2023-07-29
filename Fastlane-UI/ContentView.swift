@@ -11,6 +11,8 @@ struct ContentView: View {
     
     let userDefault = UserDefaults.standard
     
+    @State private var filename = ""
+    
     let pub = NotificationCenter.default
         .publisher(for: Process.didTerminateNotification)
     
@@ -30,6 +32,10 @@ struct ContentView: View {
             HStack {
                 Text("Project folder: ")
                 TextField("Enter your project folder", text: $projectFolder)
+                
+                Button(action: openFileDialog) {
+                    Image(systemName: "folder.fill")
+                }
             }
             
             EnvPicker(selectedEnvironment: $selectedEnvironment)
@@ -79,6 +85,9 @@ struct ContentView: View {
         }
         .onReceive(pub) { output in
             print(output)
+        }
+        .onChange(of: filename) { newValue in
+            projectFolder = newValue
         }
         .padding()
     }
@@ -195,6 +204,17 @@ extension ContentView {
     }
 }
 
+private extension ContentView {
+    func openFileDialog() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        if panel.runModal() == .OK {
+            filename = panel.url?.relativePath ?? ""
+        }
+    }
+}
+
 enum Environment: String, CaseIterable, Identifiable {
     case test = "TEST"
     case quality = "QUALITY"
@@ -209,3 +229,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
