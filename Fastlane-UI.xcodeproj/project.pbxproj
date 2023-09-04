@@ -18,6 +18,7 @@
 		4A51E75E2A6AC40900813308 /* Bash_cd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75D2A6AC40900813308 /* Bash_cd.swift */; };
 		4A51E7602A6AC8A000813308 /* Fastlane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75F2A6AC8A000813308 /* Fastlane.swift */; };
 		4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */; };
+		4A7F6BDC2AA62497000FE841 /* BuildApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDB2AA62497000FE841 /* BuildApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		4A51E75D2A6AC40900813308 /* Bash_cd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bash_cd.swift; sourceTree = "<group>"; };
 		4A51E75F2A6AC8A000813308 /* Fastlane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane.swift; sourceTree = "<group>"; };
 		4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
+		4A7F6BDB2AA62497000FE841 /* BuildApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				4A51E75B2A6AC3AC00813308 /* Bash */,
 				4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */,
 				4A51E7302A6AC03600813308 /* ContentView.swift */,
+				4A7F6BDB2AA62497000FE841 /* BuildApp.swift */,
 				4A51E7322A6AC03700813308 /* Assets.xcassets */,
 				4A51E7372A6AC03700813308 /* Fastlane_UI.entitlements */,
 				4A51E7342A6AC03700813308 /* Preview Content */,
@@ -294,6 +297,7 @@
 				4A51E75E2A6AC40900813308 /* Bash_cd.swift in Sources */,
 				4A51E7602A6AC8A000813308 /* Fastlane.swift in Sources */,
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
+				4A7F6BDC2AA62497000FE841 /* BuildApp.swift in Sources */,
 				4A51E75A2A6AC09300813308 /* BashCommand.swift in Sources */,
 				4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */,
 				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,
