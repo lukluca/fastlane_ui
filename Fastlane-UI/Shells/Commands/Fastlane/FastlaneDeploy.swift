@@ -1,5 +1,5 @@
 //
-//  Fastlane.swift
+//  FastlaneDeploy.swift
 //  Fastlane-UI
 //
 //  Created by softwave on 21/07/23.
@@ -7,10 +7,7 @@
 
 import Foundation
 
-
-let bundleCommand = "bundle"
-
-struct FastlaneArguments {
+struct FastlaneDeployArguments: FastlaneArguments {
     let environment: Environment
     let versionNumber: String
     let buildNumber: String
@@ -44,34 +41,33 @@ struct FastlaneArguments {
         return "release_notes:\(releaseNotes)"
     }
     
-    private var pushOnGitArg: String {
-        "push_on_git:\(pushOnGit)"
+    private var pushOnGitArg: String? {
+        pushOnGit ? nil : "push_on_git:\(pushOnGit)"
     }
     
-    private var uploadToFirebaseArg: String {
-        "upload_to_firebase:\(uploadToFirebase)"
+    private var uploadToFirebaseArg: String? {
+        uploadToFirebase ? nil : "upload_to_firebase:\(uploadToFirebase)"
     }
     
-    private var useSlackArg: String {
-        "use_slack:\(useSlack)"
+    private var useSlackArg: String? {
+        useSlack ? nil : "use_slack:\(useSlack)"
     }
     
-    private var makeReleaseNotesFromJiraArg: String {
-        "use_jira:\(makeReleaseNotesFromJira)"
+    private var makeReleaseNotesFromJiraArg: String? {
+        makeReleaseNotesFromJira ? nil : "use_jira:\(makeReleaseNotesFromJira)"
     }
     
     var toArray: [String] {
-        let args = ["exec",
-         "fastlane",
-         "deploy",
-         envArg,
-         versionNumberArg,
-         buildNumberArg,
-         branchNameArg,
-         pushOnGitArg,
-         uploadToFirebaseArg,
-         useSlackArg,
-         makeReleaseNotesFromJiraArg]
+        let args = [
+            envArg,
+            versionNumberArg,
+            buildNumberArg,
+            branchNameArg,
+            pushOnGitArg,
+            uploadToFirebaseArg,
+            useSlackArg,
+            makeReleaseNotesFromJiraArg
+        ].compactMap{ $0 }
         
         if let relaseNotesArg {
             return args + [relaseNotesArg]
@@ -82,10 +78,7 @@ struct FastlaneArguments {
 }
 
 extension CommandExecuting {
-    func fastlane(arguments: FastlaneArguments) throws -> String {
-        try run(
-            commandName: bundleCommand,
-            arguments: arguments.toArray
-        )
+    func fastlaneDeploy(arguments: FastlaneDeployArguments) throws -> String {
+        try fastlane(command: .deploy, arguments: arguments)
     }
 }

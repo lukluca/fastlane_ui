@@ -1,5 +1,5 @@
 //
-//  BuildApp.swift
+//  DeployApp.swift
 //  Fastlane-UI
 //
 //  Created by softwave on 04/09/23.
@@ -9,14 +9,17 @@ import SwiftUI
 
 private let defaultBranchName = "develop"
 
-struct BuildApp: View {
+struct DeployApp: View {
     
-    let userDefault = UserDefaults.standard
+    private let userDefault = UserDefaults.standard
     
     let pub = NotificationCenter.default
         .publisher(for: Process.didTerminateNotification)
     
+    @State private(set) var shell: Shell = .zsh
+    
     @State private var projectFolder = ""
+    @State private var credentialsFolder = ""
     @State private var versionNumber = ""
     @State private var buildNumber = ""
     @State private var branchName = defaultBranchName
@@ -26,84 +29,72 @@ struct BuildApp: View {
     @State private var useSlack = true
     @State private var makeReleaseNotesFromJira = true
     @State private var selectedEnvironment: Environment = .test
+    
     @State private var result = ""
     
     @State private var fastlaneCommand = ""
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 30) {
             
-            HStack {
-                Text("Project folder: ")
-                TextField("Enter your project folder", text: $projectFolder)
+            SettingsButton()
+            
+            VStack(spacing: 10) {
+                ProjectFolderView(projectFolder: $projectFolder)
                 
-                Button(action: openFileDialog) {
-                    Image(systemName: "folder.fill")
+                JiraCredentialsFoldetView(credentialsFolder: $credentialsFolder)
+                
+                EnvPicker(selectedEnvironment: $selectedEnvironment)
+                
+                VersionNumberView(versionNumber: $versionNumber)
+                
+                HStack {
+                    Text("Build number: ")
+                    TextField("Enter your build number", text: $buildNumber)
+                }
+                
+                HStack {
+                    Text("Branch name: ")
+                    TextField("Enter your branch name", text: $branchName)
+                }
+                
+                HStack {
+                    Text("Release notes: ")
+                    TextField("Enter your release notes (optional)", text: $releaseNotes)
                 }
             }
             
-            EnvPicker(selectedEnvironment: $selectedEnvironment)
-            
-            HStack {
-                Text("Version number: ")
-                TextField("Enter your version number", text: $versionNumber)
-            }
-            
-            HStack {
-                Text("Build number: ")
-                TextField("Enter your build number", text: $buildNumber)
-            }
-            
-            HStack {
-                Text("Branch name: ")
-                TextField("Enter your branch name", text: $branchName)
-            }
-            
-            HStack {
-                Text("Release notes: ")
-                TextField("Enter your release notes (optional)", text: $releaseNotes)
+            VStack(alignment: .leading, spacing: 10) {
+                
+                Toggle(" Push on Git", isOn: $pushOnGit)
+                Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
+                Toggle(" Use Slack", isOn: $useSlack)
+                Toggle(" Make relese notes from Jira", isOn: $makeReleaseNotesFromJira)
             }
             
             VStack(spacing: 10) {
-                PushOnGitRadioButton(value: $pushOnGit)
-                
-                UploadToFirebaseRadioButton(value: $uploadToFirebase)
-                
-                UseSlackRadioButton(value: $useSlack)
-                
-                MakeRelaseNotesFromJiraRadioButton(value: $makeReleaseNotesFromJira)
-            }
-            
-            VStack(spacing: 10) {
-                Button("Build app") {
+                Button("Deploy app") {
                     result = execute()
                 }
                 .disabled(projectFolder.isEmpty ||
                           versionNumber.isEmpty ||
+                          (!makeReleaseNotesFromJira && credentialsFolder.isEmpty) ||
                           buildNumber.isEmpty ||
                           branchName.isEmpty)
                 Button("Show fastlane command") {
                     fastlaneCommand = makeFastlaneCommand()
                 }
-                .disabled(projectFolder.isEmpty ||
-                          versionNumber.isEmpty ||
+                .disabled(versionNumber.isEmpty ||
                           buildNumber.isEmpty ||
                           branchName.isEmpty)
             }
             
-            if !fastlaneCommand.isEmpty {
-                HStack {
-                    Text("Fastalane command: ")
-                    TextField("", text: $fastlaneCommand, axis: .vertical)
-                }
-            }
+            FastlaneCommandView(command: $fastlaneCommand)
             
-            //TODO open new screen with results
             Text(result)
         }
         .onAppear {
-            projectFolder = userDefault.projectFolder ?? ""
-            versionNumber = userDefault.versionNumber ?? ""
+            shell = userDefault.shell ?? .zsh
             buildNumber = userDefault.buildNumber ?? ""
             branchName = userDefault.branchName ?? defaultBranchName
             pushOnGit = userDefault.pushOnGit ?? true
@@ -114,21 +105,32 @@ struct BuildApp: View {
         .onReceive(pub) { output in
             print(output)
         }
-        .onChange(of: projectFolder) { newValue in
-            userDefault.projectFolder = newValue
+        .onChange(of: selectedEnvironment) { newValue in
+            updateFastlaneCommand()
         }
         .onChange(of: versionNumber) { newValue in
-            userDefault.versionNumber = newValue
+            
+            if newValue.isEmpty {
+                fastlaneCommand = ""
+            }
             
             updateFastlaneCommand()
         }
         .onChange(of: buildNumber) { newValue in
             userDefault.buildNumber = newValue
             
+            if newValue.isEmpty {
+                fastlaneCommand = ""
+            }
+            
             updateFastlaneCommand()
         }
         .onChange(of: branchName) { newValue in
             userDefault.branchName = newValue
+            
+            if newValue.isEmpty {
+                fastlaneCommand = ""
+            }
             
             updateFastlaneCommand()
         }
@@ -159,7 +161,7 @@ struct BuildApp: View {
     }
 }
 
-extension BuildApp {
+extension DeployApp {
     
     struct EnvPicker: View {
         
@@ -183,80 +185,12 @@ extension BuildApp {
     }
 }
 
-//MARK: - Radio buttons
+extension DeployApp: FastlaneWorkflow {}
 
-extension BuildApp {
-    struct PushOnGitRadioButton: View {
-        
-        @Binding var value: Bool
-        
-        var body: some View {
-            BuildApp.BooleanRadioButton(
-                text: "Push on Git: ",
-                isYes: $value)
-        }
-    }
-}
-
-extension BuildApp {
-    struct UploadToFirebaseRadioButton: View {
-        
-        @Binding var value: Bool
-        
-        var body: some View {
-            BuildApp.BooleanRadioButton(
-                text: "Upload to Firebase: ",
-                isYes: $value)
-        }
-    }
-}
-
-extension BuildApp {
-    struct UseSlackRadioButton: View {
-        
-        @Binding var value: Bool
-        
-        var body: some View {
-            BuildApp.BooleanRadioButton(
-                text: "Use Slack: ",
-                isYes: $value)
-        }
-    }
-}
-
-extension BuildApp {
-    struct MakeRelaseNotesFromJiraRadioButton: View {
-        
-        @Binding var value: Bool
-        
-        var body: some View {
-            BuildApp.BooleanRadioButton(
-                text: "Make relese notes from Jira: ",
-                isYes: $value)
-        }
-    }
-}
-
-extension BuildApp {
-    struct BooleanRadioButton: View {
-        
-        let text: String
-        @Binding var isYes: Bool
-        
-        var body: some View {
-            Picker(text, selection: $isYes) {
-                Text("Yes").tag(true)
-                Text("No").tag(false)
-            }
-            .pickerStyle(RadioGroupPickerStyle())
-        }
-    }
-}
-
-private extension BuildApp {
+private extension DeployApp {
     
-    var fastlaneArguments: FastlaneArguments {
-        FastlaneArguments(
+    var fastlaneArguments: FastlaneDeployArguments {
+        FastlaneDeployArguments(
             environment: selectedEnvironment,
             versionNumber: versionNumber,
             buildNumber: buildNumber,
@@ -269,36 +203,25 @@ private extension BuildApp {
         )
     }
     
-    func openFileDialog() {
-        let panel = NSOpenPanel()
-        panel.canChooseDirectories = true
-        panel.canChooseFiles = false
-        if panel.runModal() == .OK {
-            projectFolder = panel.url?.relativePath ?? ""
-        }
-    }
-    
     func execute() -> String {
         
-        let bash: CommandExecuting = Bash()
-        
-        var results = [String]()
-        
-        do {
-            let cdResult = try bash.cd(folder: projectFolder)
-            results.append(cdResult)
-            let fastlaneResult = try bash.fastlane(arguments: fastlaneArguments)
-            results.append(fastlaneResult)
-            
-        } catch {
-            results.append(error.localizedDescription)
+        let commands: [String]
+        if makeReleaseNotesFromJira {
+            commands = [shell.cd(folder: projectFolder),
+                        cpCredentials(credentialsFolder: credentialsFolder,
+                                      projectFolder: projectFolder),
+                        makeFastlaneCommand(),
+                        gitRestore()]
+        } else {
+            commands = [shell.cd(folder: projectFolder),
+                        makeFastlaneCommand()]
         }
         
-        return results.joined(separator: "\n")
+        return runBundleScript(with: commands)
     }
     
     func makeFastlaneCommand() -> String {
-        bundleCommand + " " + fastlaneArguments.toArray.joined(separator: " ")
+        FastlaneCommand.deploy.fullCommand(with: fastlaneArguments)
     }
     
     func updateFastlaneCommand() {
@@ -320,6 +243,6 @@ enum Environment: String, CaseIterable, Identifiable {
 
 struct BuildApp_Previews: PreviewProvider {
     static var previews: some View {
-        BuildApp()
+        DeployApp()
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 private let defaultBranchName = "develop"
 
 enum Segment : String, CaseIterable {
-    case buildApp = "Build App"
+    case deployApp = "Deploy App"
     case jiraRelaseNotes = "Jira release notes"
     case tools = "Tools"
 }
@@ -18,7 +18,7 @@ enum Segment : String, CaseIterable {
 
 struct ContentView: View {
     
-    @State private var selectedSegment : Segment = .buildApp
+    @State private var selectedSegment : Segment = .deployApp
     
     var body: some View {
         Picker("", selection: $selectedSegment) {
@@ -36,13 +36,16 @@ struct ContentView: View {
 }
 
 struct SegmentView: View {
+    
     @Binding var selectedSement: Segment
 
     var body: some View {
         switch selectedSement {
-        case .buildApp:
-            BuildApp()
-        default:
+        case .deployApp:
+            DeployApp()
+        case .jiraRelaseNotes:
+            JiraRelaseNotes()
+        case .tools:
             EmptyView()
         }
     }

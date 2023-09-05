@@ -9,7 +9,7 @@ import Foundation
 
 extension UserDefaults {
     
-    enum Key: String {
+    private enum Key: String {
         case projectFolder
         case environment
         case versionNumber
@@ -19,6 +19,8 @@ extension UserDefaults {
         case uploadToFirebase
         case useSlack
         case makeReleaseNotesFromJira
+        case jiraCredentialsFolder
+        case shell
     }
     
     var projectFolder: String? {
@@ -102,6 +104,27 @@ extension UserDefaults {
         }
         set {
             set(newValue, for: .makeReleaseNotesFromJira)
+        }
+    }
+    
+    var jiraCredentialsFolder: String? {
+        get {
+            string(for: .jiraCredentialsFolder)
+        }
+        set {
+            set(newValue, for: .jiraCredentialsFolder)
+        }
+    }
+    
+    var shell: Shell? {
+        get {
+            guard let value = string(for: .shell) else {
+                return nil
+            }
+            return Shell(rawValue: value)
+        }
+        set {
+            set(newValue?.rawValue, for: .environment)
         }
     }
     

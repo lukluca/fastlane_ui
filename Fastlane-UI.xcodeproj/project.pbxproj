@@ -14,11 +14,22 @@
 		4A51E7412A6AC03700813308 /* Fastlane_UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7402A6AC03700813308 /* Fastlane_UITests.swift */; };
 		4A51E74B2A6AC03700813308 /* Fastlane_UIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E74A2A6AC03700813308 /* Fastlane_UIUITests.swift */; };
 		4A51E74D2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */; };
-		4A51E75A2A6AC09300813308 /* BashCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7592A6AC09300813308 /* BashCommand.swift */; };
-		4A51E75E2A6AC40900813308 /* Bash_cd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75D2A6AC40900813308 /* Bash_cd.swift */; };
-		4A51E7602A6AC8A000813308 /* Fastlane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75F2A6AC8A000813308 /* Fastlane.swift */; };
+		4A51E7602A6AC8A000813308 /* FastlaneDeploy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */; };
 		4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */; };
-		4A7F6BDC2AA62497000FE841 /* BuildApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDB2AA62497000FE841 /* BuildApp.swift */; };
+		4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDB2AA62497000FE841 /* DeployApp.swift */; };
+		4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */; };
+		4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */; };
+		4A7F6BE32AA72203000FE841 /* Fastlane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BE22AA72203000FE841 /* Fastlane.swift */; };
+		4A7F6BE62AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BE52AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift */; };
+		4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BE72AA729DD000FE841 /* VersionNumberView.swift */; };
+		4A7F6BEA2AA72D3A000FE841 /* FolderViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BE92AA72D3A000FE841 /* FolderViews.swift */; };
+		4A7F6BEF2AA73F0A000FE841 /* script.sh in Resources */ = {isa = PBXBuildFile; fileRef = 4A7F6BEE2AA73C96000FE841 /* script.sh */; };
+		4A7F6BF32AA744B3000FE841 /* CommandExecuting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BF22AA744B3000FE841 /* CommandExecuting.swift */; };
+		4A7F6BF52AA744F0000FE841 /* CD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BF42AA744F0000FE841 /* CD.swift */; };
+		4A7F6BF72AA744FA000FE841 /* CP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BF62AA744FA000FE841 /* CP.swift */; };
+		4A7F6BF92AA74617000FE841 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BF82AA74617000FE841 /* Shell.swift */; };
+		4A7F6BFC2AA74946000FE841 /* Git_restore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BFB2AA74946000FE841 /* Git_restore.swift */; };
+		4A7F6BFF2AA77A85000FE841 /* SettingsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BFE2AA77A85000FE841 /* SettingsButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,11 +61,22 @@
 		4A51E7462A6AC03700813308 /* Fastlane-UIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Fastlane-UIUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A51E74A2A6AC03700813308 /* Fastlane_UIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIUITests.swift; sourceTree = "<group>"; };
 		4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		4A51E7592A6AC09300813308 /* BashCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BashCommand.swift; sourceTree = "<group>"; };
-		4A51E75D2A6AC40900813308 /* Bash_cd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bash_cd.swift; sourceTree = "<group>"; };
-		4A51E75F2A6AC8A000813308 /* Fastlane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane.swift; sourceTree = "<group>"; };
+		4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneDeploy.swift; sourceTree = "<group>"; };
 		4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
-		4A7F6BDB2AA62497000FE841 /* BuildApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildApp.swift; sourceTree = "<group>"; };
+		4A7F6BDB2AA62497000FE841 /* DeployApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeployApp.swift; sourceTree = "<group>"; };
+		4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraRelaseNotes.swift; sourceTree = "<group>"; };
+		4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneCommandView.swift; sourceTree = "<group>"; };
+		4A7F6BE22AA72203000FE841 /* Fastlane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane.swift; sourceTree = "<group>"; };
+		4A7F6BE52AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneGetJiraReleaseNotes.swift; sourceTree = "<group>"; };
+		4A7F6BE72AA729DD000FE841 /* VersionNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionNumberView.swift; sourceTree = "<group>"; };
+		4A7F6BE92AA72D3A000FE841 /* FolderViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViews.swift; sourceTree = "<group>"; };
+		4A7F6BEE2AA73C96000FE841 /* script.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = script.sh; sourceTree = "<group>"; };
+		4A7F6BF22AA744B3000FE841 /* CommandExecuting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandExecuting.swift; sourceTree = "<group>"; };
+		4A7F6BF42AA744F0000FE841 /* CD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CD.swift; sourceTree = "<group>"; };
+		4A7F6BF62AA744FA000FE841 /* CP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CP.swift; sourceTree = "<group>"; };
+		4A7F6BF82AA74617000FE841 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
+		4A7F6BFB2AA74946000FE841 /* Git_restore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git_restore.swift; sourceTree = "<group>"; };
+		4A7F6BFE2AA77A85000FE841 /* SettingsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,10 +127,10 @@
 		4A51E72D2A6AC03600813308 /* Fastlane-UI */ = {
 			isa = PBXGroup;
 			children = (
+				4A7F6BF02AA74482000FE841 /* Shells */,
+				4A7F6BE12AA71EB9000FE841 /* Views */,
 				4A51E75B2A6AC3AC00813308 /* Bash */,
 				4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */,
-				4A51E7302A6AC03600813308 /* ContentView.swift */,
-				4A7F6BDB2AA62497000FE841 /* BuildApp.swift */,
 				4A51E7322A6AC03700813308 /* Assets.xcassets */,
 				4A51E7372A6AC03700813308 /* Fastlane_UI.entitlements */,
 				4A51E7342A6AC03700813308 /* Preview Content */,
@@ -146,7 +168,6 @@
 			isa = PBXGroup;
 			children = (
 				4A51E75C2A6AC3B500813308 /* Commands */,
-				4A51E7592A6AC09300813308 /* BashCommand.swift */,
 			);
 			path = Bash;
 			sourceTree = "<group>";
@@ -154,10 +175,70 @@
 		4A51E75C2A6AC3B500813308 /* Commands */ = {
 			isa = PBXGroup;
 			children = (
-				4A51E75D2A6AC40900813308 /* Bash_cd.swift */,
-				4A51E75F2A6AC8A000813308 /* Fastlane.swift */,
 			);
 			path = Commands;
+			sourceTree = "<group>";
+		};
+		4A7F6BE12AA71EB9000FE841 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4A7F6BFD2AA77552000FE841 /* Common */,
+				4A51E7302A6AC03600813308 /* ContentView.swift */,
+				4A7F6BDB2AA62497000FE841 /* DeployApp.swift */,
+				4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4A7F6BE42AA72313000FE841 /* Fastlane */ = {
+			isa = PBXGroup;
+			children = (
+				4A7F6BE22AA72203000FE841 /* Fastlane.swift */,
+				4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */,
+				4A7F6BE52AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift */,
+			);
+			path = Fastlane;
+			sourceTree = "<group>";
+		};
+		4A7F6BED2AA73C42000FE841 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				4A7F6BEE2AA73C96000FE841 /* script.sh */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		4A7F6BF02AA74482000FE841 /* Shells */ = {
+			isa = PBXGroup;
+			children = (
+				4A7F6BFA2AA74683000FE841 /* Commands */,
+				4A7F6BED2AA73C42000FE841 /* Scripts */,
+				4A7F6BF22AA744B3000FE841 /* CommandExecuting.swift */,
+				4A7F6BF82AA74617000FE841 /* Shell.swift */,
+			);
+			path = Shells;
+			sourceTree = "<group>";
+		};
+		4A7F6BFA2AA74683000FE841 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				4A7F6BE42AA72313000FE841 /* Fastlane */,
+				4A7F6BF62AA744FA000FE841 /* CP.swift */,
+				4A7F6BF42AA744F0000FE841 /* CD.swift */,
+				4A7F6BFB2AA74946000FE841 /* Git_restore.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+		4A7F6BFD2AA77552000FE841 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				4A7F6BFE2AA77A85000FE841 /* SettingsButton.swift */,
+				4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */,
+				4A7F6BE72AA729DD000FE841 /* VersionNumberView.swift */,
+				4A7F6BE92AA72D3A000FE841 /* FolderViews.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,6 +349,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A7F6BEF2AA73F0A000FE841 /* script.sh in Resources */,
 				4A51E7362A6AC03700813308 /* Preview Assets.xcassets in Resources */,
 				4A51E7332A6AC03700813308 /* Assets.xcassets in Resources */,
 			);
@@ -294,13 +376,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A51E75E2A6AC40900813308 /* Bash_cd.swift in Sources */,
-				4A51E7602A6AC8A000813308 /* Fastlane.swift in Sources */,
+				4A7F6BE32AA72203000FE841 /* Fastlane.swift in Sources */,
+				4A7F6BFF2AA77A85000FE841 /* SettingsButton.swift in Sources */,
+				4A51E7602A6AC8A000813308 /* FastlaneDeploy.swift in Sources */,
+				4A7F6BEA2AA72D3A000FE841 /* FolderViews.swift in Sources */,
+				4A7F6BFC2AA74946000FE841 /* Git_restore.swift in Sources */,
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
-				4A7F6BDC2AA62497000FE841 /* BuildApp.swift in Sources */,
-				4A51E75A2A6AC09300813308 /* BashCommand.swift in Sources */,
+				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
+				4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */,
+				4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */,
+				4A7F6BF52AA744F0000FE841 /* CD.swift in Sources */,
+				4A7F6BF72AA744FA000FE841 /* CP.swift in Sources */,
+				4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */,
 				4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */,
+				4A7F6BE62AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift in Sources */,
 				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,
+				4A7F6BF92AA74617000FE841 /* Shell.swift in Sources */,
+				4A7F6BF32AA744B3000FE841 /* CommandExecuting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
