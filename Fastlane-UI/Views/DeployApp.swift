@@ -7,16 +7,11 @@
 
 import SwiftUI
 
-private let defaultBranchName = "develop"
-
 struct DeployApp: View {
     
     private let userDefault = UserDefaults.standard
     
-    let pub = NotificationCenter.default
-        .publisher(for: Process.didTerminateNotification)
-    
-    @State private(set) var shell: Shell = .zsh
+    @State private(set) var shell: Shell = defaultShell
     
     @State private var projectFolder = ""
     @State private var credentialsFolder = ""
@@ -28,7 +23,7 @@ struct DeployApp: View {
     @State private var uploadToFirebase = true
     @State private var useSlack = true
     @State private var makeReleaseNotesFromJira = true
-    @State private var selectedEnvironment: Environment = .test
+    @State private var selectedEnvironment: Environment = defaultEnvironment
     
     @State private var result = ""
     
@@ -36,8 +31,6 @@ struct DeployApp: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            
-            SettingsButton()
             
             VStack(spacing: 10) {
                 ProjectFolderView(projectFolder: $projectFolder)
@@ -94,16 +87,13 @@ struct DeployApp: View {
             Text(result)
         }
         .onAppear {
-            shell = userDefault.shell ?? .zsh
+            shell = userDefault.shell ?? defaultShell
             buildNumber = userDefault.buildNumber ?? ""
             branchName = userDefault.branchName ?? defaultBranchName
             pushOnGit = userDefault.pushOnGit ?? true
             uploadToFirebase = userDefault.uploadToFirebase ?? true
             useSlack = userDefault.useSlack ?? true
             makeReleaseNotesFromJira = userDefault.makeReleaseNotesFromJira ?? true
-        }
-        .onReceive(pub) { output in
-            print(output)
         }
         .onChange(of: selectedEnvironment) { newValue in
             updateFastlaneCommand()
@@ -179,7 +169,7 @@ extension DeployApp {
                 userDefault.environment = newValue
             }
             .onAppear {
-                selectedEnvironment = userDefault.environment ?? .test
+                selectedEnvironment = userDefault.environment ?? defaultEnvironment
             }
         }
     }
@@ -241,7 +231,7 @@ enum Environment: String, CaseIterable, Identifiable {
     var id: Environment { self }
 }
 
-struct BuildApp_Previews: PreviewProvider {
+struct DeployApp_Previews: PreviewProvider {
     static var previews: some View {
         DeployApp()
     }

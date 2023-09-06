@@ -11,7 +11,7 @@ struct JiraRelaseNotes: View {
     
     private let userDefault = UserDefaults.standard
     
-    @State private(set) var shell: Shell = .zsh
+    @State private(set) var shell: Shell = defaultShell
     
     @State private var projectFolder = ""
     @State private var credentialsFolder = ""
@@ -24,8 +24,6 @@ struct JiraRelaseNotes: View {
     var body: some View {
         
         VStack(spacing: 30) {
-            
-            SettingsButton()
             
             VStack(spacing: 10) {
                 ProjectFolderView(projectFolder: $projectFolder)
@@ -66,7 +64,7 @@ struct JiraRelaseNotes: View {
             Text(result)
         }
         .onAppear {
-            shell = userDefault.shell ?? .zsh
+            shell = userDefault.shell ?? defaultShell
         }
         .onChange(of: versionNumber) { newValue in
             

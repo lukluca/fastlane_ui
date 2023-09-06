@@ -46,7 +46,7 @@ struct SegmentView: View {
         case .jiraRelaseNotes:
             JiraRelaseNotes()
         case .tools:
-            EmptyView()
+            Tools()
         }
     }
 }
