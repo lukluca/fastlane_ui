@@ -10,7 +10,7 @@ import Foundation
 struct FastlaneDeployArguments: FastlaneArguments {
     let environment: Environment
     let versionNumber: String
-    let buildNumber: String
+    let buildNumber: Int
     let branchName: String
     let releaseNotes: String
     let pushOnGit: Bool

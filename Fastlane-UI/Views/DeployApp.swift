@@ -9,25 +9,25 @@ import SwiftUI
 
 struct DeployApp: View {
     
-    private let userDefault = UserDefaults.standard
+    let shell = Defaults.shared.shell
     
-    @State private(set) var shell: Shell = defaultShell
-    
-    @State private var projectFolder = ""
-    @State private var credentialsFolder = ""
-    @State private var versionNumber = ""
-    @State private var buildNumber = ""
-    @State private var branchName = defaultBranchName
+    @Default(\.projectFolder) private var projectFolder: String
+    @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
+    @Default(\.versionNumber) private var versionNumber: String
+    @Default(\.buildNumber) private var buildNumber: Int
+    @Default(\.branchName) private var branchName: String
     @State private var releaseNotes = ""
-    @State private var pushOnGit = true
-    @State private var uploadToFirebase = true
-    @State private var useSlack = true
-    @State private var makeReleaseNotesFromJira = true
-    @State private var selectedEnvironment: Environment = defaultEnvironment
+    @Default(\.pushOnGit) private var pushOnGit: Bool
+    @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
+    @Default(\.useSlack) private var useSlack: Bool
+    @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
+    @Default(\.environment) private var selectedEnvironment: Environment
     
     @State private var result = ""
     
     @State private var fastlaneCommand = ""
+    
+    @State private var disableDeploy: Bool = false
     
     var body: some View {
         VStack(spacing: 30) {
@@ -36,6 +36,7 @@ struct DeployApp: View {
                 ProjectFolderView(projectFolder: $projectFolder)
                 
                 JiraCredentialsFoldetView(credentialsFolder: $credentialsFolder)
+                    .hidden(makeReleaseNotesFromJira == false)
                 
                 EnvPicker(selectedEnvironment: $selectedEnvironment)
                 
@@ -43,7 +44,16 @@ struct DeployApp: View {
                 
                 HStack {
                     Text("Build number: ")
-                    TextField("Enter your build number", text: $buildNumber)
+                    TextField("Enter your build number",
+                              value: $buildNumber,
+                              formatter: NumberFormatter())
+                    
+                    Button {
+                        buildNumber += 1
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                    }
+
                 }
                 
                 HStack {
@@ -69,16 +79,11 @@ struct DeployApp: View {
                 Button("Deploy app") {
                     result = execute()
                 }
-                .disabled(projectFolder.isEmpty ||
-                          versionNumber.isEmpty ||
-                          (!makeReleaseNotesFromJira && credentialsFolder.isEmpty) ||
-                          buildNumber.isEmpty ||
-                          branchName.isEmpty)
+                .disabled(disableDeploy)
                 Button("Show fastlane command") {
                     fastlaneCommand = deploy()
                 }
                 .disabled(versionNumber.isEmpty ||
-                          buildNumber.isEmpty ||
                           branchName.isEmpty)
             }
             
@@ -87,65 +92,48 @@ struct DeployApp: View {
             Text(result)
         }
         .onAppear {
-            shell = userDefault.shell ?? defaultShell
-            buildNumber = userDefault.buildNumber ?? ""
-            branchName = userDefault.branchName ?? defaultBranchName
-            pushOnGit = userDefault.pushOnGit ?? true
-            uploadToFirebase = userDefault.uploadToFirebase ?? true
-            useSlack = userDefault.useSlack ?? true
-            makeReleaseNotesFromJira = userDefault.makeReleaseNotesFromJira ?? true
+            updateDeployButtonActivity()
         }
-        .onChange(of: selectedEnvironment) { newValue in
+        .onChange(of: projectFolder) { _ in
+            updateDeployButtonActivity()
+        }
+        .onChange(of: credentialsFolder) { _ in
+            updateDeployButtonActivity()
+        }
+        .onChange(of: selectedEnvironment) { _ in
             updateFastlaneCommand()
         }
         .onChange(of: versionNumber) { newValue in
-            
             if newValue.isEmpty {
                 fastlaneCommand = ""
             }
             
-            updateFastlaneCommand()
+            update()
         }
         .onChange(of: buildNumber) { newValue in
-            userDefault.buildNumber = newValue
-            
-            if newValue.isEmpty {
-                fastlaneCommand = ""
-            }
-            
-            updateFastlaneCommand()
+            update()
         }
         .onChange(of: branchName) { newValue in
-            userDefault.branchName = newValue
-            
             if newValue.isEmpty {
                 fastlaneCommand = ""
             }
             
-            updateFastlaneCommand()
+            update()
         }
-        .onChange(of: releaseNotes) { newValue in
-            updateFastlaneCommand()
+        .onChange(of: releaseNotes) { _ in
+            update()
         }
-        .onChange(of: pushOnGit) { newValue in
-            userDefault.pushOnGit = newValue
-            
-            updateFastlaneCommand()
+        .onChange(of: pushOnGit) { _ in
+            update()
         }
-        .onChange(of: uploadToFirebase) { newValue in
-            userDefault.uploadToFirebase = newValue
-            
-            updateFastlaneCommand()
+        .onChange(of: uploadToFirebase) { _ in
+            update()
         }
-        .onChange(of: useSlack) { newValue in
-            userDefault.useSlack = newValue
-            
-            updateFastlaneCommand()
+        .onChange(of: useSlack) { _ in
+            update()
         }
-        .onChange(of: makeReleaseNotesFromJira) { newValue in
-            userDefault.makeReleaseNotesFromJira = newValue
-            
-            updateFastlaneCommand()
+        .onChange(of: makeReleaseNotesFromJira) { _ in
+            update()
         }
         .padding()
     }
@@ -155,8 +143,6 @@ extension DeployApp {
     
     struct EnvPicker: View {
         
-        let userDefault = UserDefaults.standard
-        
         @Binding var selectedEnvironment: Environment
         
         var body: some View {
@@ -164,12 +150,6 @@ extension DeployApp {
                 ForEach(Environment.allCases) { environment in
                     Text(environment.rawValue).tag(environment)
                 }
-            }
-            .onChange(of: selectedEnvironment) { newValue in
-                userDefault.environment = newValue
-            }
-            .onAppear {
-                selectedEnvironment = userDefault.environment ?? defaultEnvironment
             }
         }
     }
@@ -214,11 +194,28 @@ private extension DeployApp {
         FastlaneCommand.deploy.fullCommand(with: fastlaneArguments)
     }
     
+    func update() {
+        updateDeployButtonActivity()
+        updateFastlaneCommand()
+    }
+    
     func updateFastlaneCommand() {
         if !fastlaneCommand.isEmpty {
             fastlaneCommand = ""
             fastlaneCommand = deploy()
         }
+    }
+    
+    func updateDeployButtonActivity() {
+        print(credentialsFolder)
+        if makeReleaseNotesFromJira && credentialsFolder.isEmpty {
+            disableDeploy = true
+            return
+        }
+        
+        disableDeploy = projectFolder.isEmpty ||
+                            versionNumber.isEmpty ||
+                            branchName.isEmpty
     }
 }
 

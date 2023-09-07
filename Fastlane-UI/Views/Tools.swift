@@ -9,25 +9,17 @@ import SwiftUI
 
 struct Tools: View {
     
-    private let userDefault = UserDefaults.standard
-    
-    @State private var shellSelected: Shell = defaultShell
+    @Default(\.shell) private var shell: Shell
     
     var body: some View {
         List {
             Section("Settings") {
                 RadioButton(title: "Shell:",
-                            isSelected: $shellSelected)
+                            isSelected: $shell)
             }
             Section("Fastlane") {
                 EmptyView()
             }
-        }
-        .onAppear {
-            shellSelected = userDefault.shell ?? defaultShell
-        }
-        .onChange(of: shellSelected) { newValue in
-            userDefault.shell = newValue
         }
     }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A3767862AAA298500880FBA /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3767852AAA298500880FBA /* View+.swift */; };
 		4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */; };
 		4A51E7312A6AC03600813308 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7302A6AC03600813308 /* ContentView.swift */; };
 		4A51E7332A6AC03700813308 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A51E7322A6AC03700813308 /* Assets.xcassets */; };
@@ -15,7 +16,7 @@
 		4A51E74B2A6AC03700813308 /* Fastlane_UIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E74A2A6AC03700813308 /* Fastlane_UIUITests.swift */; };
 		4A51E74D2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */; };
 		4A51E7602A6AC8A000813308 /* FastlaneDeploy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */; };
-		4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */; };
+		4A51E7622A6ACAEB00813308 /* AppStorage+Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */; };
 		4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDB2AA62497000FE841 /* DeployApp.swift */; };
 		4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */; };
 		4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A3767852AAA298500880FBA /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		4A51E72B2A6AC03600813308 /* Fastlane-UI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fastlane-UI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIApp.swift; sourceTree = "<group>"; };
 		4A51E7302A6AC03600813308 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -63,7 +65,7 @@
 		4A51E74A2A6AC03700813308 /* Fastlane_UIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIUITests.swift; sourceTree = "<group>"; };
 		4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneDeploy.swift; sourceTree = "<group>"; };
-		4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
+		4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppStorage+Defaults.swift"; sourceTree = "<group>"; };
 		4A7F6BDB2AA62497000FE841 /* DeployApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeployApp.swift; sourceTree = "<group>"; };
 		4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraRelaseNotes.swift; sourceTree = "<group>"; };
 		4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneCommandView.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				4A7F6BDB2AA62497000FE841 /* DeployApp.swift */,
 				4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */,
 				4A7F6C042AA8D3FB000FE841 /* Tools.swift */,
+				4A3767852AAA298500880FBA /* View+.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -230,7 +233,7 @@
 		4A7F6C062AA8E09C000FE841 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
-				4A51E7612A6ACAEB00813308 /* UserDefaults+.swift */,
+				4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */,
 				4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */,
 			);
 			path = Storage;
@@ -378,11 +381,12 @@
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
 				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
 				4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */,
+				4A3767862AAA298500880FBA /* View+.swift in Sources */,
 				4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */,
 				4A7F6BF52AA744F0000FE841 /* CD.swift in Sources */,
 				4A7F6BF72AA744FA000FE841 /* CP.swift in Sources */,
 				4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */,
-				4A51E7622A6ACAEB00813308 /* UserDefaults+.swift in Sources */,
+				4A51E7622A6ACAEB00813308 /* AppStorage+Defaults.swift in Sources */,
 				4A7F6BE62AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift in Sources */,
 				4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */,
 				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,

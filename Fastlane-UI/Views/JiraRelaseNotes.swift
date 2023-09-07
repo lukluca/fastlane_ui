@@ -9,10 +9,8 @@ import SwiftUI
 
 struct JiraRelaseNotes: View {
     
-    private let userDefault = UserDefaults.standard
-    
-    @State private(set) var shell: Shell = defaultShell
-    
+    let shell = Defaults.shared.shell
+   
     @State private var projectFolder = ""
     @State private var credentialsFolder = ""
     @State private var versionNumber = ""
@@ -62,9 +60,6 @@ struct JiraRelaseNotes: View {
             FastlaneCommandView(command: $fastlaneCommand)
             
             Text(result)
-        }
-        .onAppear {
-            shell = userDefault.shell ?? defaultShell
         }
         .onChange(of: versionNumber) { newValue in
             

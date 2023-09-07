@@ -9,26 +9,16 @@ import SwiftUI
 
 struct ProjectFolderView: View {
     
-    private let userDefault = UserDefaults.standard
-    
     @Binding var projectFolder: String
     
     var body: some View {
         ChooseFolderView(title: "Project folder: ",
                          placeholder: "Enter your project folder",
                          folder: $projectFolder)
-        .onAppear {
-            projectFolder = userDefault.projectFolder ?? ""
-        }
-        .onChange(of: projectFolder) { newValue in
-            userDefault.projectFolder = newValue
-        }
     }
 }
 
 struct JiraCredentialsFoldetView: View {
-    
-    private let userDefault = UserDefaults.standard
     
     @Binding var credentialsFolder: String
     
@@ -36,12 +26,6 @@ struct JiraCredentialsFoldetView: View {
         ChooseFolderView(title: "Jira credentials folder",
                          placeholder: "Enter your jira credentials folder",
                          folder: $credentialsFolder)
-        .onAppear {
-            credentialsFolder = userDefault.jiraCredentialsFolder ?? ""
-        }
-        .onChange(of: credentialsFolder) { newValue in
-            userDefault.jiraCredentialsFolder = newValue
-        }
     }
 }
 
