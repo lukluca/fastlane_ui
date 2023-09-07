@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-private let defaultBranchName = "develop"
-
 enum Segment : String, CaseIterable {
     case deployApp = "Deploy App"
     case jiraRelaseNotes = "Jira release notes"

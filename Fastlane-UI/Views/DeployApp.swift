@@ -75,7 +75,7 @@ struct DeployApp: View {
                           buildNumber.isEmpty ||
                           branchName.isEmpty)
                 Button("Show fastlane command") {
-                    fastlaneCommand = makeFastlaneCommand()
+                    fastlaneCommand = deploy()
                 }
                 .disabled(versionNumber.isEmpty ||
                           buildNumber.isEmpty ||
@@ -200,24 +200,24 @@ private extension DeployApp {
             commands = [shell.cd(folder: projectFolder),
                         cpCredentials(credentialsFolder: credentialsFolder,
                                       projectFolder: projectFolder),
-                        makeFastlaneCommand(),
+                        deploy(),
                         gitRestore()]
         } else {
             commands = [shell.cd(folder: projectFolder),
-                        makeFastlaneCommand()]
+                        deploy()]
         }
         
         return runBundleScript(with: commands)
     }
     
-    func makeFastlaneCommand() -> String {
+    func deploy() -> String {
         FastlaneCommand.deploy.fullCommand(with: fastlaneArguments)
     }
     
     func updateFastlaneCommand() {
         if !fastlaneCommand.isEmpty {
             fastlaneCommand = ""
-            fastlaneCommand = makeFastlaneCommand()
+            fastlaneCommand = deploy()
         }
     }
 }
