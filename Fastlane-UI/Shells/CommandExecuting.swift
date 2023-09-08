@@ -7,7 +7,8 @@
 
 import Foundation
 
-protocol CommandExecuting: RawRepresentable where RawValue == String {
+protocol CommandExecuting {
+    var binPath: String { get }
 }
 
 enum CommandError: Error {
@@ -21,7 +22,7 @@ extension CommandExecuting {
     }
 
     private func resolve(_ command: String) throws -> String {
-        guard var bashCommand = try? run(rawValue , with: ["-l", "-c", "which \(command)"]) else {
+        guard var bashCommand = try? run(binPath , with: ["-l", "-c", "which \(command)"]) else {
             throw CommandError.commandNotFound(name: command)
         }
         bashCommand = bashCommand.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
@@ -50,7 +51,7 @@ extension CommandExecuting {
             throw CommandError.fileNotFound(name: bundle.scriptFileName)
         }
         
-        let str = "#!\(rawValue)\n\nosascript -e 'tell app \"Terminal\"\ndo script \"\(join)\"\nend tell'"
+        let str = "#!\(binPath)\n\nosascript -e 'tell app \"Terminal\"\ndo script \"\(join)\"\nend tell'"
         try str.write(to: scriptURL, atomically: true, encoding: String.Encoding.utf8)
     }
     
@@ -60,7 +61,7 @@ extension CommandExecuting {
             throw CommandError.fileNotFound(name: bundle.scriptFileName)
         }
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: rawValue)
+        process.executableURL = URL(fileURLWithPath: binPath)
         process.arguments = ["-c", "source \(scriptURL.path)"]
         let outputPipe = Pipe()
         process.standardOutput = outputPipe

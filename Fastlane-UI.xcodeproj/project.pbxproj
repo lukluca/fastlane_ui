@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4A3767862AAA298500880FBA /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3767852AAA298500880FBA /* View+.swift */; };
+		4A37678B2AAB724B00880FBA /* RadioButton in Frameworks */ = {isa = PBXBuildFile; productRef = 4A37678A2AAB724B00880FBA /* RadioButton */; };
 		4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */; };
 		4A51E7312A6AC03600813308 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7302A6AC03600813308 /* ContentView.swift */; };
 		4A51E7332A6AC03700813308 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A51E7322A6AC03700813308 /* Assets.xcassets */; };
@@ -88,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A37678B2AAB724B00880FBA /* RadioButton in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +258,7 @@
 			);
 			name = "Fastlane-UI";
 			packageProductDependencies = (
+				4A37678A2AAB724B00880FBA /* RadioButton */,
 			);
 			productName = "Fastlane-UI";
 			productReference = 4A51E72B2A6AC03600813308 /* Fastlane-UI.app */;
@@ -330,6 +333,7 @@
 			);
 			mainGroup = 4A51E7222A6AC03600813308;
 			packageReferences = (
+				4A3767892AAB724B00880FBA /* XCRemoteSwiftPackageReference "RadioButton" */,
 			);
 			productRefGroup = 4A51E72C2A6AC03600813308 /* Products */;
 			projectDirPath = "";
@@ -708,6 +712,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4A3767892AAB724B00880FBA /* XCRemoteSwiftPackageReference "RadioButton" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lukluca/RadioButton";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4A37678A2AAB724B00880FBA /* RadioButton */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4A3767892AAB724B00880FBA /* XCRemoteSwiftPackageReference "RadioButton" */;
+			productName = RadioButton;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4A51E7232A6AC03600813308 /* Project object */;
 }

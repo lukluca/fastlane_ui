@@ -207,7 +207,6 @@ private extension DeployApp {
     }
     
     func updateDeployButtonActivity() {
-        print(credentialsFolder)
         if makeReleaseNotesFromJira && credentialsFolder.isEmpty {
             disableDeploy = true
             return

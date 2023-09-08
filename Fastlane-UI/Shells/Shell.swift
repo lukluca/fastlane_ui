@@ -7,18 +7,19 @@
 
 import Foundation
 
-enum Shell: String, CommandExecuting, CaseIterable {
-    case bash = "/bin/bash"
-    case zsh = "/bin/zsh"
+enum Shell: String, CaseIterable {
+    case bash
+    case zsh
 }
 
-extension Shell: TitleOwner {
-    var title: String {
-        switch self {
-        case .bash:
-            return "bash"
-        case .zsh:
-            return "zsh"
-        }
+extension Shell: CommandExecuting {
+    var binPath: String {
+        "/bin/" + rawValue
+    }
+}
+
+extension Shell: Identifiable {
+    var id: RawValue {
+        rawValue
     }
 }

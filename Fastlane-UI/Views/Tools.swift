@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RadioButton
 
 struct Tools: View {
     
@@ -15,6 +16,7 @@ struct Tools: View {
         List {
             Section("Settings") {
                 RadioButton(title: "Shell:",
+                            itemTitle: \.rawValue,
                             isSelected: $shell)
             }
             Section("Fastlane") {
@@ -22,31 +24,4 @@ struct Tools: View {
             }
         }
     }
-}
-
-
-extension Tools {
-    struct RadioButton<R>: View where R: RadioButtonRepresentable,
-                                        R.RawValue: Hashable,
-                                        R.AllCases: RandomAccessCollection {
-        
-        let title: String
-      
-        @Binding var isSelected: R
-        
-        var body: some View {
-            Picker(title, selection: $isSelected) {
-                ForEach(R.allCases, id: \.rawValue) {
-                    Text($0.title).tag($0)
-                }
-            }
-            .pickerStyle(RadioGroupPickerStyle())
-        }
-    }
-}
-
-typealias RadioButtonRepresentable = CaseIterable & Hashable & RawRepresentable & TitleOwner
-
-protocol TitleOwner {
-    var title: String { get }
 }

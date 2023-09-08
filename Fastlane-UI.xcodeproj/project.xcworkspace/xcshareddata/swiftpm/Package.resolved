@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "radiobutton",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lukluca/RadioButton",
+      "state" : {
+        "revision" : "96fcd5f23d5ec891e2b4a40ad758f8428c1b2c44",
+        "version" : "1.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}
