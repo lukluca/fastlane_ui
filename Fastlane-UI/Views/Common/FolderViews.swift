@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+struct MainFolderView: View {
+    
+    @Binding var mainFolder: String
+    
+    var body: some View {
+        ChooseFolderView(title: "Main folder: ",
+                         placeholder: "Enter your main folder",
+                         folder: $mainFolder)
+    }
+}
+
 struct ProjectFolderView: View {
     
     @Binding var projectFolder: String

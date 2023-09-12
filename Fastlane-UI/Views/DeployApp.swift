@@ -12,6 +12,8 @@ struct DeployApp: View {
     let shell = Defaults.shared.shell
     
     @Default(\.projectFolder) private var projectFolder: String
+    @Default(\.mainFolder) private var mainFolder: String
+    @Default(\.remoteURL) private var remoteURL: String
     @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
     @Default(\.versionNumber) private var versionNumber: String
     @Default(\.buildNumber) private var buildNumber: Int
@@ -21,6 +23,7 @@ struct DeployApp: View {
     @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
     @Default(\.useSlack) private var useSlack: Bool
     @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
+    @Default(\.cloneFromRemote) private var cloneFromRemote: Bool
     @Default(\.environment) private var selectedEnvironment: Environment
     
     @State private var result = ""
@@ -33,7 +36,18 @@ struct DeployApp: View {
         VStack(spacing: 30) {
             
             VStack(spacing: 10) {
-                ProjectFolderView(projectFolder: $projectFolder)
+                
+                if cloneFromRemote {
+                    MainFolderView(mainFolder: $mainFolder)
+                    
+                    HStack {
+                        Text("Git remote url")
+                        TextField("Enter your git remote url", text: $remoteURL)
+                    }
+                    
+                } else {
+                    ProjectFolderView(projectFolder: $projectFolder)
+                }
                 
                 JiraCredentialsFoldetView(credentialsFolder: $credentialsFolder)
                     .hidden(makeReleaseNotesFromJira == false)
@@ -68,11 +82,11 @@ struct DeployApp: View {
             }
             
             VStack(alignment: .leading, spacing: 10) {
-                
                 Toggle(" Push on Git", isOn: $pushOnGit)
                 Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
                 Toggle(" Use Slack", isOn: $useSlack)
                 Toggle(" Make relese notes from Jira", isOn: $makeReleaseNotesFromJira)
+                Toggle(" Clone git from remote", isOn: $cloneFromRemote)
             }
             
             VStack(spacing: 10) {
@@ -175,16 +189,35 @@ private extension DeployApp {
     
     func execute() -> String {
         
+        let firstStep: [String]
+        
+        let folder: String
+        
+        if cloneFromRemote {
+            let lastPathComponent = (remoteURL as NSString).lastPathComponent
+            folder = mainFolder + "/" + lastPathComponent
+            firstStep = [shell.cd(folder: mainFolder),
+                         shell.rm(path: lastPathComponent),
+                         shell.gitClone(remoteURL: remoteURL),
+                         shell.cd(folder: lastPathComponent),
+                         shell.gitFetchOrigin(),
+                         shell.gitSwitch(branch: branchName)]
+            
+        } else {
+            folder = projectFolder
+            firstStep = [shell.cd(folder: folder)]
+        }
+        
         let commands: [String]
         if makeReleaseNotesFromJira {
-            commands = [shell.cd(folder: projectFolder),
-                        cpCredentials(credentialsFolder: credentialsFolder,
-                                      projectFolder: projectFolder),
+            commands = firstStep +
+                        [cpCredentials(credentialsFolder: credentialsFolder,
+                                       projectFolder: folder),
                         deploy(),
                         gitRestore()]
         } else {
-            commands = [shell.cd(folder: projectFolder),
-                        deploy()]
+            commands = firstStep +
+                        [deploy()]
         }
         
         return runBundleScript(with: commands)

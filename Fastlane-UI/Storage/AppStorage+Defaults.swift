@@ -21,6 +21,9 @@ class Defaults: ObservableObject {
         case makeReleaseNotesFromJira
         case jiraCredentialsFolder
         case shell
+        case cloneFromRemote
+        case mainFolder
+        case remoteURL
     }
     
     @AppStorage(.projectFolder) var projectFolder = ""
@@ -34,6 +37,9 @@ class Defaults: ObservableObject {
     @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
     @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
     @AppStorage(.shell) var shell = defaultShell
+    @AppStorage(.cloneFromRemote) var cloneFromRemote = true
+    @AppStorage(.mainFolder) var mainFolder = ""
+    @AppStorage(.remoteURL) var remoteURL = ""
     
     static let shared = Defaults()
 }
