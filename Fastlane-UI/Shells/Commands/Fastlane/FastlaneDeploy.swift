@@ -54,7 +54,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     }
     
     private var makeReleaseNotesFromJiraArg: String? {
-        makeReleaseNotesFromJira ? nil : "use_jira:\(makeReleaseNotesFromJira)"
+        !makeReleaseNotesFromJira ? nil : "use_jira:\(makeReleaseNotesFromJira)"
     }
     
     var toArray: [String] {

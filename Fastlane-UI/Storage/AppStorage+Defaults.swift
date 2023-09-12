@@ -31,7 +31,7 @@ class Defaults: ObservableObject {
     @AppStorage(.pushOnGit) var pushOnGit = true
     @AppStorage(.uploadToFirebase) var uploadToFirebase = true
     @AppStorage(.useSlack) var useSlack = true
-    @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = true
+    @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
     @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
     @AppStorage(.shell) var shell = defaultShell
     
