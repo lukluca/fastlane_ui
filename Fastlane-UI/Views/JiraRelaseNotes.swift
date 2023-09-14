@@ -11,9 +11,9 @@ struct JiraRelaseNotes: View {
     
     let shell = Defaults.shared.shell
    
-    @State private var projectFolder = ""
-    @State private var credentialsFolder = ""
-    @State private var versionNumber = ""
+    @Default(\.projectFolder) private var projectFolder: String
+    @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
+    @Default(\.versionNumber) private var versionNumber: String
     
     @State private var result = ""
     

@@ -12,15 +12,28 @@ let bundleCommand = "bundle"
 enum FastlaneCommand: String {
     case deploy
     case getJiraReleaseNotes = "get_jira_release_notes"
+    case updatePlugins = "update_plugins"
+    case update = "update fastlane"
     
-    var arguments: [String] {
-        ["exec",
-         "fastlane",
-         rawValue]
+    private var needsExec: Bool {
+        self != .update
     }
     
-    func fullCommand(with arguments: FastlaneArguments) -> String {
-        ([bundleCommand] + self.arguments + arguments.toArray).joined(separator: " ")
+    fileprivate var arguments: [String] {
+        if needsExec {
+            return ["exec",
+                    "fastlane",
+                    rawValue]
+        }
+        return [rawValue]
+    }
+    
+    func fullCommand(
+        needsSudo: Bool = false,
+        with arguments: FastlaneArguments = EmptyFastlaneArguments()
+    ) -> String {
+        let commands = ([bundleCommand] + self.arguments + arguments.toArray)
+        return (needsSudo ?  ["sudo"] + commands : commands).joined(separator: " ")
     }
 }
 
@@ -38,4 +51,8 @@ extension CommandExecuting {
             arguments: allArguments
         )
     }
+}
+
+struct EmptyFastlaneArguments: FastlaneArguments {
+    let toArray: [String] = []
 }

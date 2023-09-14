@@ -24,6 +24,7 @@ class Defaults: ObservableObject {
         case cloneFromRemote
         case mainFolder
         case remoteURL
+        case needsSudo
     }
     
     @AppStorage(.projectFolder) var projectFolder = ""
@@ -40,6 +41,7 @@ class Defaults: ObservableObject {
     @AppStorage(.cloneFromRemote) var cloneFromRemote = true
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
+    @AppStorage(.needsSudo) var needsSudo = false
     
     static let shared = Defaults()
 }
