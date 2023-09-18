@@ -49,7 +49,9 @@ struct ChooseFolderView: View {
     var body: some View {
         HStack {
             Text(title)
-            TextField(placeholder, text: $folder)
+            TextField(placeholder,
+                      text: $folder)
+                .textFieldStyle(.squareBorder)
             
             Button(action: openFileDialog) {
                 Image(systemName: "folder.fill")

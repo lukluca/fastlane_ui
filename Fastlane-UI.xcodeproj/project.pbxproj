@@ -34,6 +34,9 @@
 		4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C042AA8D3FB000FE841 /* Tools.swift */; };
 		4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */; };
 		4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9BDEA72AB07CDD006B9688 /* RM.swift */; };
+		4ACC352F2AB87A8A00DC013E /* JiraTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC352E2AB87A8A00DC013E /* JiraTools.swift */; };
+		4ACC35312AB87AFE00DC013E /* JiraTiketsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC35302AB87AFE00DC013E /* JiraTiketsStatus.swift */; };
+		4ACC35332AB87D9200DC013E /* JiraConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC35322AB87D9200DC013E /* JiraConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +87,9 @@
 		4A7F6C042AA8D3FB000FE841 /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultValues.swift; sourceTree = "<group>"; };
 		4A9BDEA72AB07CDD006B9688 /* RM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RM.swift; sourceTree = "<group>"; };
+		4ACC352E2AB87A8A00DC013E /* JiraTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraTools.swift; sourceTree = "<group>"; };
+		4ACC35302AB87AFE00DC013E /* JiraTiketsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraTiketsStatus.swift; sourceTree = "<group>"; };
+		4ACC35322AB87D9200DC013E /* JiraConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,10 +180,10 @@
 		4A7F6BE12AA71EB9000FE841 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4ACC352D2AB87A0100DC013E /* Jira */,
 				4A7F6BFD2AA77552000FE841 /* Common */,
 				4A51E7302A6AC03600813308 /* ContentView.swift */,
 				4A7F6BDB2AA62497000FE841 /* DeployApp.swift */,
-				4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */,
 				4A7F6C042AA8D3FB000FE841 /* Tools.swift */,
 				4A3767852AAA298500880FBA /* View+.swift */,
 			);
@@ -242,6 +248,17 @@
 				4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */,
 			);
 			path = Storage;
+			sourceTree = "<group>";
+		};
+		4ACC352D2AB87A0100DC013E /* Jira */ = {
+			isa = PBXGroup;
+			children = (
+				4ACC352E2AB87A8A00DC013E /* JiraTools.swift */,
+				4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */,
+				4ACC35302AB87AFE00DC013E /* JiraTiketsStatus.swift */,
+				4ACC35322AB87D9200DC013E /* JiraConfig.swift */,
+			);
+			path = Jira;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -381,9 +398,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4ACC35332AB87D9200DC013E /* JiraConfig.swift in Sources */,
 				4A7F6BE32AA72203000FE841 /* Fastlane.swift in Sources */,
 				4A51E7602A6AC8A000813308 /* FastlaneDeploy.swift in Sources */,
 				4A7F6BEA2AA72D3A000FE841 /* FolderViews.swift in Sources */,
+				4ACC35312AB87AFE00DC013E /* JiraTiketsStatus.swift in Sources */,
 				4A7F6BFC2AA74946000FE841 /* Git.swift in Sources */,
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
 				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
@@ -398,6 +417,7 @@
 				4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */,
 				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,
 				4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */,
+				4ACC352F2AB87A8A00DC013E /* JiraTools.swift in Sources */,
 				4A7F6BF92AA74617000FE841 /* Shell.swift in Sources */,
 				4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */,
 				4A7F6BF32AA744B3000FE841 /* CommandExecuting.swift in Sources */,

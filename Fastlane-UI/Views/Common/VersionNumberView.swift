@@ -14,7 +14,9 @@ struct VersionNumberView: View {
     var body: some View {
         HStack {
             Text("Version number: ")
-            TextField("Enter your version number", text: $versionNumber)
+            TextField("Enter your version number",
+                      text: $versionNumber)
+                .textFieldStyle(.squareBorder)
         }
     }
 }
