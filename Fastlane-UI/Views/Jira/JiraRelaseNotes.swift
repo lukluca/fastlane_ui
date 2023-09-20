@@ -11,12 +11,12 @@ struct JiraRelaseNotes: View {
     
     let shell = Defaults.shared.shell
    
-    @Default(\.projectFolder) private var projectFolder: String
+    @Binding var projectFolder: String
+    
     @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
     @Default(\.versionNumber) private var versionNumber: String
     
     @State private var result = ""
-    
     @State private var fastlaneCommand = ""
     
     var body: some View {
@@ -24,8 +24,6 @@ struct JiraRelaseNotes: View {
         VStack(spacing: 30) {
             
             VStack(spacing: 10) {
-                ProjectFolderView(projectFolder: $projectFolder)
-                
                 JiraCredentialsFoldetView(credentialsFolder: $credentialsFolder)
                 
                 VersionNumberView(versionNumber: $versionNumber)
@@ -86,7 +84,7 @@ private extension JiraRelaseNotes {
     
         do {
             return try shell.runCP(from: credentialsFolder + "/credentials",
-                                    to: projectFolder + "/fastlane/.jira")
+                                    to: projectFolder + "/" + jiraPathComponent)
         } catch {
             return error.localizedDescription
         }
@@ -122,30 +120,5 @@ private extension JiraRelaseNotes {
             fastlaneCommand = ""
             fastlaneCommand = makeFastlaneCommand()
         }
-    }
-}
-
-protocol FastlaneWorkflow {
-    var shell: Shell { get }
-}
-
-extension FastlaneWorkflow {
-
-    func cpCredentials(credentialsFolder: String, projectFolder: String) -> String {
-        shell.cp(from: credentialsFolder + "/credentials",
-                 to: projectFolder + "/fastlane/.jira")
-    }
-    
-    func runBundleScript(with commands: [String]) -> String {
-        do {
-            try shell.prepareBundleScript(commands: commands)
-            return try shell.runBundleScript()
-        } catch {
-            return error.localizedDescription
-        }
-    }
-    
-    func gitRestore() -> String {
-        shell.gitRestore(file: "fastlane/.jira/credentials")
     }
 }

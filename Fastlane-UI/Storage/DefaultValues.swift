@@ -10,3 +10,10 @@ import Foundation
 let defaultBranchName = "develop"
 let defaultShell: Shell = .zsh
 let defaultEnvironment: Environment = .test
+
+
+let jiraPathComponent = "fastlane/.jira"
+
+var jiraWorkflowStatusPathComponent: String {
+    jiraPathComponent + "/" + "workflow_status"
+}

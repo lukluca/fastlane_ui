@@ -56,3 +56,17 @@ extension CommandExecuting {
 struct EmptyFastlaneArguments: FastlaneArguments {
     let toArray: [String] = []
 }
+
+protocol FastlaneWorkflow: ShellWorkflow {}
+
+extension FastlaneWorkflow {
+
+    func cpCredentials(credentialsFolder: String, projectFolder: String) -> String {
+        shell.cp(from: credentialsFolder + "/credentials",
+                 to: projectFolder + "/" + jiraPathComponent)
+    }
+    
+    func gitRestore() -> String {
+        shell.gitRestore(file: jiraPathComponent + "/credentials")
+    }
+}

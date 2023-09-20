@@ -23,3 +23,18 @@ extension Shell: Identifiable {
         rawValue
     }
 }
+
+protocol ShellWorkflow {
+    var shell: Shell { get }
+}
+
+extension ShellWorkflow {
+    func runBundleScript(with commands: [String]) -> String {
+        do {
+            try shell.prepareBundleScript(commands: commands)
+            return try shell.runBundleScript()
+        } catch {
+            return error.localizedDescription
+        }
+    }
+}

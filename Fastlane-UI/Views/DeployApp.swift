@@ -246,8 +246,8 @@ private extension DeployApp {
         }
         
         disableDeploy = projectFolder.isEmpty ||
-                            versionNumber.isEmpty ||
-                            branchName.isEmpty
+                        versionNumber.isEmpty ||
+                        branchName.isEmpty
     }
 }
 

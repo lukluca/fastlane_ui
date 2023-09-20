@@ -49,3 +49,48 @@ extension CommandExecuting {
         try run(commandName: "git", arguments: ["switch", branch])
     }
 }
+
+extension CommandExecuting {
+    
+    private func encapsulate(_ message: String) -> String {
+        "\\\"" + message + "\\\""
+    }
+    
+    func gitCommit(message: String) -> String {
+        [git, "commit", "-m", encapsulate(message)].joined(separator: " ")
+    }
+    
+    func runGitCommit(message: String) throws -> String {
+        try run(commandName: "git", arguments: ["commit", "-m", encapsulate(message)])
+    }
+}
+
+extension CommandExecuting {
+    func gitPush(branch: String) -> String {
+        [git, "push", "origin", branch].joined(separator: " ")
+    }
+    
+    func runGitPush(branch: String) throws -> String {
+        try run(commandName: "git", arguments: ["push", "origin", branch])
+    }
+}
+
+extension CommandExecuting {
+    func gitCheckout(branch: String) -> String {
+        [git, "checkout", branch].joined(separator: " ")
+    }
+    
+    func runGitCheckout(branch: String) throws -> String {
+        try run(commandName: "git", arguments: ["checkout", branch])
+    }
+}
+
+extension CommandExecuting {
+    func gitAdd(file: String) -> String {
+        [git, "add", file].joined(separator: " ")
+    }
+    
+    func runGitAdd(file: String) throws -> String {
+        try run(commandName: "git", arguments: ["add", file])
+    }
+}

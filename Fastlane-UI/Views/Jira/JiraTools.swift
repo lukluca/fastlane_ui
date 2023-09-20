@@ -9,14 +9,16 @@ import SwiftUI
 
 struct JiraTools: View {
     
+    @Default(\.projectFolder) private var projectFolder: String
+    
     var body: some View {
         VStack {
             List {
                 Section("Configuration") {
-                   JiraConfig()
+                    JiraConfig(projectFolder: $projectFolder)
                 }
                 Section("Release notes") {
-                   JiraRelaseNotes()
+                    JiraRelaseNotes(projectFolder: $projectFolder)
                 }
                 Section("Tickets status managment") {
                     JiraTiketsStatus()
