@@ -7,144 +7,45 @@
 
 import SwiftUI
 
-struct JiraConfig: View {
-    
-    @Binding var projectFolder: String
-    
-    let shell = Defaults.shared.shell
-    
-    private let statusManager = TicketStatus()
-    
-    @State private var rows = [JiraConfig.Row.Model]()
-    
-    @State private var isMainActionDisabled = true
-    
-    private var status: [String] {
-        rows.status
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            
-            ProjectFolderView(projectFolder: $projectFolder)
-            
-            HStack {
-                Text("Ticket status")
-                Button {
-                    rows.append(JiraConfig.Row.Model())
-                } label: {
-                    Image(systemName: "plus.circle")
-                }
-                Button {
-                    rows = (try? statusManager.read())?.rows ?? []
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                }
-            }
-            ForEach($rows, id: \.uid) { row in
-                Row(model: row) {
-                    rows.removeAll { another in
-                        another.uid == row.wrappedValue.uid
-                    }
-                } commitAction: {
-                    isMainActionDisabled = status == statusManager.current
-                }
-            }
-            
-            Button("Commit and push") {
-                executeCommitAndPush()
-            }
-            .disabled(isMainActionDisabled)
-        }
-        .onAppear {
-            rows = statusManager.current.rows
-        }.onChange(of: rows) { newValue in
-            isMainActionDisabled = newValue.status == statusManager.current
-        }
-    }
-    
-    private func commit() {
-        do {
-            try statusManager.apply(status: status)
-        } catch {
-            print(error)
-        }
-    }
-}
-
-extension JiraConfig: ShellWorkflow {}
-
-private extension JiraConfig {
-    func executeCommitAndPush() {
-        commit()
-        let branch = Defaults.shared.branchName
-        let cd = shell.cd(folder: projectFolder)
-        let checkout = shell.gitCheckout(branch: branch)
-        let add = shell.gitAdd(file: jiraWorkflowStatusPathComponent)
-        let commit = shell.gitCommit(message: "Update name of jira ticket status")
-        let push = shell.gitPush(branch: branch)
+extension JiraTools {
+    struct Config: View {
         
-        let _ = runBundleScript(with: [cd, checkout, add, commit, push])
-    }
-}
-
-private extension JiraConfig {
-    struct Row: View {
+        @Binding var projectFolder: String
         
-        @FocusState private var isTextFieldFocused: Bool
+        private let statusManager = TicketStatus()
         
-        @State private var text: String = ""
-        
-        @Binding var model: Model
-        
-        let ereaseAction: () -> ()
-        let commitAction: () -> ()
+        @State private var rows = [TextFieldRow.Model]()
         
         var body: some View {
-            HStack {
-                TextField("",
-                          text: $text)
-                .textFieldStyle(.squareBorder)
-                .focused($isTextFieldFocused)
-                .onChange(of: isTextFieldFocused) { isFocused in
-                }
-                
-                Button(action: ereaseAction,
-                       label: {
-                    Image(systemName: "minus.circle")
-                })
-            }
-            .onAppear {
-                text = model.text
-            }
-            .onChange(of: text) { newValue in
-                model.text = newValue
-                commitAction()
+            ListView(
+                title: "Ticket status",
+                gitMessage: "Update name of jira ticket status",
+                isEnableButtonHidden: true,
+                rowsGetter: self,
+                isCommitActionDisabled: { models in
+                    models.texts == statusManager.current
+                },
+                commit: commit,
+                projectFolder: $projectFolder,
+                rows: $rows)
+        }
+        
+        private func commit() {
+            do {
+                try statusManager.apply(status: rows.texts)
+            } catch {
+                print(error)
             }
         }
     }
 }
 
-private extension JiraConfig.Row {
-    class Model {
-        
-        let uid = UUID().uuidString
-        
-        var text: String = ""
-        
-        init(text: String) {
-            self.text = text
-        }
-        
-        init() {
-            self.text = ""
-        }
+extension JiraTools.Config: TextFieldRowsGetter {
+    var readRows: [TextFieldRow.Model]  {
+        (try? statusManager.read())?.rows ?? []
     }
-}
-
-extension JiraConfig.Row.Model: Equatable {
-    static func == (lhs: JiraConfig.Row.Model, rhs: JiraConfig.Row.Model) -> Bool {
-        lhs.uid == rhs.uid
+    var currentRows: [TextFieldRow.Model] {
+        statusManager.current.rows
     }
 }
 
@@ -197,23 +98,16 @@ private class TicketStatus {
     }
 }
 
-private extension Sequence where Element: Hashable {
-    func uniqued() -> [Element] {
-        var set = Set<Element>()
-        return filter { set.insert($0).inserted }
-    }
-}
-
-private extension Array where Element == JiraConfig.Row.Model {
-    var status: [String] {
+private extension Array where Element == TextFieldRow.Model {
+    var texts: [String] {
         map(\.text)
     }
 }
 
 private extension Array where Element == String {
-    var rows: [JiraConfig.Row.Model] {
+    var rows: [TextFieldRow.Model] {
         map {
-            JiraConfig.Row.Model(text: $0)
+            TextFieldRow.Model(text: $0)
         }
     }
 }

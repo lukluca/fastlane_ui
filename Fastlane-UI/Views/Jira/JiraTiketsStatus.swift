@@ -7,6 +7,9 @@
 
 import SwiftUI
 
-struct JiraTiketsStatus: View {
-    var body: EmptyView = EmptyView()
+extension JiraTools {
+    struct TiketsStatus: View {
+        var body: EmptyView = EmptyView()
+    }
+
 }

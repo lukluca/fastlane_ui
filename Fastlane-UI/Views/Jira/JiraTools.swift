@@ -15,13 +15,13 @@ struct JiraTools: View {
         VStack {
             List {
                 Section("Configuration") {
-                    JiraConfig(projectFolder: $projectFolder)
+                    Config(projectFolder: $projectFolder)
                 }
                 Section("Release notes") {
-                    JiraRelaseNotes(projectFolder: $projectFolder)
+                    RelaseNotes(projectFolder: $projectFolder)
                 }
                 Section("Tickets status managment") {
-                    JiraTiketsStatus()
+                    TiketsStatus()
                 }
             }
         }

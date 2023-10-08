@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A17F45A2AD31705006094FA /* TextFieldRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17F4592AD31705006094FA /* TextFieldRow.swift */; };
+		4A17F45C2AD31B5F006094FA /* Sequence+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17F45B2AD31B5F006094FA /* Sequence+.swift */; };
+		4A17F45E2AD3351C006094FA /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17F45D2AD3351C006094FA /* ListView.swift */; };
 		4A3767862AAA298500880FBA /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3767852AAA298500880FBA /* View+.swift */; };
 		4A37678B2AAB724B00880FBA /* RadioButton in Frameworks */ = {isa = PBXBuildFile; productRef = 4A37678A2AAB724B00880FBA /* RadioButton */; };
 		4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */; };
@@ -33,6 +36,7 @@
 		4A7F6BFC2AA74946000FE841 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BFB2AA74946000FE841 /* Git.swift */; };
 		4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C042AA8D3FB000FE841 /* Tools.swift */; };
 		4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */; };
+		4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A998F7C2ABAF1F400601FF4 /* Firebase.swift */; };
 		4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9BDEA72AB07CDD006B9688 /* RM.swift */; };
 		4ACC352F2AB87A8A00DC013E /* JiraTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC352E2AB87A8A00DC013E /* JiraTools.swift */; };
 		4ACC35312AB87AFE00DC013E /* JiraTiketsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC35302AB87AFE00DC013E /* JiraTiketsStatus.swift */; };
@@ -57,6 +61,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A17F4592AD31705006094FA /* TextFieldRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldRow.swift; sourceTree = "<group>"; };
+		4A17F45B2AD31B5F006094FA /* Sequence+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+.swift"; sourceTree = "<group>"; };
+		4A17F45D2AD3351C006094FA /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		4A3767852AAA298500880FBA /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		4A51E72B2A6AC03600813308 /* Fastlane-UI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fastlane-UI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIApp.swift; sourceTree = "<group>"; };
@@ -86,6 +93,7 @@
 		4A7F6BFB2AA74946000FE841 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 		4A7F6C042AA8D3FB000FE841 /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultValues.swift; sourceTree = "<group>"; };
+		4A998F7C2ABAF1F400601FF4 /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
 		4A9BDEA72AB07CDD006B9688 /* RM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RM.swift; sourceTree = "<group>"; };
 		4ACC352E2AB87A8A00DC013E /* JiraTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraTools.swift; sourceTree = "<group>"; };
 		4ACC35302AB87AFE00DC013E /* JiraTiketsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraTiketsStatus.swift; sourceTree = "<group>"; };
@@ -118,6 +126,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A17F4582AD31457006094FA /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				4A998F7C2ABAF1F400601FF4 /* Firebase.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
 		4A51E7222A6AC03600813308 = {
 			isa = PBXGroup;
 			children = (
@@ -180,12 +196,14 @@
 		4A7F6BE12AA71EB9000FE841 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4A17F4582AD31457006094FA /* Firebase */,
 				4ACC352D2AB87A0100DC013E /* Jira */,
 				4A7F6BFD2AA77552000FE841 /* Common */,
 				4A51E7302A6AC03600813308 /* ContentView.swift */,
 				4A7F6BDB2AA62497000FE841 /* DeployApp.swift */,
 				4A7F6C042AA8D3FB000FE841 /* Tools.swift */,
 				4A3767852AAA298500880FBA /* View+.swift */,
+				4A17F45B2AD31B5F006094FA /* Sequence+.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -237,6 +255,8 @@
 				4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */,
 				4A7F6BE72AA729DD000FE841 /* VersionNumberView.swift */,
 				4A7F6BE92AA72D3A000FE841 /* FolderViews.swift */,
+				4A17F4592AD31705006094FA /* TextFieldRow.swift */,
+				4A17F45D2AD3351C006094FA /* ListView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -328,7 +348,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					4A51E72A2A6AC03600813308 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -404,6 +424,7 @@
 				4A7F6BEA2AA72D3A000FE841 /* FolderViews.swift in Sources */,
 				4ACC35312AB87AFE00DC013E /* JiraTiketsStatus.swift in Sources */,
 				4A7F6BFC2AA74946000FE841 /* Git.swift in Sources */,
+				4A17F45C2AD31B5F006094FA /* Sequence+.swift in Sources */,
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
 				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
 				4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */,
@@ -414,10 +435,13 @@
 				4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */,
 				4A51E7622A6ACAEB00813308 /* AppStorage+Defaults.swift in Sources */,
 				4A7F6BE62AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift in Sources */,
+				4A17F45E2AD3351C006094FA /* ListView.swift in Sources */,
 				4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */,
 				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,
+				4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */,
 				4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */,
 				4ACC352F2AB87A8A00DC013E /* JiraTools.swift in Sources */,
+				4A17F45A2AD31705006094FA /* TextFieldRow.swift in Sources */,
 				4A7F6BF92AA74617000FE841 /* Shell.swift in Sources */,
 				4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */,
 				4A7F6BF32AA744B3000FE841 /* CommandExecuting.swift in Sources */,
@@ -490,9 +514,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -550,9 +576,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -579,6 +607,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Fastlane-UI/Preview Content\"";
 				DEVELOPMENT_TEAM = G58Y4PZ34Q;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -606,6 +635,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Fastlane-UI/Preview Content\"";
 				DEVELOPMENT_TEAM = G58Y4PZ34Q;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -631,6 +661,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = G58Y4PZ34Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
@@ -650,6 +681,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = G58Y4PZ34Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
@@ -668,6 +700,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = G58Y4PZ34Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -685,6 +718,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = G58Y4PZ34Q;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;

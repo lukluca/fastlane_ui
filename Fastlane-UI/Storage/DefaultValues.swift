@@ -11,9 +11,22 @@ let defaultBranchName = "develop"
 let defaultShell: Shell = .zsh
 let defaultEnvironment: Environment = .test
 
+private let fastlanePathComponent = "fastlane"
 
-let jiraPathComponent = "fastlane/.jira"
+var jiraPathComponent: String {
+    fastlanePathComponent + "/" + ".jira"
+}
+
+private var firebasePathComponent: String {
+    fastlanePathComponent + "/" + ".firebase"
+}
+
+var firebaseTestersPathComponent: String {
+    firebasePathComponent + "/" + "testers"
+}
 
 var jiraWorkflowStatusPathComponent: String {
     jiraPathComponent + "/" + "workflow_status"
 }
+
+

@@ -12,6 +12,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let versionNumber: String
     let buildNumber: Int
     let branchName: String
+    let testers: String
     let releaseNotes: String
     let pushOnGit: Bool
     let uploadToFirebase: Bool
@@ -32,6 +33,13 @@ struct FastlaneDeployArguments: FastlaneArguments {
     
     private var branchNameArg: String {
         "branch_name:\(branchName)"
+    }
+    
+    private var testersArg: String? {
+        guard !testers.isEmpty else {
+            return nil
+        }
+        return "testers:\(testers)"
     }
     
     private var relaseNotesArg: String? {
@@ -58,22 +66,18 @@ struct FastlaneDeployArguments: FastlaneArguments {
     }
     
     var toArray: [String] {
-        let args = [
+        [
             envArg,
             versionNumberArg,
             buildNumberArg,
             branchNameArg,
+            testersArg,
+            relaseNotesArg,
             pushOnGitArg,
             uploadToFirebaseArg,
             useSlackArg,
             makeReleaseNotesFromJiraArg
         ].compactMap{ $0 }
-        
-        if let relaseNotesArg {
-            return args + [relaseNotesArg]
-        }
-        
-        return args
     }
 }
 

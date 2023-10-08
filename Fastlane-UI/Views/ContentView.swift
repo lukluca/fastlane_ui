@@ -9,6 +9,7 @@ import SwiftUI
 
 enum Segment : String, CaseIterable {
     case deployApp = "Deploy App"
+    case firebase = "Firebase"
     case jiraTools = "Jira tools"
     case tools = "Tools"
 }
@@ -40,6 +41,8 @@ struct SegmentView: View {
         switch selectedSement {
         case .deployApp:
             DeployApp()
+        case .firebase:
+            Firebase()
         case .jiraTools:
             JiraTools()
         case .tools:

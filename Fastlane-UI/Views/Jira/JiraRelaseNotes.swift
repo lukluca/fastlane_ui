@@ -7,73 +7,76 @@
 
 import SwiftUI
 
-struct JiraRelaseNotes: View {
-    
-    let shell = Defaults.shared.shell
-   
-    @Binding var projectFolder: String
-    
-    @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
-    @Default(\.versionNumber) private var versionNumber: String
-    
-    @State private var result = ""
-    @State private var fastlaneCommand = ""
-    
-    var body: some View {
+extension JiraTools {
+    struct RelaseNotes: View {
         
-        VStack(spacing: 30) {
+        let shell = Defaults.shared.shell
+       
+        @Binding var projectFolder: String
+        
+        @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
+        @Default(\.versionNumber) private var versionNumber: String
+        
+        @State private var result = ""
+        @State private var fastlaneCommand = ""
+        
+        var body: some View {
             
-            VStack(spacing: 10) {
-                JiraCredentialsFoldetView(credentialsFolder: $credentialsFolder)
+            VStack(spacing: 30) {
                 
-                VersionNumberView(versionNumber: $versionNumber)
+                VStack(spacing: 10) {
+                    JiraCredentialsFoldetView(credentialsFolder: $credentialsFolder)
+                    
+                    VersionNumberView(versionNumber: $versionNumber)
+                }
+                
+                VStack(spacing: 10) {
+                    Button("Copy credentials") {
+                        result = executeCopyCredentials()
+                    }
+                    .disabled(projectFolder.isEmpty ||
+                              credentialsFolder.isEmpty)
+                    
+                    Button("Reset credentials") {
+                        result = executeResetCredentials()
+                    }
+                    .disabled(projectFolder.isEmpty ||
+                              credentialsFolder.isEmpty)
+                    
+                    Button("Make relese notes") {
+                        result = execute()
+                    }
+                    .disabled(projectFolder.isEmpty ||
+                              credentialsFolder.isEmpty ||
+                              versionNumber.isEmpty)
+                    
+                    Button("Show fastlane command") {
+                        fastlaneCommand = makeFastlaneCommand()
+                    }
+                    .disabled(versionNumber.isEmpty)
+                }
+                
+                FastlaneCommandView(command: $fastlaneCommand)
+                
+                Text(result)
             }
-            
-            VStack(spacing: 10) {
-                Button("Copy credentials") {
-                    result = executeCopyCredentials()
-                }
-                .disabled(projectFolder.isEmpty ||
-                          credentialsFolder.isEmpty)
+            .onChange(of: versionNumber) { newValue in
                 
-                Button("Reset credentials") {
-                    result = executeResetCredentials()
+                if newValue.isEmpty {
+                    fastlaneCommand = ""
                 }
-                .disabled(projectFolder.isEmpty ||
-                          credentialsFolder.isEmpty)
                 
-                Button("Make relese notes") {
-                    result = execute()
-                }
-                .disabled(projectFolder.isEmpty ||
-                          credentialsFolder.isEmpty ||
-                          versionNumber.isEmpty)
-                
-                Button("Show fastlane command") {
-                    fastlaneCommand = makeFastlaneCommand()
-                }
-                .disabled(versionNumber.isEmpty)
+                updateFastlaneCommand()
             }
-            
-            FastlaneCommandView(command: $fastlaneCommand)
-            
-            Text(result)
+            .padding()
         }
-        .onChange(of: versionNumber) { newValue in
-            
-            if newValue.isEmpty {
-                fastlaneCommand = ""
-            }
-            
-            updateFastlaneCommand()
-        }
-        .padding()
     }
 }
 
-extension JiraRelaseNotes: FastlaneWorkflow {}
 
-private extension JiraRelaseNotes {
+extension JiraTools.RelaseNotes: FastlaneWorkflow {}
+
+private extension JiraTools.RelaseNotes {
     
     var fastlaneArguments: FastlaneGetJiraReleaseNotesArguments {
         FastlaneGetJiraReleaseNotesArguments(versionNumber: versionNumber)

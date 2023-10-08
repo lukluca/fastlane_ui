@@ -18,6 +18,7 @@ struct DeployApp: View {
     @Default(\.versionNumber) private var versionNumber: String
     @Default(\.buildNumber) private var buildNumber: Int
     @Default(\.branchName) private var branchName: String
+    @Default(\.testers) private var testers: String
     @State private var releaseNotes = ""
     @Default(\.pushOnGit) private var pushOnGit: Bool
     @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
@@ -73,6 +74,11 @@ struct DeployApp: View {
                 HStack {
                     Text("Branch name: ")
                     TextField("Enter your branch name", text: $branchName)
+                }
+                
+                HStack {
+                    Text("Testers: ")
+                    TextField("Enter additional testers splited using comma and space", text: $testers)
                 }
                 
                 HStack {
@@ -179,6 +185,7 @@ private extension DeployApp {
             versionNumber: versionNumber,
             buildNumber: buildNumber,
             branchName: branchName,
+            testers: testers,
             releaseNotes: releaseNotes,
             pushOnGit: pushOnGit,
             uploadToFirebase: uploadToFirebase,

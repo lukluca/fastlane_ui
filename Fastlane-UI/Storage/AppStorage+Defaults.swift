@@ -25,6 +25,7 @@ class Defaults: ObservableObject {
         case mainFolder
         case remoteURL
         case needsSudo
+        case testers
     }
     
     @AppStorage(.projectFolder) var projectFolder = ""
@@ -42,6 +43,7 @@ class Defaults: ObservableObject {
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
     @AppStorage(.needsSudo) var needsSudo = false
+    @AppStorage(.testers) var testers = ""
     
     static let shared = Defaults()
 }
