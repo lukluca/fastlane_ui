@@ -28,5 +28,3 @@ var firebaseTestersPathComponent: String {
 var jiraWorkflowStatusPathComponent: String {
     jiraPathComponent + "/" + "workflow_status"
 }
-
-

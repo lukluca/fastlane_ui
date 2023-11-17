@@ -10,6 +10,7 @@ import SwiftUI
 class Defaults: ObservableObject {
     
     fileprivate enum Key: String {
+        case showWizard
         case projectFolder
         case environment
         case versionNumber
@@ -28,6 +29,7 @@ class Defaults: ObservableObject {
         case testers
     }
     
+    @AppStorage(.showWizard) var showWizard = true
     @AppStorage(.projectFolder) var projectFolder = ""
     @AppStorage(.environment) var environment = defaultEnvironment
     @AppStorage(.versionNumber) var versionNumber = ""

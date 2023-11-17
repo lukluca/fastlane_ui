@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum Segment : String, CaseIterable {
+enum Segment: String, CaseIterable {
     case deployApp = "Deploy App"
     case firebase = "Firebase"
     case jiraTools = "Jira tools"
@@ -16,20 +16,36 @@ enum Segment : String, CaseIterable {
 
 struct ContentView: View {
     
-    @State private var selectedSegment : Segment = .deployApp
+    @Default(\.showWizard) private var showWizard: Bool
     
     var body: some View {
-        Picker("", selection: $selectedSegment) {
-            ForEach(Segment.allCases, id: \.self) { option in
-                Text(option.rawValue)
-            }
+        if showWizard {
+            Wizard()
+        } else {
+            SegementContent()
         }
-        .pickerStyle(.segmented)
-        .padding()
+    }
+}
+
+extension ContentView {
+
+    struct SegementContent: View {
         
-        Spacer()
-        SegmentView(selectedSement: $selectedSegment)
-        Spacer()
+        @State private var selectedSegment : Segment = .deployApp
+        
+        var body: some View {
+            Picker("", selection: $selectedSegment) {
+                ForEach(Segment.allCases, id: \.self) { option in
+                    Text(option.rawValue)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding()
+           
+            Spacer()
+            SegmentView(selectedSement: $selectedSegment)
+            Spacer()
+        }
     }
 }
 
