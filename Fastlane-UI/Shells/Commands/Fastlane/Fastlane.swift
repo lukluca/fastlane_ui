@@ -62,11 +62,11 @@ protocol FastlaneWorkflow: ShellWorkflow {}
 extension FastlaneWorkflow {
 
     func cpCredentials(credentialsFolder: String, projectFolder: String) -> String {
-        shell.cp(from: credentialsFolder + "/credentials",
+        shell.cp(from: credentialsFolder + "/" + credentialsPathComponent,
                  to: projectFolder + "/" + jiraPathComponent)
     }
     
     func gitRestore() -> String {
-        shell.gitRestore(file: jiraPathComponent + "/credentials")
+        shell.gitRestore(file: jiraPathComponent + "/" + credentialsPathComponent)
     }
 }

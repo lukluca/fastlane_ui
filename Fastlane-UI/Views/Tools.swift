@@ -24,6 +24,11 @@ struct Tools: View {
                                 itemTitle: \.rawValue,
                                 isSelected: $shell)
                 }
+                Section("Wizard") {
+                    Button("Show wizard") {
+                        Defaults.shared.showWizard = true
+                    }
+                }
                 Section("Fastlane") {
                     
                     VStack(alignment: .center, spacing: 10) {

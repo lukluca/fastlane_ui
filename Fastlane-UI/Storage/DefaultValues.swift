@@ -11,6 +11,8 @@ let defaultBranchName = "develop"
 let defaultShell: Shell = .zsh
 let defaultEnvironment: Environment = .test
 
+let credentialsPathComponent = "credentials"
+
 private let fastlanePathComponent = "fastlane"
 
 var jiraPathComponent: String {

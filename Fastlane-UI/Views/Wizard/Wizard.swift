@@ -98,7 +98,18 @@ struct Wizard: View {
                                 isNextButtonDisabled = true
                             }
                         case .jira:
-                            goToNextStep()
+                            do {
+                                if try JiraFolder.areCredentialsPresent() {
+                                    errorText = ""
+                                    goToNextStep()
+                                } else {
+                                    errorText = "The folder does not contain a formatted credentials file"
+                                    isNextButtonDisabled = true
+                                }
+                            } catch {
+                                errorText = error.localizedDescription
+                                isNextButtonDisabled = true
+                            }
                         case .completed:
                             goToNextStep()
                         }
@@ -117,6 +128,7 @@ struct Wizard: View {
                 isBackButtonDisabled = currentStep.rawValue == 0
                 isCompleted = stepCompleted.isCompleted
             }.onChange(of: currentStep.kind) { newValue in
+                errorText = ""
                 isBackButtonDisabled = newValue.index == 0
                 isNextButtonDisabled = newValue.index == (Step.Kind.allCases.count - 1)
             }
@@ -168,7 +180,7 @@ extension Wizard {
             case .projectFolder:
                 ProjectFolderItem(errorText: $errorText)
             case .jira:
-                JiraItem()
+                JiraItem(errorText: $errorText)
             case .completed:
                 CompletedItem()
             }
@@ -200,6 +212,8 @@ extension Wizard {
         
         @State private var isChecked = false
         
+        @Binding var errorText: String
+        
         @Default(\.useJira) private var useJira: Bool
         @Default(\.jiraCredentialsFolder) private var jiraCredentialsFolder: String
         
@@ -218,11 +232,14 @@ extension Wizard {
                 Text("If you wish to make release notes from Jira, please fill the folder where the credentials are stored. Must not be empty.")
                     .opacity(isChecked ? 1 : 0.5)
                 
-                Text("Inside the folder must be a file named 'credentials' of this structure\n\nUSERNAME=\"JIRA_USERNAME\" \nTOKEN=\"JIRA_TOKEN\"\n\nPlease replace JIRA_USERNAME and JIRA_TOKEN with your credentials")
+                Text("Inside the folder must be a file named '\(credentialsPathComponent)' of this structure\n\nUSERNAME=\"JIRA_USERNAME\" \nTOKEN=\"JIRA_TOKEN\"\n\nPlease replace JIRA_USERNAME and JIRA_TOKEN with your credentials")
                     .opacity(isChecked ? 1 : 0.5)
                 
                 Text("You can configure the status of the ticket to show inside release note from the Jira tools tab.")
                     .opacity(isChecked ? 1 : 0.5)
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
                 
             }.onAppear {
                 isChecked = useJira
@@ -406,21 +423,24 @@ final class JiraFolderStepState: ObservableObject {
     
     init() {
         
-        isDone = JiraFolderStepState.validate()
+        isDone = JiraFolder.validate()
         
-        Defaults.shared.objectWillChange.map {
-            JiraFolderStepState.validate()
+        let isEnabled = Defaults.shared.objectWillChange.map {
+            Defaults.shared.useJira
         }
-        .removeDuplicates()
-        .assign(to: \.isDone, on: self)
-        .store(in: &bag)
-    }
-    
-    fileprivate static func validate() -> Bool {
-        guard Defaults.shared.useJira else {
-            return true
+            .removeDuplicates()
+            .filter { $0 }
+        
+        let isPathValid = Defaults.shared.objectWillChange.map {
+            Defaults.shared.jiraCredentialsFolder
         }
-        return Defaults.shared.jiraCredentialsFolder != ""
+            .removeDuplicates()
+            .map { $0 != "" }
+            .filter { $0 }
+        
+        isEnabled.merge(with: isPathValid)
+            .assign(to: \.isDone, on: self)
+            .store(in: &bag)
     }
 }
 
@@ -451,7 +471,7 @@ private final class StepCompleted: ObservableObject {
             .store(in: &bag)
         
         count = [ProjectFolder.validate(),
-                 JiraFolderStepState.validate()].filter { $0 }.count
+                 JiraFolder.validate()].filter { $0 }.count
     }
 }
 
@@ -468,5 +488,44 @@ private enum ProjectFolder {
         let fm = FileManager.default
         let path = Defaults.shared.projectFolder
         return try fm.contentsOfDirectory(atPath: path).contains { $0 == ".git" }
+    }
+}
+
+private enum JiraFolder {
+    static func validate() -> Bool {
+        guard Defaults.shared.useJira else {
+            return true
+        }
+        return Defaults.shared.jiraCredentialsFolder != ""
+    }
+    
+    static func areCredentialsPresent() throws -> Bool {
+        let path = Defaults.shared.jiraCredentialsFolder
+    
+        let values = try String(contentsOfFile: path + "/" + credentialsPathComponent).split(separator: "\n")
+        
+        if values.count >= 2 {
+            let first = values[0]
+            
+            if first.starts(with: "USERNAME=") {
+                
+                let tail = first.replacingOccurrences(of: "USERNAME=", with: "")
+                
+                if tail.count > 2 {
+                    let second = values[1]
+                    
+                    if second.starts(with: "TOKEN=") {
+                        
+                        let tail = second.replacingOccurrences(of: "TOKEN=", with: "")
+                        
+                        if tail.count > 2 {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false
     }
 }
