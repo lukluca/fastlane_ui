@@ -15,6 +15,12 @@ struct Wizard: View {
     @State private var isBackButtonDisabled = true
     @State private var isNextButtonDisabled = true
     
+    @State private var errorText = ""
+    
+    @State private var isCompleted = false
+    
+    @ObservedObject private var stepCompleted = StepCompleted()
+    
     private var bag = [AnyCancellable]()
     
     var body: some View {
@@ -26,15 +32,16 @@ struct Wizard: View {
                 HStack(spacing: 0){
                     ForEach(Step.Kind.allCases) {
                         StepCircleView(text: "\($0.index + 1)",
-                                       isLast: $0.index == (Step.Kind.allCases.count - 1),
-                                       isDone: $0.index != 9)
+                                       isLast: $0.isLast,
+                                       isDone: ($0.isLast && stepCompleted.isCompleted) ? true : $0.index < stepCompleted.count )
                     }
                 }
             }
             .frame(height: 40)
             .padding()
             
-            StepContent(current: $currentStep.kind)
+            StepContent(current: $currentStep.kind,
+                        errorText: $errorText)
                 .padding()
             
             HStack(spacing: 30) {
@@ -54,31 +61,70 @@ struct Wizard: View {
                 }
                 .disabled(isBackButtonDisabled)
                 
-                Button {
-                    isBackButtonDisabled = false
-                    if let kind = Step.Kind(index: currentStep.rawValue + 1) {
-                        currentStep.kind = kind
-                    } else {
-                        isNextButtonDisabled = true
+                if isCompleted && currentStep.kind.isLast {
+                    Button {
+                        Defaults.shared.showWizard = false
+                    } label: {
+                        Image(systemName: "xmark.circle")
+                            .resizable()
+                            .scaledToFit()
+                            .imageScale(.large)
+                            .frame(height: 50)
                     }
-                } label: {
-                    Image(systemName: "arrowshape.forward")
-                        .resizable()
-                        .scaledToFit()
-                        .imageScale(.large)
-                        .frame(height: 50)
+                } else {
+                    Button {
+                        
+                        func goToNextStep() {
+                            isBackButtonDisabled = false
+                            if let kind = Step.Kind(index: currentStep.rawValue + 1) {
+                                currentStep.kind = kind
+                            } else {
+                                isNextButtonDisabled = true
+                            }
+                        }
+                        
+                        switch currentStep.kind {
+                        case .projectFolder:
+                            do {
+                                if try ProjectFolder.containsGitRepo() {
+                                    errorText = ""
+                                    goToNextStep()
+                                } else {
+                                    errorText = "The folder does not contain a git repo!"
+                                    isNextButtonDisabled = true
+                                }
+                            } catch {
+                                errorText = error.localizedDescription
+                                isNextButtonDisabled = true
+                            }
+                        case .jira:
+                            goToNextStep()
+                        case .completed:
+                            goToNextStep()
+                        }
+                    } label: {
+                        Image(systemName: "arrowshape.forward")
+                            .resizable()
+                            .scaledToFit()
+                            .imageScale(.large)
+                            .frame(height: 50)
+                    }
+                    .disabled(isNextButtonDisabled)
                 }
-                .disabled(isNextButtonDisabled)
             }
             .onAppear {
                 isNextButtonDisabled = !currentStep.isDone
                 isBackButtonDisabled = currentStep.rawValue == 0
-            }.onChange(of: currentStep) { newValue in
-                isBackButtonDisabled = newValue.rawValue == 0
-                isNextButtonDisabled = newValue.rawValue == (Step.Kind.allCases.count - 1)
+                isCompleted = stepCompleted.isCompleted
+            }.onChange(of: currentStep.kind) { newValue in
+                isBackButtonDisabled = newValue.index == 0
+                isNextButtonDisabled = newValue.index == (Step.Kind.allCases.count - 1)
             }
-            .onChange(of: currentStep.isDone) { newValue in
-                isNextButtonDisabled = !newValue
+            .onReceive(currentStep.$isDone) { value in
+                isNextButtonDisabled = !value
+            }
+            .onChange(of: stepCompleted.isCompleted) { newValue in
+                isCompleted = newValue
             }
         }
     }
@@ -115,11 +161,12 @@ extension Wizard {
     struct StepContent: View {
         
         @Binding var current: Step.Kind
+        @Binding var errorText: String
 
         var body: some View {
             switch current {
             case .projectFolder:
-                ProjectFolderItem()
+                ProjectFolderItem(errorText: $errorText)
             case .jira:
                 JiraItem()
             case .completed:
@@ -134,12 +181,17 @@ extension Wizard {
         
         @Default(\.projectFolder) private var projectFolder: String
         
+        @Binding var errorText: String
+        
         var body: some View {
             VStack(spacing: 20) {
                 ProjectFolderView(projectFolder: $projectFolder)
                     .padding(.horizontal, 20)
                 
                 Text("This is the folder on your mac where the git froject is stored. Must not be empty.")
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
             }
         }
     }
@@ -148,6 +200,7 @@ extension Wizard {
         
         @State private var isChecked = false
         
+        @Default(\.useJira) private var useJira: Bool
         @Default(\.jiraCredentialsFolder) private var jiraCredentialsFolder: String
         
         var body: some View {
@@ -157,18 +210,25 @@ extension Wizard {
                 }
                 .toggleStyle(.checkbox)
                 
-                if isChecked {
-                    JiraCredentialsFoldetView(credentialsFolder: $jiraCredentialsFolder)
-                        .padding(.horizontal, 20)
-                }
+                JiraCredentialsFoldetView(credentialsFolder: $jiraCredentialsFolder)
+                    .opacity(isChecked ? 1 : 0.5)
+                    .allowsHitTesting(isChecked)
+                    .padding(.horizontal, 20)
                 
-                Text("If you wish to make release notes from Jira, please fill the folder where the credential is stored. Must not be empty.")
+                Text("If you wish to make release notes from Jira, please fill the folder where the credentials are stored. Must not be empty.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text("Inside the folder must be a file named 'credentials' of this structure\n\nUSERNAME=\"JIRA_USERNAME\" \nTOKEN=\"JIRA_TOKEN\"\n\nPlease replace JIRA_USERNAME and JIRA_TOKEN with your credentials")
+                    .opacity(isChecked ? 1 : 0.5)
                 
                 Text("You can configure the status of the ticket to show inside release note from the Jira tools tab.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
             }.onAppear {
-                isChecked = jiraCredentialsFolder != ""
+                isChecked = useJira
+            }.onChange(of: isChecked) { newValue in
+                useJira = isChecked
             }
-            
         }
     }
     
@@ -190,6 +250,7 @@ extension Wizard {
     
         @Published var kind: Kind {
             didSet {
+                bag.removeAll()
                 bindIsDone()
             }
         }
@@ -236,6 +297,10 @@ extension Wizard.Step {
             }
         }
         
+        var isLast: Bool {
+            self == .completed
+        }
+        
         init?(index: Int) {
             switch index {
             case 0:
@@ -279,7 +344,6 @@ extension Wizard.Step {
     static let initial = Wizard.Step(kind: .projectFolder(ProjectFolderStepState()))
 }
 
-
 extension Wizard.Step: RawRepresentable {
     
     var rawValue: Int {
@@ -312,7 +376,7 @@ extension Wizard.Step: Identifiable {
     }
 }
 
-class ProjectFolderStepState: ObservableObject {
+final class ProjectFolderStepState: ObservableObject {
     
     @Published var isDone = false
     
@@ -320,22 +384,21 @@ class ProjectFolderStepState: ObservableObject {
     
     init() {
         
-        isDone = ProjectFolderStepState.validate()
+        isDone = ProjectFolder.validate()
         
         Defaults.shared.objectWillChange.map {
-            ProjectFolderStepState.validate()
+            Defaults.shared.projectFolder
         }
         .removeDuplicates()
+        .map {
+            ProjectFolder.isValid($0)
+        }
         .assign(to: \.isDone, on: self)
         .store(in: &bag)
     }
-    
-    private static func validate() -> Bool {
-        Defaults.shared.projectFolder != ""
-    }
 }
 
-class JiraFolderStepState: ObservableObject {
+final class JiraFolderStepState: ObservableObject {
     
     @Published var isDone = false
     
@@ -353,7 +416,57 @@ class JiraFolderStepState: ObservableObject {
         .store(in: &bag)
     }
     
-    private static func validate() -> Bool {
-        Defaults.shared.jiraCredentialsFolder != ""
+    fileprivate static func validate() -> Bool {
+        guard Defaults.shared.useJira else {
+            return true
+        }
+        return Defaults.shared.jiraCredentialsFolder != ""
+    }
+}
+
+private final class StepCompleted: ObservableObject {
+    
+    @Published var isCompleted = false
+    
+    @Published var count = 0
+    
+    private var bag = [AnyCancellable]()
+    
+    private let project = ProjectFolderStepState()
+    private let jira = JiraFolderStepState()
+    
+    init() {
+        
+        project.$isDone
+            .merge(with: jira.$isDone)
+            .filter { $0 }
+            .count()
+            .removeDuplicates()
+            .assign(to: \.count, on: self)
+            .store(in: &bag)
+        
+        $count
+            .map { $0 == 2 }
+            .assign(to: \.isCompleted, on: self)
+            .store(in: &bag)
+        
+        count = [ProjectFolder.validate(),
+                 JiraFolderStepState.validate()].filter { $0 }.count
+    }
+}
+
+private enum ProjectFolder {
+    static func validate() -> Bool {
+        isValid(Defaults.shared.projectFolder)
+    }
+    
+    static func isValid(_ string: String) -> Bool {
+        string != ""
+    }
+    
+    static func containsGitRepo() throws -> Bool {
+        let fm = FileManager.default
+        let path = Defaults.shared.projectFolder
+        return try fm.contentsOfDirectory(atPath: path).contains { $0 == ".git" }
     }
 }

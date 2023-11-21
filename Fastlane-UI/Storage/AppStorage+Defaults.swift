@@ -19,6 +19,7 @@ class Defaults: ObservableObject {
         case pushOnGit
         case uploadToFirebase
         case useSlack
+        case useJira
         case makeReleaseNotesFromJira
         case jiraCredentialsFolder
         case shell
@@ -39,6 +40,7 @@ class Defaults: ObservableObject {
     @AppStorage(.uploadToFirebase) var uploadToFirebase = true
     @AppStorage(.useSlack) var useSlack = true
     @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
+    @AppStorage(.useJira) var useJira = false
     @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
     @AppStorage(.shell) var shell = defaultShell
     @AppStorage(.cloneFromRemote) var cloneFromRemote = true
