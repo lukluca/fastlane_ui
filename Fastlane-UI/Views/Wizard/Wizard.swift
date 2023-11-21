@@ -485,9 +485,8 @@ private enum ProjectFolder {
     }
     
     static func containsGitRepo() throws -> Bool {
-        let fm = FileManager.default
         let path = Defaults.shared.projectFolder
-        return try fm.contentsOfDirectory(atPath: path).contains { $0 == ".git" }
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == gitPathComponent }
     }
 }
 

@@ -35,7 +35,7 @@ class Defaults: ObservableObject {
     @AppStorage(.environment) var environment = defaultEnvironment
     @AppStorage(.versionNumber) var versionNumber = ""
     @AppStorage(.buildNumber) var buildNumber: Int = 0
-    @AppStorage(.branchName) var branchName = defaultBranchName
+    @AppStorage(.branchName) var branchName = ""
     @AppStorage(.pushOnGit) var pushOnGit = true
     @AppStorage(.uploadToFirebase) var uploadToFirebase = true
     @AppStorage(.useSlack) var useSlack = true

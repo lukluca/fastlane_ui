@@ -33,6 +33,8 @@ struct DeployApp: View {
     
     @State private var disableDeploy: Bool = false
     
+    private let gitBranches = GitBranches().values
+    
     var body: some View {
         VStack(spacing: 30) {
             
@@ -71,10 +73,7 @@ struct DeployApp: View {
 
                 }
                 
-                HStack {
-                    Text("Branch name: ")
-                    TextField("Enter your branch name", text: $branchName)
-                }
+                GitPicker(selectedBranch: $branchName, branches: gitBranches)
                 
                 HStack {
                     Text("Testers: ")
@@ -113,6 +112,10 @@ struct DeployApp: View {
         }
         .onAppear {
             updateDeployButtonActivity()
+            
+            if branchName.isEmpty {
+                branchName = gitBranches.first ?? ""
+            }
         }
         .onChange(of: projectFolder) { _ in
             updateDeployButtonActivity()
@@ -169,6 +172,21 @@ extension DeployApp {
             Picker("Environment:", selection: $selectedEnvironment) {
                 ForEach(Environment.allCases) { environment in
                     Text(environment.rawValue).tag(environment)
+                }
+            }
+        }
+    }
+    
+    struct GitPicker: View {
+        
+        @Binding var selectedBranch: String
+        
+        let branches: [String]
+        
+        var body: some View {
+            Picker("Git Branch:", selection: $selectedBranch) {
+                ForEach(branches, id: \.self) { branch in
+                    Text(branch).tag(branch)
                 }
             }
         }
@@ -267,8 +285,63 @@ enum Environment: String, CaseIterable, Identifiable {
     var id: Environment { self }
 }
 
+private struct GitBranches {
+    
+    let values: [String]
+    
+    init() {
+        
+        let path = Defaults.shared.projectFolder + "/" + gitPathComponent + "/refs/heads"
+        
+        func extract(at path: String) -> [String] {
+            
+            let contents = (try? FileManager.default.contentsOfDirectory(atPath: path)) ?? []
+            
+            if contents.isEmpty {
+                return []
+            }
+            
+            let urls = contents.map {
+                URL(fileURLWithPath: path + "/" + $0)
+            }
+            
+            let directories = urls.filter {
+                $0.isDirectory
+            }
+            
+            let notDirectories = urls.filter {
+                !$0.isDirectory
+            }
+            
+            let others = directories.flatMap {
+                extract(at: $0.path())
+            }
+            
+            return notDirectories.map {
+                $0.path()
+            } + others
+        }
+        
+        let values = extract(at: path).map {
+            $0.replacingOccurrences(of: path + "/", with: "")
+        }.map {
+            $0.replacingOccurrences(of: "//", with: "/")
+        }
+        
+        self.values = values.filter {
+            $0 != ".DS_Store"
+        }
+    }
+}
+
 struct DeployApp_Previews: PreviewProvider {
     static var previews: some View {
         DeployApp()
+    }
+}
+
+private extension URL {
+    var isDirectory: Bool {
+       (try? resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
     }
 }
