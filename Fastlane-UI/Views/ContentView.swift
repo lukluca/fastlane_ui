@@ -9,9 +9,33 @@ import SwiftUI
 
 enum Segment: String, CaseIterable {
     case deployApp = "Deploy App"
+    case git = "Git"
     case firebase = "Firebase"
-    case jiraTools = "Jira tools"
+    case jira = "Jira"
+    case slack = "Slack"
     case tools = "Tools"
+    
+    static var allCases: [Segment] {
+        var cases: [Segment] = [.deployApp]
+        
+        let defaults = Defaults.shared
+        if defaults.useGit {
+            cases.append(.git)
+        }
+        if defaults.useFirebase {
+            cases.append(.firebase)
+        }
+        if defaults.useJira {
+            cases.append(.jira)
+        }
+        if defaults.useSlack {
+            cases.append(.slack)
+        }
+        
+        cases.append(.tools)
+        
+        return cases
+    }
 }
 
 struct ContentView: View {
@@ -57,10 +81,14 @@ struct SegmentView: View {
         switch selectedSement {
         case .deployApp:
             DeployApp()
+        case .git:
+            GitView()
         case .firebase:
             Firebase()
-        case .jiraTools:
-            JiraTools()
+        case .jira:
+            Jira()
+        case .slack:
+            Slack()
         case .tools:
             Tools()
         }

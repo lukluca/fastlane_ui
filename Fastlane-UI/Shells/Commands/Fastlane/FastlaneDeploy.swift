@@ -8,7 +8,7 @@
 import Foundation
 
 struct FastlaneDeployArguments: FastlaneArguments {
-    let environment: Environment
+    let scheme: String
     let versionNumber: String
     let buildNumber: Int
     let branchName: String
@@ -16,11 +16,26 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let releaseNotes: String
     let pushOnGit: Bool
     let uploadToFirebase: Bool
-    let useSlack: Bool
+    let useCrashlytics: Bool
+    let notifySlack: Bool
     let makeReleaseNotesFromJira: Bool
     
     private var envArg: String {
-        "--env " + environment.rawValue
+        let jsonPath = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".env_mapping.json"
+       
+        guard let data = try? Data(contentsOf: URL(filePath: jsonPath)) else {
+            return "--env " + scheme
+        }
+        
+        let mapping = try? JSONDecoder().decode([EnvMapping].self, from: data)
+
+        let mapped = mapping?.first {
+            $0.scheme == scheme
+        }
+        
+        let env = mapped?.envName ?? scheme
+        
+        return "--env " + env
     }
     
     private var versionNumberArg: String {
@@ -57,8 +72,12 @@ struct FastlaneDeployArguments: FastlaneArguments {
         uploadToFirebase ? nil : "upload_to_firebase:\(uploadToFirebase)"
     }
     
-    private var useSlackArg: String? {
-        useSlack ? nil : "use_slack:\(useSlack)"
+    private var useCrashlyticsArg: String? {
+        useCrashlytics ? nil : "use_crashlytics:\(useCrashlytics)"
+    }
+    
+    private var notifySlackArg: String? {
+        notifySlack ? nil : "use_slack:\(notifySlack)"
     }
     
     private var makeReleaseNotesFromJiraArg: String? {
@@ -75,7 +94,8 @@ struct FastlaneDeployArguments: FastlaneArguments {
             relaseNotesArg,
             pushOnGitArg,
             uploadToFirebaseArg,
-            useSlackArg,
+            useCrashlyticsArg,
+            notifySlackArg,
             makeReleaseNotesFromJiraArg
         ].compactMap{ $0 }
     }
@@ -84,5 +104,15 @@ struct FastlaneDeployArguments: FastlaneArguments {
 extension CommandExecuting {
     func fastlaneDeploy(arguments: FastlaneDeployArguments) throws -> String {
         try fastlane(command: .deploy, arguments: arguments)
+    }
+}
+
+private struct EnvMapping: Decodable {
+    let scheme: String
+    let envName: String
+    
+    enum CodingKeys: String, CodingKey {
+        case scheme
+        case envName = "env_name"
     }
 }

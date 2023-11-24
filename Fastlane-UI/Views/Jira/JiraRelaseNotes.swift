@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-extension JiraTools {
+extension Jira {
     struct RelaseNotes: View {
         
         let shell = Defaults.shared.shell
-       
-        @Binding var projectFolder: String
         
+        let projectFolder = Defaults.shared.projectFolder
+       
         @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
         @Default(\.versionNumber) private var versionNumber: String
         
@@ -74,9 +74,9 @@ extension JiraTools {
 }
 
 
-extension JiraTools.RelaseNotes: FastlaneWorkflow {}
+extension Jira.RelaseNotes: FastlaneWorkflow {}
 
-private extension JiraTools.RelaseNotes {
+private extension Jira.RelaseNotes {
     
     var fastlaneArguments: FastlaneGetJiraReleaseNotesArguments {
         FastlaneGetJiraReleaseNotesArguments(versionNumber: versionNumber)

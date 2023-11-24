@@ -9,47 +9,98 @@ import SwiftUI
 
 class Defaults: ObservableObject {
     
-    fileprivate enum Key: String {
+    fileprivate enum Key: String, CaseIterable {
         case showWizard
+        //project
         case projectFolder
-        case environment
+        case schema
         case versionNumber
         case buildNumber
+        //git
+        case useGit
         case branchName
         case pushOnGit
-        case uploadToFirebase
-        case useSlack
-        case useJira
-        case makeReleaseNotesFromJira
-        case jiraCredentialsFolder
-        case shell
         case cloneFromRemote
         case mainFolder
         case remoteURL
-        case needsSudo
+        //firebase
+        case useFirebase
+        case uploadToFirebase
         case testers
+        case useCrashlytics
+        //slack
+        case useSlack
+        case notifySlack
+        //jira
+        case useJira
+        case jiraCredentialsFolder
+        case makeReleaseNotesFromJira
+        //settings
+        case shell
+        case needsSudo
     }
     
     @AppStorage(.showWizard) var showWizard = true
+    //project
     @AppStorage(.projectFolder) var projectFolder = ""
-    @AppStorage(.environment) var environment = defaultEnvironment
+    @AppStorage(.schema) var schema = ""
     @AppStorage(.versionNumber) var versionNumber = ""
-    @AppStorage(.buildNumber) var buildNumber: Int = 0
+    @AppStorage(.buildNumber) var buildNumber = 0
+    //git
+    @AppStorage(.useGit) var useGit = false
     @AppStorage(.branchName) var branchName = ""
-    @AppStorage(.pushOnGit) var pushOnGit = true
-    @AppStorage(.uploadToFirebase) var uploadToFirebase = true
-    @AppStorage(.useSlack) var useSlack = true
-    @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
-    @AppStorage(.useJira) var useJira = false
-    @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
-    @AppStorage(.shell) var shell = defaultShell
-    @AppStorage(.cloneFromRemote) var cloneFromRemote = true
+    @AppStorage(.pushOnGit) var pushOnGit = false
+    @AppStorage(.cloneFromRemote) var cloneFromRemote = false
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
-    @AppStorage(.needsSudo) var needsSudo = false
+    //firebase
+    @AppStorage(.useFirebase) var useFirebase = false
+    @AppStorage(.uploadToFirebase) var uploadToFirebase = false
     @AppStorage(.testers) var testers = ""
+    @AppStorage(.useCrashlytics) var useCrashlytics = false
+    //slack
+    @AppStorage(.useSlack) var useSlack = false
+    @AppStorage(.notifySlack) var notifySlack = false
+    //jira
+    @AppStorage(.useJira) var useJira = false
+    @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
+    @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
+    //settings
+    @AppStorage(.shell) var shell = defaultShell
+    @AppStorage(.needsSudo) var needsSudo = false
     
     static let shared = Defaults()
+    
+    func reset() {
+        showWizard = true
+        //project
+        projectFolder = ""
+        schema = ""
+        versionNumber = ""
+        buildNumber = 0
+        //git
+        useGit = false
+        branchName = ""
+        pushOnGit = false
+        cloneFromRemote = false
+        mainFolder = ""
+        remoteURL = ""
+        //firebase
+        useFirebase = false
+        uploadToFirebase = false
+        testers = ""
+        useCrashlytics = false
+        //slack
+        useSlack = false
+        notifySlack = false
+        //jira
+        useJira = false
+        jiraCredentialsFolder = ""
+        makeReleaseNotesFromJira = false
+        //settings
+        shell = defaultShell
+        needsSudo = false
+    }
 }
 
 @propertyWrapper

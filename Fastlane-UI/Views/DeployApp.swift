@@ -11,21 +11,26 @@ struct DeployApp: View {
     
     let shell = Defaults.shared.shell
     
-    @Default(\.projectFolder) private var projectFolder: String
-    @Default(\.mainFolder) private var mainFolder: String
-    @Default(\.remoteURL) private var remoteURL: String
-    @Default(\.jiraCredentialsFolder) private var credentialsFolder: String
     @Default(\.versionNumber) private var versionNumber: String
     @Default(\.buildNumber) private var buildNumber: Int
+
+    @Default(\.useGit) private var useGit: Bool
     @Default(\.branchName) private var branchName: String
+    @Default(\.pushOnGit) private var pushOnGit: Bool
+    
+    @Default(\.useFirebase) private var useFirebase: Bool
+    @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
+    @Default(\.useCrashlytics) private var useCrashlytics: Bool
     @Default(\.testers) private var testers: String
     @State private var releaseNotes = ""
-    @Default(\.pushOnGit) private var pushOnGit: Bool
-    @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
+    
+    @Default(\.useJira) private var useJira: Bool
+    
     @Default(\.useSlack) private var useSlack: Bool
+    @Default(\.notifySlack) private var notifySlack: Bool
+    
     @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
-    @Default(\.cloneFromRemote) private var cloneFromRemote: Bool
-    @Default(\.environment) private var selectedEnvironment: Environment
+    @Default(\.schema) private var selectedScheme: String
     
     @State private var result = ""
     
@@ -34,28 +39,14 @@ struct DeployApp: View {
     @State private var disableDeploy: Bool = false
     
     private let gitBranches = GitBranches().values
+    private let schemes = Schemes().values
     
     var body: some View {
         VStack(spacing: 30) {
             
             VStack(spacing: 10) {
                 
-                if cloneFromRemote {
-                    MainFolderView(mainFolder: $mainFolder)
-                    
-                    HStack {
-                        Text("Git remote url")
-                        TextField("Enter your git remote url", text: $remoteURL)
-                    }
-                    
-                } else {
-                    ProjectFolderView(projectFolder: $projectFolder)
-                }
-                
-                JiraCredentialsFoldetView(credentialsFolder: $credentialsFolder)
-                    .hidden(makeReleaseNotesFromJira == false)
-                
-                EnvPicker(selectedEnvironment: $selectedEnvironment)
+                SchemePicker(selectedScheme: $selectedScheme, schemes: schemes)
                 
                 VersionNumberView(versionNumber: $versionNumber)
                 
@@ -73,25 +64,40 @@ struct DeployApp: View {
 
                 }
                 
-                GitPicker(selectedBranch: $branchName, branches: gitBranches)
-                
-                HStack {
-                    Text("Testers: ")
-                    TextField("Enter additional testers splited using comma and space", text: $testers)
+                if useGit {
+                    GitPicker(selectedBranch: $branchName, branches: gitBranches)
                 }
                 
-                HStack {
-                    Text("Release notes: ")
-                    TextField("Enter your release notes (optional)", text: $releaseNotes)
+                if useFirebase && uploadToFirebase {
+                    HStack {
+                        Text("Testers: ")
+                        TextField("Enter additional testers splited using comma and space", text: $testers)
+                    }
+                    
+                    HStack {
+                        Text("Release notes: ")
+                        TextField("Enter your release notes (optional)", text: $releaseNotes)
+                    }
                 }
             }
             
             VStack(alignment: .leading, spacing: 10) {
-                Toggle(" Push on Git", isOn: $pushOnGit)
-                Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
-                Toggle(" Use Slack", isOn: $useSlack)
-                Toggle(" Make relese notes from Jira", isOn: $makeReleaseNotesFromJira)
-                Toggle(" Clone git from remote", isOn: $cloneFromRemote)
+                if useGit {
+                    Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
+                }
+                if useFirebase {
+                    Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
+                    if uploadToFirebase {
+                        Toggle(" Use Crashlytics", isOn: $useCrashlytics)
+                    }
+                }
+                if useSlack {
+                    Toggle(" Notify Slack", isOn: $notifySlack)
+                }
+               
+                if useJira && useFirebase && uploadToFirebase {
+                    Toggle(" Make relese notes from Jira", isOn: $makeReleaseNotesFromJira)
+                }
             }
             
             VStack(spacing: 10) {
@@ -116,14 +122,11 @@ struct DeployApp: View {
             if branchName.isEmpty {
                 branchName = gitBranches.first ?? ""
             }
+            if selectedScheme.isEmpty {
+                selectedScheme = schemes.first ?? ""
+            }
         }
-        .onChange(of: projectFolder) { _ in
-            updateDeployButtonActivity()
-        }
-        .onChange(of: credentialsFolder) { _ in
-            updateDeployButtonActivity()
-        }
-        .onChange(of: selectedEnvironment) { _ in
+        .onChange(of: selectedScheme) { _ in
             updateFastlaneCommand()
         }
         .onChange(of: versionNumber) { newValue in
@@ -152,7 +155,10 @@ struct DeployApp: View {
         .onChange(of: uploadToFirebase) { _ in
             update()
         }
-        .onChange(of: useSlack) { _ in
+        .onChange(of: useCrashlytics) { _ in
+            update()
+        }
+        .onChange(of: notifySlack) { _ in
             update()
         }
         .onChange(of: makeReleaseNotesFromJira) { _ in
@@ -164,14 +170,15 @@ struct DeployApp: View {
 
 extension DeployApp {
     
-    struct EnvPicker: View {
+    struct SchemePicker: View {
         
-        @Binding var selectedEnvironment: Environment
+        @Binding var selectedScheme: String
+        let schemes: [String]
         
         var body: some View {
-            Picker("Environment:", selection: $selectedEnvironment) {
-                ForEach(Environment.allCases) { environment in
-                    Text(environment.rawValue).tag(environment)
+            Picker("Schema:", selection: $selectedScheme) {
+                ForEach(schemes, id: \.self) {
+                    Text($0).tag($0)
                 }
             }
         }
@@ -185,8 +192,8 @@ extension DeployApp {
         
         var body: some View {
             Picker("Git Branch:", selection: $selectedBranch) {
-                ForEach(branches, id: \.self) { branch in
-                    Text(branch).tag(branch)
+                ForEach(branches, id: \.self) {
+                    Text($0).tag($0)
                 }
             }
         }
@@ -199,15 +206,16 @@ private extension DeployApp {
     
     var fastlaneArguments: FastlaneDeployArguments {
         FastlaneDeployArguments(
-            environment: selectedEnvironment,
+            scheme: selectedScheme,
             versionNumber: versionNumber,
             buildNumber: buildNumber,
             branchName: branchName,
             testers: testers,
             releaseNotes: releaseNotes,
             pushOnGit: pushOnGit,
-            uploadToFirebase: uploadToFirebase,
-            useSlack: useSlack,
+            uploadToFirebase: uploadToFirebase, 
+            useCrashlytics: useCrashlytics,
+            notifySlack: notifySlack,
             makeReleaseNotesFromJira: makeReleaseNotesFromJira
         )
     }
@@ -218,8 +226,11 @@ private extension DeployApp {
         
         let folder: String
         
-        if cloneFromRemote {
+        let defaults = Defaults.shared
+        if useGit && defaults.cloneFromRemote {
+            let remoteURL = defaults.remoteURL
             let lastPathComponent = (remoteURL as NSString).lastPathComponent
+            let mainFolder = defaults.mainFolder
             folder = mainFolder + "/" + lastPathComponent
             firstStep = [shell.cd(folder: mainFolder),
                          shell.rm(path: lastPathComponent),
@@ -229,14 +240,14 @@ private extension DeployApp {
                          shell.gitSwitch(branch: branchName)]
             
         } else {
-            folder = projectFolder
+            folder = Defaults.shared.projectFolder
             firstStep = [shell.cd(folder: folder)]
         }
         
         let commands: [String]
         if makeReleaseNotesFromJira {
             commands = firstStep +
-                        [cpCredentials(credentialsFolder: credentialsFolder,
+            [cpCredentials(credentialsFolder: Defaults.shared.jiraCredentialsFolder,
                                        projectFolder: folder),
                         deploy(),
                         gitRestore()]
@@ -265,24 +276,35 @@ private extension DeployApp {
     }
     
     func updateDeployButtonActivity() {
-        if makeReleaseNotesFromJira && credentialsFolder.isEmpty {
-            disableDeploy = true
-            return
-        }
-        
-        disableDeploy = projectFolder.isEmpty ||
-                        versionNumber.isEmpty ||
+        disableDeploy = versionNumber.isEmpty ||
                         branchName.isEmpty
     }
 }
 
-enum Environment: String, CaseIterable, Identifiable {
-    case test = "TEST"
-    case quality = "QUALITY"
-    case qualityCRM = "QUALITYCRM"
-    case production = "PRODUCTION"
+private struct Schemes {
+    let values: [String]
     
-    var id: Environment { self }
+    init() {
+        
+        let path = Defaults.shared.projectFolder
+        let contents = (try? FileManager.default.contentsOfDirectory(atPath: path)) ?? []
+        
+        let proj = contents.first {
+            $0.hasSuffix(".xcodeproj")
+        }
+        
+        if let proj {
+            let xcschemesPath = path + "/" + "\(proj)/xcshareddata/xcschemes"
+            
+            let xcschemes = (try? FileManager.default.contentsOfDirectory(atPath: xcschemesPath)) ?? []
+            
+            values = xcschemes.map {
+                $0.replacingOccurrences(of: ".xcscheme", with: "")
+            }
+        } else {
+            values = []
+        }
+    }
 }
 
 private struct GitBranches {

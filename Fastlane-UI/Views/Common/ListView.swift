@@ -24,14 +24,10 @@ struct ListView: View {
     
     @State private var isMainActionDisabled = true
     
-    @Binding var projectFolder: String
-    
     @Binding var rows: [TextFieldRow.Model]
     
     var body: some View {
         VStack(alignment: .leading) {
-            
-            ProjectFolderView(projectFolder: $projectFolder)
             
             HStack {
                 Text(title)
@@ -73,7 +69,7 @@ private extension ListView {
     func executeCommitAndPush() {
         commit()
         let branch = Defaults.shared.branchName
-        let cd = shell.cd(folder: projectFolder)
+        let cd = shell.cd(folder: Defaults.shared.projectFolder)
         let checkout = shell.gitCheckout(branch: branch)
         let add = shell.gitAdd(file: jiraWorkflowStatusPathComponent)
         let commit = shell.gitCommit(message: gitMessage)

@@ -25,6 +25,9 @@ struct Tools: View {
                                 isSelected: $shell)
                 }
                 Section("Wizard") {
+                    Button("Erease data", role: .destructive) {
+                        Defaults.shared.reset()
+                    }
                     Button("Show wizard") {
                         Defaults.shared.showWizard = true
                     }

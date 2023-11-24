@@ -83,34 +83,12 @@ struct Wizard: View {
                             }
                         }
                         
-                        switch currentStep.kind {
-                        case .projectFolder:
-                            do {
-                                if try ProjectFolder.containsGitRepo() {
-                                    errorText = ""
-                                    goToNextStep()
-                                } else {
-                                    errorText = "The folder does not contain a git repo!"
-                                    isNextButtonDisabled = true
-                                }
-                            } catch {
-                                errorText = error.localizedDescription
-                                isNextButtonDisabled = true
-                            }
-                        case .jira:
-                            do {
-                                if try JiraFolder.areCredentialsPresent() {
-                                    errorText = ""
-                                    goToNextStep()
-                                } else {
-                                    errorText = "The folder does not contain a formatted credentials file"
-                                    isNextButtonDisabled = true
-                                }
-                            } catch {
-                                errorText = error.localizedDescription
-                                isNextButtonDisabled = true
-                            }
-                        case .completed:
+                        let error = currentStep.kind.error
+                        errorText = error
+                        
+                        if !error.isEmpty {
+                            isNextButtonDisabled = true
+                        } else {
                             goToNextStep()
                         }
                     } label: {
@@ -179,8 +157,14 @@ extension Wizard {
             switch current {
             case .projectFolder:
                 ProjectFolderItem(errorText: $errorText)
+            case .git:
+                GitItem(errorText: $errorText)
+            case .firebase:
+                FirebaseItem(errorText: $errorText)
             case .jira:
                 JiraItem(errorText: $errorText)
+            case .slack:
+                SlackItem(errorText: $errorText)
             case .completed:
                 CompletedItem()
             }
@@ -204,6 +188,64 @@ extension Wizard {
                 
                 Text(errorText)
                     .foregroundStyle(.red)
+            }
+        }
+    }
+    
+    struct GitItem: View {
+        
+        @State private var isChecked = false
+        
+        @Binding var errorText: String
+        
+        @Default(\.useGit) private var useGit: Bool
+      
+        var body: some View {
+            VStack(spacing: 20) {
+                Toggle(isOn: $isChecked) {
+                    Text("Enable Git")
+                }
+                .toggleStyle(.checkbox)
+                
+                Text("If you wish to use Git, inside the project folder must be inited git.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
+                
+            }.onAppear {
+                isChecked = useGit
+            }.onChange(of: isChecked) { newValue in
+                useGit = isChecked
+            }
+        }
+    }
+    
+    struct FirebaseItem: View {
+        
+        @State private var isChecked = false
+        
+        @Binding var errorText: String
+        
+        @Default(\.useFirebase) private var useFirebase: Bool
+      
+        var body: some View {
+            VStack(spacing: 20) {
+                Toggle(isOn: $isChecked) {
+                    Text("Enable Firebase")
+                }
+                .toggleStyle(.checkbox)
+                
+                Text("If you wish to use Firebase, inside the fastlane folder there must be a 'google-creds.json' file filled with the Firebase project data.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
+                
+            }.onAppear {
+                isChecked = useFirebase
+            }.onChange(of: isChecked) { newValue in
+                useFirebase = isChecked
             }
         }
     }
@@ -232,10 +274,13 @@ extension Wizard {
                 Text("If you wish to make release notes from Jira, please fill the folder where the credentials are stored. Must not be empty.")
                     .opacity(isChecked ? 1 : 0.5)
                 
-                Text("Inside the folder must be a file named '\(credentialsPathComponent)' of this structure\n\nUSERNAME=\"JIRA_USERNAME\" \nTOKEN=\"JIRA_TOKEN\"\n\nPlease replace JIRA_USERNAME and JIRA_TOKEN with your credentials")
+                Text("Inside this folder there must be a file named '\(credentialsPathComponent)' of this structure\n\nUSERNAME=\"JIRA_USERNAME\" \nTOKEN=\"JIRA_TOKEN\"\n\nPlease replace JIRA_USERNAME and JIRA_TOKEN with your credentials!")
                     .opacity(isChecked ? 1 : 0.5)
                 
-                Text("You can configure the status of the ticket to show inside release note from the Jira tools tab.")
+                Text("Inside the 'fastlane/.jira' project folder there must be a host file of this structure\n\nURL=\"JIRA_URL\" \nPROJECT=\"JIRA_PROJECT_NAME\"\n\nPlease replace JIRA_URL and JIRA_PROJECT_NAME with valid value!")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text("You can configure the status of the ticket to show inside release note from the Jira tab later.")
                     .opacity(isChecked ? 1 : 0.5)
                 
                 Text(errorText)
@@ -245,6 +290,35 @@ extension Wizard {
                 isChecked = useJira
             }.onChange(of: isChecked) { newValue in
                 useJira = isChecked
+            }
+        }
+    }
+    
+    struct SlackItem: View {
+        
+        @State private var isChecked = false
+        
+        @Binding var errorText: String
+        
+        @Default(\.useSlack) private var useSlack: Bool
+        
+        var body: some View {
+            VStack(spacing: 20) {
+                Toggle(isOn: $isChecked) {
+                    Text("Enable Slack")
+                }
+                .toggleStyle(.checkbox)
+                
+                Text("If you wish to notify Slack about build results, please fill up '.slack_token' file with your Slack token. This file must be stored inside 'fastlane' project folder.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
+                
+            }.onAppear {
+                isChecked = useSlack
+            }.onChange(of: isChecked) { newValue in
+                useSlack = isChecked
             }
         }
     }
@@ -284,13 +358,23 @@ extension Wizard {
                 state.$isDone
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
+            case .git(let state):
+                state.$isDone
+                    .assign(to: \.isDone, on: self)
+                    .store(in: &bag)
+            case .firebase(let state):
+                state.$isDone
+                    .assign(to: \.isDone, on: self)
+                    .store(in: &bag)
             case .jira(let state):
                 state.$isDone
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
-                break
-                
-            case .completed:
+            case .slack(let state):
+                state.$isDone
+                    .assign(to: \.isDone, on: self)
+                    .store(in: &bag)
+              case .completed:
                 break
             }
         }
@@ -300,17 +384,26 @@ extension Wizard {
 extension Wizard.Step {
     enum Kind {
         case projectFolder(ProjectFolderStepState)
+        case git(GitFolderStepState)
+        case firebase(FirebaseFolderStepState)
         case jira(JiraFolderStepState)
+        case slack(SlackStepState)
         case completed
         
         var index: Int {
             switch self {
             case .projectFolder:
                 return 0
-            case .jira:
+            case .git:
                 return 1
-            case .completed:
+            case .firebase:
                 return 2
+            case .jira:
+                return 3
+            case .slack:
+                return 4
+            case .completed:
+                return 5
             }
         }
         
@@ -323,8 +416,14 @@ extension Wizard.Step {
             case 0:
                 self = .projectFolder(ProjectFolderStepState())
             case 1:
-                self = .jira(JiraFolderStepState())
+                self = .git(GitFolderStepState())
             case 2:
+                self = .firebase(FirebaseFolderStepState())
+            case 3:
+                self = .jira(JiraFolderStepState())
+            case 4:
+                self = .slack(SlackStepState())
+            case 5:
                 self = .completed
             default:
                 return nil
@@ -352,7 +451,72 @@ extension Wizard.Step.Kind: Identifiable {
 }
 
 extension Wizard.Step.Kind: CaseIterable {
-    static let allCases: [Wizard.Step.Kind] = [.projectFolder(ProjectFolderStepState()), .jira(JiraFolderStepState()), .completed]
+    static let allCases: [Wizard.Step.Kind] = [
+        .projectFolder(ProjectFolderStepState()),
+        .git(GitFolderStepState()),
+        .firebase(FirebaseFolderStepState()),
+        .jira(JiraFolderStepState()),
+        .slack(SlackStepState()),
+        .completed]
+}
+
+extension Wizard.Step.Kind {
+    var error: String {
+        switch self {
+        case .projectFolder:
+            do {
+                if try ProjectFolder.containsProjectFile() {
+                    return ""
+                } else {
+                    return "The folder does not contain a xcodeproj file!"
+                }
+            } catch {
+                return error.localizedDescription
+            }
+        case .git:
+            do {
+                if try GitFolder.validate() {
+                    return ""
+                } else {
+                    return "The folder does not contain a git repo inited!"
+                }
+            } catch {
+                return error.localizedDescription
+            }
+        case .firebase:
+            do {
+                if try FirebaseFolder.validate() {
+                    return ""
+                } else {
+                    return "The 'fastlane 'folder does not contain a google credentials file!"
+                }
+            } catch {
+                return error.localizedDescription
+            }
+        case .jira:
+            do {
+                if try JiraFolder.validate() {
+                    return ""
+                } else {
+                    return "The folder does not contain a formatted credentials file"
+                }
+            } catch {
+                return error.localizedDescription
+            }
+        case .slack:
+            do {
+                if try SlackFolder.validate() {
+                    return ""
+                } else {
+                    return "The folder does not contain a formatted credentials file"
+                }
+            } catch {
+                return error.localizedDescription
+            }
+        case .completed:
+            return ""
+        }
+    }
 }
 
 extension Wizard.Step: ObservableObject {}
@@ -401,7 +565,7 @@ final class ProjectFolderStepState: ObservableObject {
     
     init() {
         
-        isDone = ProjectFolder.validate()
+        isDone = ProjectFolder.validatePath()
         
         Defaults.shared.objectWillChange.map {
             Defaults.shared.projectFolder
@@ -415,6 +579,64 @@ final class ProjectFolderStepState: ObservableObject {
     }
 }
 
+final class GitFolderStepState: ObservableObject {
+    
+    @Published var isDone = false
+    
+    private var bag = [AnyCancellable]()
+    
+    init() {
+        
+        isDone = GitFolder.validateEnabledPath()
+        
+        let isEnabled = Defaults.shared.objectWillChange.map {
+            Defaults.shared.useGit
+        }
+            .removeDuplicates()
+            .filter { $0 }
+        
+        let isPathValid = Defaults.shared.objectWillChange.map {
+            Defaults.shared.projectFolder
+        }
+            .removeDuplicates()
+            .map { $0 != "" }
+            .filter { $0 }
+        
+        isEnabled.merge(with: isPathValid)
+            .assign(to: \.isDone, on: self)
+            .store(in: &bag)
+    }
+}
+
+final class FirebaseFolderStepState: ObservableObject {
+    
+    @Published var isDone = false
+    
+    private var bag = [AnyCancellable]()
+    
+    init() {
+        
+        isDone = FirebaseFolder.validateEnabledPath()
+        
+        let isEnabled = Defaults.shared.objectWillChange.map {
+            Defaults.shared.useFirebase
+        }
+            .removeDuplicates()
+            .filter { $0 }
+        
+        let isPathValid = Defaults.shared.objectWillChange.map {
+            Defaults.shared.projectFolder
+        }
+            .removeDuplicates()
+            .map { $0 != "" }
+            .filter { $0 }
+        
+        isEnabled.merge(with: isPathValid)
+            .assign(to: \.isDone, on: self)
+            .store(in: &bag)
+    }
+}
+
 final class JiraFolderStepState: ObservableObject {
     
     @Published var isDone = false
@@ -423,7 +645,7 @@ final class JiraFolderStepState: ObservableObject {
     
     init() {
         
-        isDone = JiraFolder.validate()
+        isDone = JiraFolder.validateEnabledPath()
         
         let isEnabled = Defaults.shared.objectWillChange.map {
             Defaults.shared.useJira
@@ -433,6 +655,35 @@ final class JiraFolderStepState: ObservableObject {
         
         let isPathValid = Defaults.shared.objectWillChange.map {
             Defaults.shared.jiraCredentialsFolder
+        }
+            .removeDuplicates()
+            .map { $0 != "" }
+            .filter { $0 }
+        
+        isEnabled.merge(with: isPathValid)
+            .assign(to: \.isDone, on: self)
+            .store(in: &bag)
+    }
+}
+
+final class SlackStepState: ObservableObject {
+    
+    @Published var isDone = false
+    
+    private var bag = [AnyCancellable]()
+    
+    init() {
+        
+        isDone = SlackFolder.validateEnabledPath()
+        
+        let isEnabled = Defaults.shared.objectWillChange.map {
+            Defaults.shared.useSlack
+        }
+            .removeDuplicates()
+            .filter { $0 }
+        
+        let isPathValid = Defaults.shared.objectWillChange.map {
+            Defaults.shared.projectFolder
         }
             .removeDuplicates()
             .map { $0 != "" }
@@ -466,22 +717,72 @@ private final class StepCompleted: ObservableObject {
             .store(in: &bag)
         
         $count
-            .map { $0 == 2 }
+            .map { $0 == (Wizard.Step.Kind.allCases.count - 1) }
             .assign(to: \.isCompleted, on: self)
             .store(in: &bag)
         
-        count = [ProjectFolder.validate(),
-                 JiraFolder.validate()].filter { $0 }.count
+        count = validate().filter { $0 }.count
+    }
+    
+    func validate() -> [Bool] {
+        Wizard.Step.Kind.allCases.compactMap {
+            switch $0 {
+            case .projectFolder:
+                return (try? ProjectFolder.validate()) ?? false
+            case .git:
+                return (try? GitFolder.validate()) ?? false
+            case .firebase:
+                return (try? FirebaseFolder.validate()) ?? false
+            case .jira:
+                return (try? JiraFolder.validate()) ?? false
+            case .slack:
+                return (try? SlackFolder.validate()) ?? false
+            case .completed:
+                return nil
+            }
+        }
     }
 }
 
 private enum ProjectFolder {
-    static func validate() -> Bool {
+    
+    static func validate() throws -> Bool {
+        try validatePath() && containsProjectFile()
+    }
+    
+    static func validatePath() -> Bool {
         isValid(Defaults.shared.projectFolder)
     }
     
     static func isValid(_ string: String) -> Bool {
         string != ""
+    }
+    
+    static func containsProjectFile() throws -> Bool {
+        let path = Defaults.shared.projectFolder
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0.hasSuffix(".xcodeproj") }
+    }
+}
+
+private enum GitFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.useGit else {
+            return true
+        }
+        return try validatePath() && containsGitRepo()
+    }
+    
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useGit else {
+            return true
+        }
+        return ProjectFolder.validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        ProjectFolder.validatePath()
     }
     
     static func containsGitRepo() throws -> Bool {
@@ -490,12 +791,80 @@ private enum ProjectFolder {
     }
 }
 
+private enum FirebaseFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.useFirebase else {
+            return true
+        }
+        return try validatePath() && containsGoogleCredentials()
+    }
+    
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useFirebase else {
+            return true
+        }
+        return validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        ProjectFolder.validatePath()
+    }
+    
+    static func containsGoogleCredentials() throws -> Bool {
+        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "google-creds.json" }
+    }
+}
+
+private enum SlackFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.useSlack else {
+            return true
+        }
+        return try validatePath() && containsCredentials()
+    }
+    
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useSlack else {
+            return true
+        }
+        return validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        ProjectFolder.validatePath()
+    }
+    
+    static func containsCredentials() throws -> Bool {
+        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == ".slack_token" }
+    }
+}
+
+
 private enum JiraFolder {
-    static func validate() -> Bool {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.useJira else {
+            return true
+        }
+        
+        return try validatePath() && areCredentialsPresent()
+    }
+    
+    static func validateEnabledPath() -> Bool {
         guard Defaults.shared.useJira else {
             return true
         }
         return Defaults.shared.jiraCredentialsFolder != ""
+    }
+    
+    private static func validatePath() -> Bool {
+        Defaults.shared.jiraCredentialsFolder != ""
     }
     
     static func areCredentialsPresent() throws -> Bool {
