@@ -17,6 +17,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let pushOnGit: Bool
     let uploadToFirebase: Bool
     let useCrashlytics: Bool
+    let useDynatrace: Bool
     let notifySlack: Bool
     let makeReleaseNotesFromJira: Bool
     
@@ -76,6 +77,10 @@ struct FastlaneDeployArguments: FastlaneArguments {
         useCrashlytics ? nil : "use_crashlytics:\(useCrashlytics)"
     }
     
+    private var useDynatraceArg: String? {
+        useDynatrace ? nil : "use_dynatrace:\(useDynatrace)"
+    }
+    
     private var notifySlackArg: String? {
         notifySlack ? nil : "use_slack:\(notifySlack)"
     }
@@ -95,6 +100,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
             pushOnGitArg,
             uploadToFirebaseArg,
             useCrashlyticsArg,
+            useDynatraceArg,
             notifySlackArg,
             makeReleaseNotesFromJiraArg
         ].compactMap{ $0 }

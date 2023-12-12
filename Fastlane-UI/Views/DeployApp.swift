@@ -24,13 +24,16 @@ struct DeployApp: View {
     @Default(\.testers) private var testers: String
     @State private var releaseNotes = ""
     
+    @Default(\.useDynatrace) private var useDynatrace: Bool
+    @Default(\.uploadDsymToDynatrace) private var uploadDsymToDynatrace: Bool
+    
     @Default(\.useJira) private var useJira: Bool
+    @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
     
     @Default(\.useSlack) private var useSlack: Bool
     @Default(\.notifySlack) private var notifySlack: Bool
     
-    @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
-    @Default(\.schema) private var selectedScheme: String
+    @Default(\.scheme) private var selectedScheme: String
     
     @State private var result = ""
     
@@ -91,6 +94,11 @@ struct DeployApp: View {
                         Toggle(" Use Crashlytics", isOn: $useCrashlytics)
                     }
                 }
+                
+                if useDynatrace {
+                    Toggle(" Upload dsym to Dynatrace", isOn: $uploadDsymToDynatrace)
+                }
+                
                 if useSlack {
                     Toggle(" Notify Slack", isOn: $notifySlack)
                 }
@@ -158,6 +166,9 @@ struct DeployApp: View {
         .onChange(of: useCrashlytics) { _ in
             update()
         }
+        .onChange(of: uploadDsymToDynatrace) { _ in
+            update()
+        }
         .onChange(of: notifySlack) { _ in
             update()
         }
@@ -176,7 +187,7 @@ extension DeployApp {
         let schemes: [String]
         
         var body: some View {
-            Picker("Schema:", selection: $selectedScheme) {
+            Picker("Scheme:", selection: $selectedScheme) {
                 ForEach(schemes, id: \.self) {
                     Text($0).tag($0)
                 }
@@ -215,6 +226,7 @@ private extension DeployApp {
             pushOnGit: pushOnGit,
             uploadToFirebase: uploadToFirebase, 
             useCrashlytics: useCrashlytics,
+            useDynatrace: uploadDsymToDynatrace,
             notifySlack: notifySlack,
             makeReleaseNotesFromJira: makeReleaseNotesFromJira
         )

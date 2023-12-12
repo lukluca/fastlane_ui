@@ -10,7 +10,7 @@ import Combine
 
 struct Wizard: View {
     
-    @ObservedObject private var currentStep : Step = .initial
+    @ObservedObject private var currentStep: Step = .initial
     
     @State private var isBackButtonDisabled = true
     @State private var isNextButtonDisabled = true
@@ -31,9 +31,9 @@ struct Wizard: View {
             ScrollView{
                 HStack(spacing: 0){
                     ForEach(Step.Kind.allCases) {
-                        StepCircleView(text: "\($0.index + 1)",
+                        StepCircleView(text: "\($0.rawValue + 1)",
                                        isLast: $0.isLast,
-                                       isDone: ($0.isLast && stepCompleted.isCompleted) ? true : $0.index < stepCompleted.count )
+                                       isDone: ($0.isLast && stepCompleted.isCompleted) ? true : $0.rawValue < stepCompleted.count )
                     }
                 }
             }
@@ -47,7 +47,7 @@ struct Wizard: View {
             HStack(spacing: 30) {
                 
                 Button {
-                    if let kind = Step.Kind(index: currentStep.rawValue - 1) {
+                    if let kind = Step.Kind(rawValue: currentStep.kind.rawValue - 1) {
                         currentStep.kind = kind
                     } else {
                         isBackButtonDisabled = true
@@ -76,7 +76,7 @@ struct Wizard: View {
                         
                         func goToNextStep() {
                             isBackButtonDisabled = false
-                            if let kind = Step.Kind(index: currentStep.rawValue + 1) {
+                            if let kind = Step.Kind(rawValue: currentStep.kind.rawValue + 1) {
                                 currentStep.kind = kind
                             } else {
                                 isNextButtonDisabled = true
@@ -102,13 +102,15 @@ struct Wizard: View {
                 }
             }
             .onAppear {
+                currentStep.setInitialIfNeeded()
+                
                 isNextButtonDisabled = !currentStep.isDone
-                isBackButtonDisabled = currentStep.rawValue == 0
+                isBackButtonDisabled = currentStep.kind.rawValue == 0
                 isCompleted = stepCompleted.isCompleted
             }.onChange(of: currentStep.kind) { newValue in
                 errorText = ""
-                isBackButtonDisabled = newValue.index == 0
-                isNextButtonDisabled = newValue.index == (Step.Kind.allCases.count - 1)
+                isBackButtonDisabled = newValue.rawValue == 0
+                isNextButtonDisabled = newValue.rawValue == (Step.Kind.allCases.count - 1)
             }
             .onReceive(currentStep.$isDone) { value in
                 isNextButtonDisabled = !value
@@ -122,10 +124,10 @@ struct Wizard: View {
 
 extension Wizard {
     struct StepCircleView: View {
+        
         let text: String
         let isLast: Bool
         let isDone: Bool
-        
         
         var body: some View {
             HStack(alignment: .center, spacing: 0) {
@@ -161,6 +163,8 @@ extension Wizard {
                 GitItem(errorText: $errorText)
             case .firebase:
                 FirebaseItem(errorText: $errorText)
+            case .dynatrace:
+                DynatraceItem(errorText: $errorText)
             case .jira:
                 JiraItem(errorText: $errorText)
             case .slack:
@@ -246,6 +250,35 @@ extension Wizard {
                 isChecked = useFirebase
             }.onChange(of: isChecked) { newValue in
                 useFirebase = isChecked
+            }
+        }
+    }
+    
+    struct DynatraceItem: View {
+        
+        @State private var isChecked = false
+        
+        @Binding var errorText: String
+        
+        @Default(\.useDynatrace) private var useDynatrace: Bool
+      
+        var body: some View {
+            VStack(spacing: 20) {
+                Toggle(isOn: $isChecked) {
+                    Text("Enable Dynatrace")
+                }
+                .toggleStyle(.checkbox)
+                
+                Text("If you wish to use Dynatrace, inside the .dynatrace subfolder of fastlane folder there must be a 'config' file filled with the Dynatrace project data.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
+                
+            }.onAppear {
+                isChecked = useDynatrace
+            }.onChange(of: isChecked) { newValue in
+                useDynatrace = isChecked
             }
         }
     }
@@ -337,10 +370,13 @@ extension Wizard {
         
         @Published var isDone = false
         
+        private var state: Any?
+        
         private var bag = [AnyCancellable]()
     
         @Published var kind: Kind {
             didSet {
+                state = nil
                 bag.removeAll()
                 bindIsDone()
             }
@@ -352,28 +388,53 @@ extension Wizard {
             bindIsDone()
         }
         
+        func setInitialIfNeeded() {
+            let initial = Kind.projectFolder
+            guard kind != initial else {
+                return
+            }
+            
+            kind = initial
+        }
+        
         private func bindIsDone() {
             switch kind {
-            case .projectFolder(let state):
+            case .projectFolder:
+                let state = ProjectFolderStepState()
                 state.$isDone
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
-            case .git(let state):
+                self.state = state
+            case .git:
+                let state = GitFolderStepState()
                 state.$isDone
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
-            case .firebase(let state):
+                self.state = state
+            case .firebase:
+                let state = FirebaseFolderStepState()
                 state.$isDone
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
-            case .jira(let state):
+                self.state = state
+            case .dynatrace:
+                let state = DynatraceFolderStepState()
                 state.$isDone
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
-            case .slack(let state):
+                self.state = state
+            case .jira:
+                let state = JiraFolderStepState()
                 state.$isDone
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
+                self.state = state
+            case .slack:
+                let state = SlackStepState()
+                state.$isDone
+                    .assign(to: \.isDone, on: self)
+                    .store(in: &bag)
+                self.state = state
               case .completed:
                 break
             }
@@ -382,83 +443,30 @@ extension Wizard {
 }
 
 extension Wizard.Step {
-    enum Kind {
-        case projectFolder(ProjectFolderStepState)
-        case git(GitFolderStepState)
-        case firebase(FirebaseFolderStepState)
-        case jira(JiraFolderStepState)
-        case slack(SlackStepState)
+    enum Kind: Int {
+        case projectFolder = 0
+        case git
+        case firebase
+        case dynatrace
+        case jira
+        case slack
         case completed
-        
-        var index: Int {
-            switch self {
-            case .projectFolder:
-                return 0
-            case .git:
-                return 1
-            case .firebase:
-                return 2
-            case .jira:
-                return 3
-            case .slack:
-                return 4
-            case .completed:
-                return 5
-            }
-        }
         
         var isLast: Bool {
             self == .completed
         }
-        
-        init?(index: Int) {
-            switch index {
-            case 0:
-                self = .projectFolder(ProjectFolderStepState())
-            case 1:
-                self = .git(GitFolderStepState())
-            case 2:
-                self = .firebase(FirebaseFolderStepState())
-            case 3:
-                self = .jira(JiraFolderStepState())
-            case 4:
-                self = .slack(SlackStepState())
-            case 5:
-                self = .completed
-            default:
-                return nil
-            }
-        }
     }
 }
 
-extension Wizard.Step.Kind: Equatable {
-    static func == (lhs: Wizard.Step.Kind, rhs: Wizard.Step.Kind) -> Bool {
-        lhs.index == rhs.index
-    }
-}
-
-extension Wizard.Step.Kind: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(index)
-    }
-}
+extension Wizard.Step.Kind: Hashable {}
 
 extension Wizard.Step.Kind: Identifiable {
     var id: Int {
-        index
+        rawValue
     }
 }
 
-extension Wizard.Step.Kind: CaseIterable {
-    static let allCases: [Wizard.Step.Kind] = [
-        .projectFolder(ProjectFolderStepState()),
-        .git(GitFolderStepState()),
-        .firebase(FirebaseFolderStepState()),
-        .jira(JiraFolderStepState()),
-        .slack(SlackStepState()),
-        .completed]
-}
+extension Wizard.Step.Kind: CaseIterable {}
 
 extension Wizard.Step.Kind {
     var error: String {
@@ -493,6 +501,16 @@ extension Wizard.Step.Kind {
             } catch {
                 return error.localizedDescription
             }
+        case .dynatrace:
+            do {
+                if try DynatraceFolder.validate() {
+                    return ""
+                } else {
+                    return "The '.dynatrace 'folder does not contain a config file!"
+                }
+            } catch {
+                return error.localizedDescription
+            }
         case .jira:
             do {
                 if try JiraFolder.validate() {
@@ -522,21 +540,7 @@ extension Wizard.Step.Kind {
 extension Wizard.Step: ObservableObject {}
 
 extension Wizard.Step {
-    static let initial = Wizard.Step(kind: .projectFolder(ProjectFolderStepState()))
-}
-
-extension Wizard.Step: RawRepresentable {
-    
-    var rawValue: Int {
-        kind.index
-    }
-    
-    convenience init?(rawValue: Int) {
-        guard let kind = Kind(index: rawValue) else {
-            return nil
-        }
-        self.init(kind: kind)
-    }
+    static let initial = Wizard.Step(kind: .projectFolder)
 }
 
 extension Wizard.Step: Equatable {
@@ -620,6 +624,35 @@ final class FirebaseFolderStepState: ObservableObject {
         
         let isEnabled = Defaults.shared.objectWillChange.map {
             Defaults.shared.useFirebase
+        }
+            .removeDuplicates()
+            .filter { $0 }
+        
+        let isPathValid = Defaults.shared.objectWillChange.map {
+            Defaults.shared.projectFolder
+        }
+            .removeDuplicates()
+            .map { $0 != "" }
+            .filter { $0 }
+        
+        isEnabled.merge(with: isPathValid)
+            .assign(to: \.isDone, on: self)
+            .store(in: &bag)
+    }
+}
+
+final class DynatraceFolderStepState: ObservableObject {
+    
+    @Published var isDone = false
+    
+    private var bag = [AnyCancellable]()
+    
+    init() {
+        
+        isDone = DynatraceFolder.validateEnabledPath()
+        
+        let isEnabled = Defaults.shared.objectWillChange.map {
+            Defaults.shared.useDynatrace
         }
             .removeDuplicates()
             .filter { $0 }
@@ -733,6 +766,8 @@ private final class StepCompleted: ObservableObject {
                 return (try? GitFolder.validate()) ?? false
             case .firebase:
                 return (try? FirebaseFolder.validate()) ?? false
+            case .dynatrace:
+                return (try? DynatraceFolder.validate()) ?? false
             case .jira:
                 return (try? JiraFolder.validate()) ?? false
             case .slack:
@@ -815,6 +850,32 @@ private enum FirebaseFolder {
     static func containsGoogleCredentials() throws -> Bool {
         let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent
         return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "google-creds.json" }
+    }
+}
+
+private enum DynatraceFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.useDynatrace else {
+            return true
+        }
+        return try validatePath() && containsConfig()
+    }
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useDynatrace else {
+            return true
+        }
+        return validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        ProjectFolder.validatePath()
+    }
+    
+    static func containsConfig() throws -> Bool {
+        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".dynatrace"
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
     }
 }
 

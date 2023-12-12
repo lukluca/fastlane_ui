@@ -13,7 +13,7 @@ class Defaults: ObservableObject {
         case showWizard
         //project
         case projectFolder
-        case schema
+        case scheme
         case versionNumber
         case buildNumber
         //git
@@ -28,6 +28,9 @@ class Defaults: ObservableObject {
         case uploadToFirebase
         case testers
         case useCrashlytics
+        //dynatrace
+        case useDynatrace
+        case uploadDsymToDynatrace
         //slack
         case useSlack
         case notifySlack
@@ -43,7 +46,7 @@ class Defaults: ObservableObject {
     @AppStorage(.showWizard) var showWizard = true
     //project
     @AppStorage(.projectFolder) var projectFolder = ""
-    @AppStorage(.schema) var schema = ""
+    @AppStorage(.scheme) var scheme = ""
     @AppStorage(.versionNumber) var versionNumber = ""
     @AppStorage(.buildNumber) var buildNumber = 0
     //git
@@ -58,6 +61,9 @@ class Defaults: ObservableObject {
     @AppStorage(.uploadToFirebase) var uploadToFirebase = false
     @AppStorage(.testers) var testers = ""
     @AppStorage(.useCrashlytics) var useCrashlytics = false
+    //dynatrace
+    @AppStorage(.useDynatrace) var useDynatrace = false
+    @AppStorage(.uploadDsymToDynatrace) var uploadDsymToDynatrace = false
     //slack
     @AppStorage(.useSlack) var useSlack = false
     @AppStorage(.notifySlack) var notifySlack = false
@@ -75,7 +81,7 @@ class Defaults: ObservableObject {
         showWizard = true
         //project
         projectFolder = ""
-        schema = ""
+        scheme = ""
         versionNumber = ""
         buildNumber = 0
         //git
@@ -90,6 +96,9 @@ class Defaults: ObservableObject {
         uploadToFirebase = false
         testers = ""
         useCrashlytics = false
+        //dynatrace
+        useDynatrace = false
+        uploadDsymToDynatrace = false
         //slack
         useSlack = false
         notifySlack = false
