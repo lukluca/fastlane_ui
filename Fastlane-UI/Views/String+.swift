@@ -15,13 +15,12 @@ extension String {
         let first = String(dropFirst(key.count + 1))
         
         if first.starts(with: "\"") {
-            let removed = String(dropFirst())
+            let removed = String(first.dropFirst())
             
             if removed.last == "\"" {
                 return String(removed.dropLast(1))
-            } else {
-                return removed
             }
+            return removed
         }
         
         return first
