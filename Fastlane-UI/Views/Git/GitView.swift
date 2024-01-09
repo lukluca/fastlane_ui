@@ -13,6 +13,7 @@ struct GitView: View {
     @Default(\.mainFolder) private var mainFolder: String
     @Default(\.remoteURL) private var remoteURL: String
     @Default(\.cloneFromRemote) private var cloneFromRemote: Bool
+    @Default(\.useGitFlow) private var useGitFlow: Bool
     
     var body: some View {
         VStack(spacing: 30) {
@@ -26,11 +27,13 @@ struct GitView: View {
                         Text("Git remote url")
                         TextField("Enter your git remote url", text: $remoteURL)
                     }
-                    
                 }
                 
                 VStack(alignment: .leading, spacing: 10) {
                     Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
+                    if pushOnGit {
+                        Toggle(" Use GitFlow", isOn: $useGitFlow)
+                    }
                     Toggle(" Clone git from remote", isOn: $cloneFromRemote)
                 }
             }

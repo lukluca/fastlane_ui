@@ -23,6 +23,7 @@ class Defaults: ObservableObject {
         case cloneFromRemote
         case mainFolder
         case remoteURL
+        case useGitFlow
         //firebase
         case useFirebase
         case uploadToFirebase
@@ -56,6 +57,7 @@ class Defaults: ObservableObject {
     @AppStorage(.cloneFromRemote) var cloneFromRemote = false
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
+    @AppStorage(.useGitFlow) var useGitFlow = false
     //firebase
     @AppStorage(.useFirebase) var useFirebase = false
     @AppStorage(.uploadToFirebase) var uploadToFirebase = false
@@ -91,6 +93,7 @@ class Defaults: ObservableObject {
         cloneFromRemote = false
         mainFolder = ""
         remoteURL = ""
+        useGitFlow = false
         //firebase
         useFirebase = false
         uploadToFirebase = false

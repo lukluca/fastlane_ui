@@ -21,6 +21,8 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let notifySlack: Bool
     let makeReleaseNotesFromJira: Bool
     
+    let defaultParameters = DefaultParameters()
+    
     private var envArg: String {
         let jsonPath = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".env_mapping.json"
        
@@ -48,7 +50,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     }
     
     private var branchNameArg: String {
-        "branch_name:\(branchName)"
+        "branch_name:\\\"\(branchName)\\\""
     }
     
     private var testersArg: String? {
@@ -62,31 +64,49 @@ struct FastlaneDeployArguments: FastlaneArguments {
         guard !releaseNotes.isEmpty else {
             return nil
         }
-        return "release_notes:\(releaseNotes)"
+        return "release_notes:\\\"\(releaseNotes)\\\""
     }
     
     private var pushOnGitArg: String? {
-        pushOnGit ? nil : "push_on_git:\(pushOnGit)"
+        guard pushOnGit != defaultParameters.pushOnGit else {
+            return nil
+        }
+        return "push_on_git:\(pushOnGit)"
     }
     
     private var uploadToFirebaseArg: String? {
-        uploadToFirebase ? nil : "upload_to_firebase:\(uploadToFirebase)"
+        guard uploadToFirebase != defaultParameters.uploadToFirebase else {
+            return nil
+        }
+        return "upload_to_firebase:\(uploadToFirebase)"
     }
     
     private var useCrashlyticsArg: String? {
-        useCrashlytics ? nil : "use_crashlytics:\(useCrashlytics)"
+        guard useCrashlytics != defaultParameters.useCrashlytics else {
+            return nil
+        }
+        return "use_crashlytics:\(useCrashlytics)"
     }
     
     private var useDynatraceArg: String? {
-        useDynatrace ? nil : "use_dynatrace:\(useDynatrace)"
+        guard useDynatrace != defaultParameters.useDynatrace else {
+            return nil
+        }
+        return "use_dynatrace:\(useDynatrace)"
     }
     
     private var notifySlackArg: String? {
-        notifySlack ? nil : "use_slack:\(notifySlack)"
+        guard notifySlack != defaultParameters.useSlack else {
+            return nil
+        }
+        return "use_slack:\(notifySlack)"
     }
     
     private var makeReleaseNotesFromJiraArg: String? {
-        !makeReleaseNotesFromJira ? nil : "use_jira:\(makeReleaseNotesFromJira)"
+        guard makeReleaseNotesFromJira != defaultParameters.useJira else {
+            return nil
+        }
+        return "use_jira:\(makeReleaseNotesFromJira)"
     }
     
     var toArray: [String] {
@@ -120,5 +140,94 @@ private struct EnvMapping: Decodable {
     enum CodingKeys: String, CodingKey {
         case scheme
         case envName = "env_name"
+    }
+}
+
+extension FastlaneDeployArguments {
+    struct DefaultParameters {
+        
+        let pushOnGit: Bool
+        let useGitFlow: Bool
+        let uploadToFirebase: Bool
+        let useCrashlytics: Bool
+        let useDynatrace: Bool
+        let useSlack: Bool
+        let useJira: Bool
+        
+        init() {
+            let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".default_parameters"
+            
+            let values = (try? String.contentsOfFileSeparatedByNewLine(path: path)) ?? []
+            
+            var pushOnGit: Bool?
+            var useGitFlow: Bool?
+            var uploadToFirebase: Bool?
+            var useCrashlytics: Bool?
+            var useDynatrace: Bool?
+            var useSlack: Bool?
+            var useJira: Bool?
+            
+            func purge(value: String, parameter: Parameter) -> String? {
+                value.purge(using: parameter.key)
+            }
+            
+            values.forEach {
+                if let value = purge(value: $0, parameter: .pushOnGit) {
+                    pushOnGit = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useGitFlow) {
+                    useGitFlow = Bool(value)
+                } else if let value = purge(value: $0, parameter: .uploadToFirebase) {
+                    uploadToFirebase = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useCrashlytics) {
+                    useCrashlytics = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useDynatrace) {
+                    useDynatrace = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useSlack) {
+                    useSlack = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useJira) {
+                    useJira = Bool(value)
+                }
+            }
+            
+            self.pushOnGit = pushOnGit ?? false
+            self.useGitFlow = useGitFlow ?? false
+            self.uploadToFirebase = uploadToFirebase ?? false
+            self.useCrashlytics = useCrashlytics ?? false
+            self.useDynatrace = useDynatrace ?? false
+            self.useSlack = useSlack ?? false
+            self.useJira = useJira ?? false
+        }
+    }
+}
+
+extension FastlaneDeployArguments.DefaultParameters {
+    enum Parameter {
+        
+        case pushOnGit
+        case useGitFlow
+        case uploadToFirebase
+        case useCrashlytics
+        case useDynatrace
+        case useSlack
+        case useJira
+        
+        var key: String {
+            switch self {
+            case .pushOnGit:
+                "PUSH_ON_GIT"
+            case .useGitFlow:
+                "USE_GIT_FLOW"
+            case .uploadToFirebase:
+                "UPLOAD_TO_FIREBASE"
+            case .useCrashlytics:
+                "USE_CRASHLYTICS"
+            case .useDynatrace:
+                "USE_DYNATRACE"
+            case .useSlack:
+                "USE_SLACK"
+            case .useJira:
+                "USE_JIRA"
+            }
+        }
     }
 }

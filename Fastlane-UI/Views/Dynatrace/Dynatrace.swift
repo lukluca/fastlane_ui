@@ -105,19 +105,14 @@ extension Dynatrace {
         
         func readFromFile() throws -> Configuration? {
             let path = Defaults.shared.projectFolder + "/" + dynatracePathComponent + "/config"
-            let values = try String(contentsOfFile: path).components(separatedBy: "\n")
+            let values = try String.contentsOfFileSeparatedByNewLine(path: path)
             
             var appId: String?
             var server: String?
             var apiToken: String?
             
             func purge(value: String, config: Dynatrace.Config) -> String? {
-                let key = config.key
-                guard value.starts(with: key) else {
-                    return nil
-                }
-                let first = String(value.dropFirst(key.count + 2))
-                return String(first.dropLast(1))
+                value.purge(using: config.key)
             }
             
             values.forEach {

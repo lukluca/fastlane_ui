@@ -40,6 +40,7 @@
 		4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A998F7C2ABAF1F400601FF4 /* Firebase.swift */; };
 		4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9BDEA72AB07CDD006B9688 /* RM.swift */; };
 		4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */; };
+		4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C062B4DB4B300F69A0F /* String+.swift */; };
 		4ACC352F2AB87A8A00DC013E /* Jira.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC352E2AB87A8A00DC013E /* Jira.swift */; };
 		4ACC35332AB87D9200DC013E /* JiraTiketsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */; };
 		4AD59B732B11002A0089A549 /* GitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD59B722B11002A0089A549 /* GitView.swift */; };
@@ -101,6 +102,7 @@
 		4A998F7C2ABAF1F400601FF4 /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
 		4A9BDEA72AB07CDD006B9688 /* RM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RM.swift; sourceTree = "<group>"; };
 		4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynatrace.swift; sourceTree = "<group>"; };
+		4AC20C062B4DB4B300F69A0F /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		4ACC352E2AB87A8A00DC013E /* Jira.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jira.swift; sourceTree = "<group>"; };
 		4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraTiketsStatus.swift; sourceTree = "<group>"; };
 		4AD59B722B11002A0089A549 /* GitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitView.swift; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 				4A7F6C042AA8D3FB000FE841 /* Tools.swift */,
 				4A3767852AAA298500880FBA /* View+.swift */,
 				4A17F45B2AD31B5F006094FA /* Sequence+.swift */,
+				4AC20C062B4DB4B300F69A0F /* String+.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -472,6 +475,7 @@
 				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
 				4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */,
 				4A3767862AAA298500880FBA /* View+.swift in Sources */,
+				4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */,
 				4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */,
 				4A51832C2B051AFD0080355F /* Wizard.swift in Sources */,
 				4AD59B732B11002A0089A549 /* GitView.swift in Sources */,

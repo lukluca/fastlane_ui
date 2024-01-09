@@ -17,6 +17,7 @@ struct DeployApp: View {
     @Default(\.useGit) private var useGit: Bool
     @Default(\.branchName) private var branchName: String
     @Default(\.pushOnGit) private var pushOnGit: Bool
+    @Default(\.useGitFlow) private var useGitFlow: Bool
     
     @Default(\.useFirebase) private var useFirebase: Bool
     @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
@@ -87,6 +88,9 @@ struct DeployApp: View {
             VStack(alignment: .leading, spacing: 10) {
                 if useGit {
                     Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
+                    if pushOnGit {
+                        Toggle(" Use GitFlow", isOn: $useGitFlow)
+                    }
                 }
                 if useFirebase {
                     Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
