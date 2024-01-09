@@ -29,3 +29,7 @@ var firebaseTestersPathComponent: String {
 var jiraWorkflowStatusPathComponent: String {
     jiraPathComponent + "/" + "workflow_status"
 }
+
+var dynatracePathComponent: String {
+    fastlanePathComponent + "/" + ".dynatrace"
+}

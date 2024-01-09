@@ -13,6 +13,7 @@ enum Segment: String, CaseIterable {
     case firebase = "Firebase"
     case jira = "Jira"
     case slack = "Slack"
+    case dynatrace = "Dynatrace"
     case tools = "Tools"
     
     static var allCases: [Segment] {
@@ -30,6 +31,9 @@ enum Segment: String, CaseIterable {
         }
         if defaults.useSlack {
             cases.append(.slack)
+        }
+        if defaults.useDynatrace {
+            cases.append(.dynatrace)
         }
         
         cases.append(.tools)
@@ -89,6 +93,8 @@ struct SegmentView: View {
             Jira()
         case .slack:
             Slack()
+        case .dynatrace:
+            Dynatrace()
         case .tools:
             Tools()
         }

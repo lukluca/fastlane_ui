@@ -874,7 +874,7 @@ private enum DynatraceFolder {
     }
     
     static func containsConfig() throws -> Bool {
-        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".dynatrace"
+        let path = Defaults.shared.projectFolder + "/" + dynatracePathComponent
         return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
     }
 }

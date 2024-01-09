@@ -39,6 +39,7 @@
 		4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */; };
 		4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A998F7C2ABAF1F400601FF4 /* Firebase.swift */; };
 		4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9BDEA72AB07CDD006B9688 /* RM.swift */; };
+		4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */; };
 		4ACC352F2AB87A8A00DC013E /* Jira.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC352E2AB87A8A00DC013E /* Jira.swift */; };
 		4ACC35332AB87D9200DC013E /* JiraTiketsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */; };
 		4AD59B732B11002A0089A549 /* GitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD59B722B11002A0089A549 /* GitView.swift */; };
@@ -99,6 +100,7 @@
 		4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultValues.swift; sourceTree = "<group>"; };
 		4A998F7C2ABAF1F400601FF4 /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
 		4A9BDEA72AB07CDD006B9688 /* RM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RM.swift; sourceTree = "<group>"; };
+		4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynatrace.swift; sourceTree = "<group>"; };
 		4ACC352E2AB87A8A00DC013E /* Jira.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jira.swift; sourceTree = "<group>"; };
 		4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraTiketsStatus.swift; sourceTree = "<group>"; };
 		4AD59B722B11002A0089A549 /* GitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitView.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 		4A7F6BE12AA71EB9000FE841 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4AC20C032B4D6E5400F69A0F /* Dynatrace */,
 				4AD59B762B1119230089A549 /* Slack */,
 				4AD59B712B11001E0089A549 /* Git */,
 				4A51832A2B0504440080355F /* Wizard */,
@@ -286,6 +289,14 @@
 				4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */,
 			);
 			path = Storage;
+			sourceTree = "<group>";
+		};
+		4AC20C032B4D6E5400F69A0F /* Dynatrace */ = {
+			isa = PBXGroup;
+			children = (
+				4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */,
+			);
+			path = Dynatrace;
 			sourceTree = "<group>";
 		};
 		4ACC352D2AB87A0100DC013E /* Jira */ = {
@@ -475,6 +486,7 @@
 				4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */,
 				4AD59B782B1119360089A549 /* Slack.swift in Sources */,
 				4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */,
+				4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */,
 				4ACC352F2AB87A8A00DC013E /* Jira.swift in Sources */,
 				4A17F45A2AD31705006094FA /* TextFieldRow.swift in Sources */,
 				4AD59B752B11093A0089A549 /* FirebaseTesters.swift in Sources */,

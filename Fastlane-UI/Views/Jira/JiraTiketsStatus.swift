@@ -48,14 +48,12 @@ extension Jira.TiketsStatus: TextFieldRowsGetter {
 
 private class TicketStatus {
     
-    @Default(\.projectFolder) private var projectFolder: String
-    
     private(set) var current = [String]()
     
     private let separator = ", "
     
     private var path: String {
-        projectFolder + "/" + jiraWorkflowStatusPathComponent
+        Defaults.shared.projectFolder + "/" + jiraWorkflowStatusPathComponent
     }
     
     init() {
