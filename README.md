@@ -1,5 +1,7 @@
 # fastlane_ui
-GUI for Fastlane tool
+GUI for Fastlane tool. 
+
+This App is intended to use only for deployng a Xcode project 
 
 TODO list
 
