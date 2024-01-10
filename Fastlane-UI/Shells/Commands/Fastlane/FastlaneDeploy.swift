@@ -24,21 +24,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let defaultParameters = DefaultParameters()
     
     private var envArg: String {
-        let jsonPath = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".env_mapping.json"
-       
-        guard let data = try? Data(contentsOf: URL(filePath: jsonPath)) else {
-            return "--env " + scheme
-        }
-        
-        let mapping = try? JSONDecoder().decode([EnvMapping].self, from: data)
-
-        let mapped = mapping?.first {
-            $0.scheme == scheme
-        }
-        
-        let env = mapped?.envName ?? scheme
-        
-        return "--env " + env
+        "--env " + scheme.asEnvironment
     }
     
     private var versionNumberArg: String {
@@ -130,16 +116,6 @@ struct FastlaneDeployArguments: FastlaneArguments {
 extension CommandExecuting {
     func fastlaneDeploy(arguments: FastlaneDeployArguments) throws -> String {
         try fastlane(command: .deploy, arguments: arguments)
-    }
-}
-
-private struct EnvMapping: Decodable {
-    let scheme: String
-    let envName: String
-    
-    enum CodingKeys: String, CodingKey {
-        case scheme
-        case envName = "env_name"
     }
 }
 

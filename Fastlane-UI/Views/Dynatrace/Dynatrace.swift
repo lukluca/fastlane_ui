@@ -53,7 +53,7 @@ extension Dynatrace {
         
         var body: some View {
             HStack {
-                Text(config.title)
+                Text(config.title + ":")
                 
                 TextField("",
                           text: $text)
