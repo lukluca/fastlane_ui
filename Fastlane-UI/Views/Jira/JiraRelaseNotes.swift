@@ -95,7 +95,7 @@ private extension Jira.RelaseNotes {
     
     func executeResetCredentials() -> String {
     
-        let commands = [cdProjectFolder(), gitRestore()]
+        let commands = [cdProjectFolder(), gitRestoreJira()]
     
         return runBundleScript(with: commands)
     }
@@ -109,7 +109,7 @@ private extension Jira.RelaseNotes {
                         cpCredentials(credentialsFolder: credentialsFolder,
                                        projectFolder: projectFolder),
                         makeFastlaneCommand(),
-                        gitRestore()]
+                        gitRestoreJira()]
         
         return runBundleScript(with: commands)
     }
