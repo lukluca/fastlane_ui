@@ -15,6 +15,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let testers: String
     let releaseNotes: String
     let pushOnGit: Bool
+    let useBitbucket: Bool
     let uploadToFirebase: Bool
     let useCrashlytics: Bool
     let useDynatrace: Bool
@@ -58,6 +59,13 @@ struct FastlaneDeployArguments: FastlaneArguments {
             return nil
         }
         return "push_on_git:\(pushOnGit)"
+    }
+    
+    private var useBitbucketArg: String? {
+        guard useBitbucket != defaultParameters.useBitbucket else {
+            return nil
+        }
+        return "use_bitbucket:\(useBitbucket)"
     }
     
     private var uploadToFirebaseArg: String? {
@@ -104,6 +112,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
             testersArg,
             relaseNotesArg,
             pushOnGitArg,
+            useBitbucketArg,
             uploadToFirebaseArg,
             useCrashlyticsArg,
             useDynatraceArg,
@@ -124,6 +133,7 @@ extension FastlaneDeployArguments {
         
         let pushOnGit: Bool
         let useGitFlow: Bool
+        let useBitbucket: Bool
         let uploadToFirebase: Bool
         let useCrashlytics: Bool
         let useDynatrace: Bool
@@ -137,6 +147,7 @@ extension FastlaneDeployArguments {
             
             var pushOnGit: Bool?
             var useGitFlow: Bool?
+            var useBitbucket: Bool?
             var uploadToFirebase: Bool?
             var useCrashlytics: Bool?
             var useDynatrace: Bool?
@@ -152,6 +163,8 @@ extension FastlaneDeployArguments {
                     pushOnGit = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useGitFlow) {
                     useGitFlow = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useBitbucket) {
+                    useBitbucket = Bool(value)
                 } else if let value = purge(value: $0, parameter: .uploadToFirebase) {
                     uploadToFirebase = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useCrashlytics) {
@@ -167,6 +180,7 @@ extension FastlaneDeployArguments {
             
             self.pushOnGit = pushOnGit ?? false
             self.useGitFlow = useGitFlow ?? false
+            self.useBitbucket = useBitbucket ?? false
             self.uploadToFirebase = uploadToFirebase ?? false
             self.useCrashlytics = useCrashlytics ?? false
             self.useDynatrace = useDynatrace ?? false
@@ -181,6 +195,7 @@ extension FastlaneDeployArguments.DefaultParameters {
         
         case pushOnGit
         case useGitFlow
+        case useBitbucket
         case uploadToFirebase
         case useCrashlytics
         case useDynatrace
@@ -193,6 +208,8 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "PUSH_ON_GIT"
             case .useGitFlow:
                 "USE_GIT_FLOW"
+            case .useBitbucket:
+                "USE_BITBUCKET"
             case .uploadToFirebase:
                 "UPLOAD_TO_FIREBASE"
             case .useCrashlytics:

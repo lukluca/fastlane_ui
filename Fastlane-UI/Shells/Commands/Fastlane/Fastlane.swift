@@ -66,7 +66,11 @@ extension FastlaneWorkflow {
                  to: projectFolder + "/" + jiraPathComponent)
     }
     
-    func gitRestore() -> String {
+    func gitRestoreJira() -> String {
         shell.gitRestore(file: jiraPathComponent + "/" + credentialsPathComponent)
+    }
+    
+    func gitRestoreBitbucket() -> String {
+        shell.gitRestore(file: bitbucketPathComponent + "/" + credentialsPathComponent)
     }
 }

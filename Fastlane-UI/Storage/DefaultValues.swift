@@ -14,6 +14,10 @@ let gitPathComponent = ".git"
 
 let fastlanePathComponent = "fastlane"
 
+var bitbucketPathComponent: String {
+    fastlanePathComponent + "/" + ".bitbucket"
+}
+
 var jiraPathComponent: String {
     fastlanePathComponent + "/" + ".jira"
 }

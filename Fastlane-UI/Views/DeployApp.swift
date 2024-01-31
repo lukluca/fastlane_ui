@@ -19,6 +19,8 @@ struct DeployApp: View {
     @Default(\.pushOnGit) private var pushOnGit: Bool
     @Default(\.useGitFlow) private var useGitFlow: Bool
     
+    @Default(\.useBitbucket) private var useBitbucket: Bool
+    
     @Default(\.useFirebase) private var useFirebase: Bool
     @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
     @Default(\.useCrashlytics) private var useCrashlytics: Bool
@@ -229,7 +231,8 @@ private extension DeployApp {
             testers: testers,
             releaseNotes: releaseNotes,
             pushOnGit: pushOnGit,
-            uploadToFirebase: uploadToFirebase, 
+            useBitbucket: useBitbucket,
+            uploadToFirebase: uploadToFirebase,
             useCrashlytics: useCrashlytics,
             useDynatrace: uploadDsymToDynatrace,
             notifySlack: notifySlack,
@@ -261,16 +264,24 @@ private extension DeployApp {
             firstStep = [shell.cd(folder: folder)]
         }
         
-        let commands: [String]
+        var commands = firstStep
+        if useBitbucket {
+            commands.append(cpCredentials(credentialsFolder: Defaults.shared.bitbucketCredentialsFolder,
+                                          projectFolder: folder))
+        }
         if makeReleaseNotesFromJira {
-            commands = firstStep +
-            [cpCredentials(credentialsFolder: Defaults.shared.jiraCredentialsFolder,
-                                       projectFolder: folder),
-                        deploy(),
-                        gitRestore()]
-        } else {
-            commands = firstStep +
-                        [deploy()]
+            commands.append(cpCredentials(credentialsFolder: Defaults.shared.jiraCredentialsFolder,
+                                          projectFolder: folder))
+        }
+        
+        commands.append(deploy())
+            
+        if useBitbucket {
+            commands.append(gitRestoreBitbucket())
+        }
+        
+        if makeReleaseNotesFromJira {
+            commands.append(gitRestoreJira())
         }
         
         return runBundleScript(with: commands)
