@@ -24,6 +24,9 @@ class Defaults: ObservableObject {
         case mainFolder
         case remoteURL
         case useGitFlow
+        //bitbucket
+        case useBitbucket
+        case bitbucketCredentialsFolder
         //firebase
         case useFirebase
         case uploadToFirebase
@@ -58,6 +61,9 @@ class Defaults: ObservableObject {
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
     @AppStorage(.useGitFlow) var useGitFlow = false
+    //bitbucket
+    @AppStorage(.useBitbucket) var useBitbucket = false
+    @AppStorage(.bitbucketCredentialsFolder) var bitbucketCredentialsFolder = ""
     //firebase
     @AppStorage(.useFirebase) var useFirebase = false
     @AppStorage(.uploadToFirebase) var uploadToFirebase = false
@@ -94,6 +100,9 @@ class Defaults: ObservableObject {
         mainFolder = ""
         remoteURL = ""
         useGitFlow = false
+        bitbucketCredentialsFolder = ""
+        //bitbucket
+        useBitbucket = false
         //firebase
         useFirebase = false
         uploadToFirebase = false

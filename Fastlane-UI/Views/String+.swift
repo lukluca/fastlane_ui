@@ -45,6 +45,13 @@ extension String {
         
         return mapped?.envName ?? self
     }
+    
+    var replace: String {
+        let defaults = Defaults.shared
+        let version = replacingOccurrences(of: "{VERSION_NUMBER}", with: defaults.versionNumber)
+        let build = version.replacingOccurrences(of: "{BUILD_NUMBER}", with: "\(defaults.buildNumber)")
+        return build.replacingOccurrences(of: "{ENV}", with: defaults.scheme.asEnvironment)
+    }
 }
 
 private struct EnvMapping: Decodable {

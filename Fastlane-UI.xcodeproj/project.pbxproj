@@ -46,6 +46,7 @@
 		4AD59B732B11002A0089A549 /* GitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD59B722B11002A0089A549 /* GitView.swift */; };
 		4AD59B752B11093A0089A549 /* FirebaseTesters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD59B742B11093A0089A549 /* FirebaseTesters.swift */; };
 		4AD59B782B1119360089A549 /* Slack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD59B772B1119360089A549 /* Slack.swift */; };
+		4AE8645F2B6A611200C5846D /* BitbucketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE8645E2B6A611200C5846D /* BitbucketView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +109,7 @@
 		4AD59B722B11002A0089A549 /* GitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitView.swift; sourceTree = "<group>"; };
 		4AD59B742B11093A0089A549 /* FirebaseTesters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseTesters.swift; sourceTree = "<group>"; };
 		4AD59B772B1119360089A549 /* Slack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slack.swift; sourceTree = "<group>"; };
+		4AE8645E2B6A611200C5846D /* BitbucketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitbucketView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,19 +217,20 @@
 		4A7F6BE12AA71EB9000FE841 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				4AC20C032B4D6E5400F69A0F /* Dynatrace */,
-				4AD59B762B1119230089A549 /* Slack */,
-				4AD59B712B11001E0089A549 /* Git */,
-				4A51832A2B0504440080355F /* Wizard */,
-				4A17F4582AD31457006094FA /* Firebase */,
-				4ACC352D2AB87A0100DC013E /* Jira */,
+				4AE8645D2B6A60C400C5846D /* Bitbucket */,
 				4A7F6BFD2AA77552000FE841 /* Common */,
 				4A51E7302A6AC03600813308 /* ContentView.swift */,
 				4A7F6BDB2AA62497000FE841 /* DeployApp.swift */,
+				4AC20C032B4D6E5400F69A0F /* Dynatrace */,
+				4A17F4582AD31457006094FA /* Firebase */,
+				4AD59B712B11001E0089A549 /* Git */,
+				4ACC352D2AB87A0100DC013E /* Jira */,
+				4A17F45B2AD31B5F006094FA /* Sequence+.swift */,
+				4AD59B762B1119230089A549 /* Slack */,
+				4AC20C062B4DB4B300F69A0F /* String+.swift */,
 				4A7F6C042AA8D3FB000FE841 /* Tools.swift */,
 				4A3767852AAA298500880FBA /* View+.swift */,
-				4A17F45B2AD31B5F006094FA /* Sequence+.swift */,
-				4AC20C062B4DB4B300F69A0F /* String+.swift */,
+				4A51832A2B0504440080355F /* Wizard */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -326,6 +329,14 @@
 				4AD59B772B1119360089A549 /* Slack.swift */,
 			);
 			path = Slack;
+			sourceTree = "<group>";
+		};
+		4AE8645D2B6A60C400C5846D /* Bitbucket */ = {
+			isa = PBXGroup;
+			children = (
+				4AE8645E2B6A611200C5846D /* BitbucketView.swift */,
+			);
+			path = Bitbucket;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -474,6 +485,7 @@
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
 				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
 				4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */,
+				4AE8645F2B6A611200C5846D /* BitbucketView.swift in Sources */,
 				4A3767862AAA298500880FBA /* View+.swift in Sources */,
 				4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */,
 				4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */,

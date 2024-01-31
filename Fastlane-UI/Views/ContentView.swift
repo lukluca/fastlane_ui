@@ -10,6 +10,7 @@ import SwiftUI
 enum Segment: String, CaseIterable {
     case deployApp = "Deploy App"
     case git = "Git"
+    case bitbucket = "Bitbucket"
     case firebase = "Firebase"
     case jira = "Jira"
     case slack = "Slack"
@@ -22,6 +23,9 @@ enum Segment: String, CaseIterable {
         let defaults = Defaults.shared
         if defaults.useGit {
             cases.append(.git)
+        }
+        if defaults.useBitbucket {
+            cases.append(.bitbucket)
         }
         if defaults.useFirebase {
             cases.append(.firebase)
@@ -87,6 +91,8 @@ struct SegmentView: View {
             DeployApp()
         case .git:
             GitView()
+        case .bitbucket:
+            BitbucketView()
         case .firebase:
             Firebase()
         case .jira:

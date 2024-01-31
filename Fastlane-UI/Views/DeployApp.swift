@@ -88,9 +88,7 @@ struct DeployApp: View {
             VStack(alignment: .leading, spacing: 10) {
                 if useGit {
                     Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
-                    if pushOnGit {
-                        Toggle(" Use GitFlow", isOn: $useGitFlow)
-                    }
+                    Toggle(" Use GitFlow", isOn: $useGitFlow)
                 }
                 if useFirebase {
                     Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
@@ -162,6 +160,9 @@ struct DeployApp: View {
             update()
         }
         .onChange(of: pushOnGit) { _ in
+            update()
+        }
+        .onChange(of: useGitFlow) { _ in
             update()
         }
         .onChange(of: uploadToFirebase) { _ in

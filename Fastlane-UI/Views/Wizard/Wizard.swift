@@ -8,6 +8,10 @@
 import SwiftUI
 import Combine
 
+private let USERNAME = "USERNAME"
+private let TOKEN = "TOKEN"
+private let TOKEN_PR_W = "TOKEN_PR_W"
+
 struct Wizard: View {
     
     @ObservedObject private var currentStep: Step = .initial
@@ -161,6 +165,8 @@ extension Wizard {
                 ProjectFolderItem(errorText: $errorText)
             case .git:
                 GitItem(errorText: $errorText)
+            case .bitbucket:
+                BitbucketItem(errorText: $errorText)
             case .firebase:
                 FirebaseItem(errorText: $errorText)
             case .dynatrace:
@@ -220,7 +226,58 @@ extension Wizard {
             }.onAppear {
                 isChecked = useGit
             }.onChange(of: isChecked) { newValue in
-                useGit = isChecked
+                useGit = newValue
+            }
+        }
+    }
+    
+    struct BitbucketItem: View {
+        
+        @State private var isChecked = false
+        
+        @Binding var errorText: String
+        
+        @Default(\.useBitbucket) private var useBitbucket: Bool
+        @Default(\.bitbucketCredentialsFolder) private var bitbucketCredentialsFolder: String
+      
+        var body: some View {
+            VStack(spacing: 20) {
+                Toggle(isOn: $isChecked) {
+                    Text("Enable Bitbucket")
+                }
+                .toggleStyle(.checkbox)
+                
+                BitbucketCredentialsFoldetView(credentialsFolder: $bitbucketCredentialsFolder)
+                    .opacity(isChecked ? 1 : 0.5)
+                    .allowsHitTesting(isChecked)
+                    .padding(.horizontal, 20)
+                
+                Text("If you wish to manage pull request using Bitbucket, please fill the folder where the credentials are stored. Must not be empty.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text("Inside this folder there must be a file named '\(credentialsPathComponent)' of this structure\n\n\(USERNAME)=\"BITBUCKET_USERNAME\" \n\(TOKEN_PR_W)=\"BITBUCKET_TOKEN\"\n\nPlease replace BITBUCKET_USERNAME and BITBUCKET_TOKEN with your credentials!")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text("""
+                     Inside the 'fastlane/.bitbucket' project folder there must be a 'config' file of this structure\n\nCOMPANY_HOST_NAME=\"YOUR_COMPANY\"\n
+                     REPOSITORY_NAME=\"YOUR_REPO\"\n
+                     TITLE=\"YOUR_TITLE"\n
+                     DESCRIPTION=\"YOUR_DESCRIPTION"\n
+                     SOURCE_BRANCH=\"YOUR_SOURCE"\n
+                     DESTINATION_BRANCH=\"YOUR_DESTINATION"\n\nPlease replace values with valid one!
+                    """)
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text("You can configure Bitbucket from the Bitbucket tab later.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
+                
+            }.onAppear {
+                isChecked = useBitbucket
+            }.onChange(of: isChecked) { newValue in
+                useBitbucket = newValue
             }
         }
     }
@@ -249,7 +306,7 @@ extension Wizard {
             }.onAppear {
                 isChecked = useFirebase
             }.onChange(of: isChecked) { newValue in
-                useFirebase = isChecked
+                useFirebase = newValue
             }
         }
     }
@@ -278,7 +335,7 @@ extension Wizard {
             }.onAppear {
                 isChecked = useDynatrace
             }.onChange(of: isChecked) { newValue in
-                useDynatrace = isChecked
+                useDynatrace = newValue
             }
         }
     }
@@ -307,10 +364,10 @@ extension Wizard {
                 Text("If you wish to make release notes from Jira, please fill the folder where the credentials are stored. Must not be empty.")
                     .opacity(isChecked ? 1 : 0.5)
                 
-                Text("Inside this folder there must be a file named '\(credentialsPathComponent)' of this structure\n\nUSERNAME=\"JIRA_USERNAME\" \nTOKEN=\"JIRA_TOKEN\"\n\nPlease replace JIRA_USERNAME and JIRA_TOKEN with your credentials!")
+                Text("Inside this folder there must be a file named '\(credentialsPathComponent)' of this structure\n\n\(USERNAME)=\"JIRA_USERNAME\" \n\(TOKEN)=\"JIRA_TOKEN\"\n\nPlease replace JIRA_USERNAME and JIRA_TOKEN with your credentials!")
                     .opacity(isChecked ? 1 : 0.5)
                 
-                Text("Inside the 'fastlane/.jira' project folder there must be a host file of this structure\n\nURL=\"JIRA_URL\" \nPROJECT=\"JIRA_PROJECT_NAME\"\n\nPlease replace JIRA_URL and JIRA_PROJECT_NAME with valid value!")
+                Text("Inside the 'fastlane/.jira' project folder there must be a 'host' file of this structure\n\nURL=\"JIRA_URL\" \nPROJECT=\"JIRA_PROJECT_NAME\"\n\nPlease replace JIRA_URL and JIRA_PROJECT_NAME with valid value!")
                     .opacity(isChecked ? 1 : 0.5)
                 
                 Text("You can configure the status of the ticket to show inside release note from the Jira tab later.")
@@ -322,7 +379,7 @@ extension Wizard {
             }.onAppear {
                 isChecked = useJira
             }.onChange(of: isChecked) { newValue in
-                useJira = isChecked
+                useJira = newValue
             }
         }
     }
@@ -351,7 +408,7 @@ extension Wizard {
             }.onAppear {
                 isChecked = useSlack
             }.onChange(of: isChecked) { newValue in
-                useSlack = isChecked
+                useSlack = newValue
             }
         }
     }
@@ -411,6 +468,12 @@ extension Wizard {
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
                 self.state = state
+            case .bitbucket:
+                let state = BitbucketFolderStepState()
+                state.$isDone
+                    .assign(to: \.isDone, on: self)
+                    .store(in: &bag)
+                self.state = state
             case .firebase:
                 let state = FirebaseFolderStepState()
                 state.$isDone
@@ -446,6 +509,7 @@ extension Wizard.Step {
     enum Kind: Int {
         case projectFolder = 0
         case git
+        case bitbucket
         case firebase
         case dynatrace
         case jira
@@ -491,6 +555,17 @@ extension Wizard.Step.Kind {
             } catch {
                 return error.localizedDescription
             }
+        case .bitbucket:
+            do {
+                if try BitbucketFolder.validate() {
+                    return ""
+                } else {
+                    return "The folder does not contain a formatted credentials file!"
+                }
+            } catch {
+                return error.localizedDescription
+            }
+            
         case .firebase:
             do {
                 if try FirebaseFolder.validate() {
@@ -516,7 +591,7 @@ extension Wizard.Step.Kind {
                 if try JiraFolder.validate() {
                     return ""
                 } else {
-                    return "The folder does not contain a formatted credentials file"
+                    return "The folder does not contain a formatted credentials file!"
                 }
             } catch {
                 return error.localizedDescription
@@ -526,7 +601,7 @@ extension Wizard.Step.Kind {
                 if try SlackFolder.validate() {
                     return ""
                 } else {
-                    return "The folder does not contain a formatted credentials file"
+                    return "The folder does not contain a formatted credentials file!"
                 }
             } catch {
                 return error.localizedDescription
@@ -601,6 +676,35 @@ final class GitFolderStepState: ObservableObject {
         
         let isPathValid = Defaults.shared.objectWillChange.map {
             Defaults.shared.projectFolder
+        }
+            .removeDuplicates()
+            .map { $0 != "" }
+            .filter { $0 }
+        
+        isEnabled.merge(with: isPathValid)
+            .assign(to: \.isDone, on: self)
+            .store(in: &bag)
+    }
+}
+
+final class BitbucketFolderStepState: ObservableObject {
+    
+    @Published var isDone = false
+    
+    private var bag = [AnyCancellable]()
+    
+    init() {
+        
+        isDone = BitbucketFolder.validateEnabledPath()
+        
+        let isEnabled = Defaults.shared.objectWillChange.map {
+            Defaults.shared.useBitbucket
+        }
+            .removeDuplicates()
+            .filter { $0 }
+        
+        let isPathValid = Defaults.shared.objectWillChange.map {
+            Defaults.shared.bitbucketCredentialsFolder
         }
             .removeDuplicates()
             .map { $0 != "" }
@@ -737,12 +841,16 @@ private final class StepCompleted: ObservableObject {
     private var bag = [AnyCancellable]()
     
     private let project = ProjectFolderStepState()
+    private let bitbucket = BitbucketFolderStepState()
     private let jira = JiraFolderStepState()
+    private let firebase = FirebaseFolderStepState()
     
     init() {
         
         project.$isDone
+            .merge(with: bitbucket.$isDone)
             .merge(with: jira.$isDone)
+            .merge(with: firebase.$isDone)
             .filter { $0 }
             .count()
             .removeDuplicates()
@@ -764,6 +872,8 @@ private final class StepCompleted: ObservableObject {
                 return (try? ProjectFolder.validate()) ?? false
             case .git:
                 return (try? GitFolder.validate()) ?? false
+            case .bitbucket:
+                return (try? BitbucketFolder.validate()) ?? false
             case .firebase:
                 return (try? FirebaseFolder.validate()) ?? false
             case .dynatrace:
@@ -823,6 +933,62 @@ private enum GitFolder {
     static func containsGitRepo() throws -> Bool {
         let path = Defaults.shared.projectFolder
         return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == gitPathComponent }
+    }
+}
+
+private enum BitbucketFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.useBitbucket else {
+            return true
+        }
+        
+        return try validatePath() && areCredentialsPresent()
+    }
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useBitbucket else {
+            return true
+        }
+        return validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        Defaults.shared.bitbucketCredentialsFolder != ""
+    }
+    
+    static func areCredentialsPresent() throws -> Bool {
+        let path = Defaults.shared.bitbucketCredentialsFolder
+    
+        let values = try String(contentsOfFile: path + "/" + credentialsPathComponent).split(separator: "\n")
+        
+        if values.count >= 2 {
+            let first = values[0]
+            
+            let usernameKey = "\(USERNAME)="
+            
+            if first.starts(with: usernameKey) {
+                
+                let tail = first.replacingOccurrences(of: usernameKey, with: "")
+                
+                if tail.count > 2 {
+                    let second = values[1]
+                    
+                    let tokenKey = "\(TOKEN_PR_W)="
+                    
+                    if second.starts(with: tokenKey) {
+                        
+                        let tail = second.replacingOccurrences(of: tokenKey, with: "")
+                        
+                        if tail.count > 2 {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false
     }
 }
 
@@ -901,8 +1067,8 @@ private enum SlackFolder {
     }
     
     static func containsCredentials() throws -> Bool {
-        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent
-        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == ".slack_token" }
+        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/.slack"
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
     }
 }
 
@@ -936,16 +1102,20 @@ private enum JiraFolder {
         if values.count >= 2 {
             let first = values[0]
             
-            if first.starts(with: "USERNAME=") {
+            let usernameKey = "\(USERNAME)="
+            
+            if first.starts(with: "\(USERNAME)=") {
                 
-                let tail = first.replacingOccurrences(of: "USERNAME=", with: "")
+                let tail = first.replacingOccurrences(of: usernameKey, with: "")
                 
                 if tail.count > 2 {
                     let second = values[1]
                     
-                    if second.starts(with: "TOKEN=") {
+                    let tokenKey = "\(TOKEN)="
+                    
+                    if second.starts(with: tokenKey) {
                         
-                        let tail = second.replacingOccurrences(of: "TOKEN=", with: "")
+                        let tail = second.replacingOccurrences(of: tokenKey, with: "")
                         
                         if tail.count > 2 {
                             return true

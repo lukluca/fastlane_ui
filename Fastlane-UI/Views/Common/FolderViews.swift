@@ -29,6 +29,17 @@ struct ProjectFolderView: View {
     }
 }
 
+struct BitbucketCredentialsFoldetView: View {
+    
+    @Binding var credentialsFolder: String
+    
+    var body: some View {
+        ChooseFolderView(title: "Bitbucket credentials folder",
+                         placeholder: "Enter your bitbucket credentials folder",
+                         folder: $credentialsFolder)
+    }
+}
+
 struct JiraCredentialsFoldetView: View {
     
     @Binding var credentialsFolder: String

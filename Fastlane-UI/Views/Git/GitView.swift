@@ -22,7 +22,7 @@ struct GitView: View {
             
             VStack(spacing: 10) {
                 
-                if pushOnGit {
+                if pushOnGit || useGitFlow {
                     ForEach(GitView.Config.allCases) {
                         ConfigItem(config: $0, configuration: manager.current)
                     }
@@ -39,9 +39,7 @@ struct GitView: View {
                 
                 VStack(alignment: .leading, spacing: 10) {
                     Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
-                    if pushOnGit {
-                        Toggle(" Use GitFlow", isOn: $useGitFlow)
-                    }
+                    Toggle(" Use GitFlow", isOn: $useGitFlow)
                     Toggle(" Clone git from remote", isOn: $cloneFromRemote)
                 }
                 .padding(.top, 5)
@@ -196,13 +194,3 @@ extension GitView.Config: Identifiable {
 }
 
 extension GitView.Config: CaseIterable {}
-
-private extension String {
-    
-    var replace: String {
-        let defaults = Defaults.shared
-        let version = replacingOccurrences(of: "{VERSION_NUMBER}", with: defaults.versionNumber)
-        let build = version.replacingOccurrences(of: "{BUILD_NUMBER}", with: "\(defaults.buildNumber)")
-        return build.replacingOccurrences(of: "{ENV}", with: defaults.scheme.asEnvironment)
-    }
-}
