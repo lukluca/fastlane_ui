@@ -32,6 +32,7 @@ struct DeployApp: View {
     
     @Default(\.useJira) private var useJira: Bool
     @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
+    @Default(\.debugMode) private var debugMode: Bool
     
     @Default(\.useSlack) private var useSlack: Bool
     @Default(\.notifySlack) private var notifySlack: Bool
@@ -110,6 +111,8 @@ struct DeployApp: View {
                 if useJira && useFirebase && uploadToFirebase {
                     Toggle(" Make relese notes from Jira", isOn: $makeReleaseNotesFromJira)
                 }
+                
+                Toggle(" Enable debug mode", isOn: $debugMode)
             }
             
             VStack(spacing: 10) {
@@ -148,7 +151,7 @@ struct DeployApp: View {
             
             update()
         }
-        .onChange(of: buildNumber) { newValue in
+        .onChange(of: buildNumber) { _ in
             update()
         }
         .onChange(of: branchName) { newValue in
@@ -180,6 +183,9 @@ struct DeployApp: View {
             update()
         }
         .onChange(of: makeReleaseNotesFromJira) { _ in
+            update()
+        }
+        .onChange(of: debugMode) { _ in
             update()
         }
         .padding()
@@ -236,7 +242,8 @@ private extension DeployApp {
             useCrashlytics: useCrashlytics,
             useDynatrace: uploadDsymToDynatrace,
             notifySlack: notifySlack,
-            makeReleaseNotesFromJira: makeReleaseNotesFromJira
+            makeReleaseNotesFromJira: makeReleaseNotesFromJira,
+            debugMode: debugMode
         )
     }
     
@@ -266,12 +273,10 @@ private extension DeployApp {
         
         var commands = firstStep
         if useBitbucket {
-            commands.append(cpCredentials(credentialsFolder: Defaults.shared.bitbucketCredentialsFolder,
-                                          projectFolder: folder))
+            commands.append(cpCredentialsBitbucket(projectFolder: folder))
         }
         if makeReleaseNotesFromJira {
-            commands.append(cpCredentials(credentialsFolder: Defaults.shared.jiraCredentialsFolder,
-                                          projectFolder: folder))
+            commands.append(cpCredentialsJira(projectFolder: folder))
         }
         
         commands.append(deploy())

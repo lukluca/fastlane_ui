@@ -106,8 +106,8 @@ private extension Jira.RelaseNotes {
     
     func execute() -> String {
         let commands = [cdProjectFolder(),
-                        cpCredentials(credentialsFolder: credentialsFolder,
-                                       projectFolder: projectFolder),
+                        cpCredentialsJira(credentialsFolder: credentialsFolder,
+                                          projectFolder: projectFolder),
                         makeFastlaneCommand(),
                         gitRestoreJira()]
         

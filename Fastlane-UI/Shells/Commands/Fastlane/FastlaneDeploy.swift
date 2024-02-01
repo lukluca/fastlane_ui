@@ -21,6 +21,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let useDynatrace: Bool
     let notifySlack: Bool
     let makeReleaseNotesFromJira: Bool
+    let debugMode: Bool
     
     let defaultParameters = DefaultParameters()
     
@@ -103,6 +104,13 @@ struct FastlaneDeployArguments: FastlaneArguments {
         return "use_jira:\(makeReleaseNotesFromJira)"
     }
     
+    private var debugModeArg: String? {
+        guard debugMode != defaultParameters.debugMode else {
+            return nil
+        }
+        return "debug_mode:\(debugMode)"
+    }
+    
     var toArray: [String] {
         [
             envArg,
@@ -117,7 +125,8 @@ struct FastlaneDeployArguments: FastlaneArguments {
             useCrashlyticsArg,
             useDynatraceArg,
             notifySlackArg,
-            makeReleaseNotesFromJiraArg
+            makeReleaseNotesFromJiraArg,
+            debugModeArg
         ].compactMap{ $0 }
     }
 }
@@ -139,6 +148,7 @@ extension FastlaneDeployArguments {
         let useDynatrace: Bool
         let useSlack: Bool
         let useJira: Bool
+        let debugMode: Bool
         
         init() {
             let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".default_parameters"
@@ -153,6 +163,7 @@ extension FastlaneDeployArguments {
             var useDynatrace: Bool?
             var useSlack: Bool?
             var useJira: Bool?
+            var debugMode: Bool?
             
             func purge(value: String, parameter: Parameter) -> String? {
                 value.purge(using: parameter.key)
@@ -175,6 +186,8 @@ extension FastlaneDeployArguments {
                     useSlack = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useJira) {
                     useJira = Bool(value)
+                } else if let value = purge(value: $0, parameter: .debugMode) {
+                    debugMode = Bool(value)
                 }
             }
             
@@ -186,6 +199,7 @@ extension FastlaneDeployArguments {
             self.useDynatrace = useDynatrace ?? false
             self.useSlack = useSlack ?? false
             self.useJira = useJira ?? false
+            self.debugMode = debugMode ?? false
         }
     }
 }
@@ -201,6 +215,7 @@ extension FastlaneDeployArguments.DefaultParameters {
         case useDynatrace
         case useSlack
         case useJira
+        case debugMode
         
         var key: String {
             switch self {
@@ -220,6 +235,8 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "USE_SLACK"
             case .useJira:
                 "USE_JIRA"
+            case .debugMode:
+                "DEBUG_MODE"
             }
         }
     }

@@ -61,9 +61,15 @@ protocol FastlaneWorkflow: ShellWorkflow {}
 
 extension FastlaneWorkflow {
 
-    func cpCredentials(credentialsFolder: String, projectFolder: String) -> String {
-        shell.cp(from: credentialsFolder + "/" + credentialsPathComponent,
+    func cpCredentialsJira(credentialsFolder: String = Defaults.shared.jiraCredentialsFolder,
+                           projectFolder: String) -> String {
+        shell.cp(from: credentialsFolderPath(root: credentialsFolder),
                  to: projectFolder + "/" + jiraPathComponent)
+    }
+    
+    func cpCredentialsBitbucket(projectFolder: String) -> String {
+        shell.cp(from: credentialsFolderPath(root: Defaults.shared.bitbucketCredentialsFolder),
+                 to: projectFolder + "/" + bitbucketPathComponent)
     }
     
     func gitRestoreJira() -> String {
@@ -72,5 +78,9 @@ extension FastlaneWorkflow {
     
     func gitRestoreBitbucket() -> String {
         shell.gitRestore(file: bitbucketPathComponent + "/" + credentialsPathComponent)
+    }
+    
+    private func credentialsFolderPath(root: String) -> String {
+        root + "/" + credentialsPathComponent
     }
 }
