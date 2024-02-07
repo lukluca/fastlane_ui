@@ -70,15 +70,19 @@ private extension Tools {
         FastlaneCommand.updatePlugins.fullCommand(needsSudo: needsSudo)
     }
     
+    private var cdProjectFolderCommand: String {
+        shell.cd(folder: Defaults.shared.projectFolder)
+    }
+    
     func update() -> String {
-        runBundleScript(with: [updateCommand])
+        runBundleScript(with: [cdProjectFolderCommand, updateCommand])
     }
     
     func updateAll() -> String {
-        runBundleScript(with: [updateCommand, updatePluginsCommand])
+        runBundleScript(with: [cdProjectFolderCommand, updateCommand, updatePluginsCommand])
     }
     
     func updatePlugins() -> String {
-        runBundleScript(with: [updatePluginsCommand])
+        runBundleScript(with: [cdProjectFolderCommand, updatePluginsCommand])
     }
 }
