@@ -16,7 +16,7 @@ struct Jira: View {
                     TiketsStatus()
                 }
                 Section("Release notes") {
-                    RelaseNotes()
+                    ReleaseNotes()
                 }
             }
         }

@@ -32,6 +32,7 @@ struct DeployApp: View {
     
     @Default(\.useJira) private var useJira: Bool
     @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
+    @Default(\.makeJiraRelease) private var makeJiraRelease: Bool
     @Default(\.debugMode) private var debugMode: Bool
     
     @Default(\.useSlack) private var useSlack: Bool
@@ -45,7 +46,8 @@ struct DeployApp: View {
     
     @State private var disableDeploy: Bool = false
     
-    private let gitBranches = GitBranches().values
+    @State private var gitBranches = GitBranches().values
+    
     private let schemes = Schemes().values
     
     var body: some View {
@@ -63,16 +65,15 @@ struct DeployApp: View {
                               value: $buildNumber,
                               formatter: NumberFormatter())
                     
-                    Button {
+                    Button(systemImage: "plus.circle.fill") {
                         buildNumber += 1
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
                     }
-
                 }
                 
                 if useGit {
-                    GitPicker(selectedBranch: $branchName, branches: gitBranches)
+                    GitPicker(selectedBranch: $branchName, branches: gitBranches) {
+                        gitBranches = GitBranches().values
+                    }
                 }
                 
                 if useFirebase && uploadToFirebase {
@@ -107,11 +108,14 @@ struct DeployApp: View {
                 if useSlack {
                     Toggle(" Notify Slack", isOn: $notifySlack)
                 }
-               
-                if useJira && useFirebase && uploadToFirebase {
-                    Toggle(" Make relese notes from Jira", isOn: $makeReleaseNotesFromJira)
-                }
                 
+                if useJira {
+                    if useFirebase && uploadToFirebase {
+                        Toggle(" Make release notes from Jira", isOn: $makeReleaseNotesFromJira)
+                    }
+                    Toggle(" Make Jira release", isOn: $makeJiraRelease)
+                }
+               
                 Toggle(" Enable debug mode", isOn: $debugMode)
             }
             
@@ -213,12 +217,18 @@ extension DeployApp {
         @Binding var selectedBranch: String
         
         let branches: [String]
+        let action: () -> Void
         
         var body: some View {
-            Picker("Git Branch:", selection: $selectedBranch) {
-                ForEach(branches, id: \.self) {
-                    Text($0).tag($0)
+            
+            HStack {
+                Picker("Git Branch:", selection: $selectedBranch) {
+                    ForEach(branches, id: \.self) {
+                        Text($0).tag($0)
+                    }
                 }
+                
+                Button(systemImage: "arrow.counterclockwise", action: action)
             }
         }
     }
@@ -242,7 +252,8 @@ private extension DeployApp {
             useCrashlytics: useCrashlytics,
             useDynatrace: uploadDsymToDynatrace,
             notifySlack: notifySlack,
-            makeReleaseNotesFromJira: makeReleaseNotesFromJira,
+            makeReleaseNotesFromJira: makeReleaseNotesFromJira, 
+            makeJiraRelease: makeJiraRelease,
             debugMode: debugMode
         )
     }
@@ -275,7 +286,7 @@ private extension DeployApp {
         if useBitbucket {
             commands.append(cpCredentialsBitbucket(projectFolder: folder))
         }
-        if makeReleaseNotesFromJira {
+        if makeReleaseNotesFromJira || makeJiraRelease {
             commands.append(cpCredentialsJira(projectFolder: folder))
         }
         
@@ -285,7 +296,7 @@ private extension DeployApp {
             commands.append(gitRestoreBitbucket())
         }
         
-        if makeReleaseNotesFromJira {
+        if makeReleaseNotesFromJira || makeJiraRelease {
             commands.append(gitRestoreJira())
         }
         
@@ -385,7 +396,7 @@ private struct GitBranches {
         
         self.values = values.filter {
             $0 != ".DS_Store"
-        }
+        }.sorted()
     }
 }
 

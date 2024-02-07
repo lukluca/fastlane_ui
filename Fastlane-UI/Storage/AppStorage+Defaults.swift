@@ -42,6 +42,7 @@ class Defaults: ObservableObject {
         case useJira
         case jiraCredentialsFolder
         case makeReleaseNotesFromJira
+        case makeJiraRelease
         case debugMode
         //settings
         case shell
@@ -80,6 +81,7 @@ class Defaults: ObservableObject {
     @AppStorage(.useJira) var useJira = false
     @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
     @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
+    @AppStorage(.makeJiraRelease) var makeJiraRelease = false
     @AppStorage(.debugMode) var debugMode = false
     //settings
     @AppStorage(.shell) var shell = defaultShell
@@ -120,6 +122,7 @@ class Defaults: ObservableObject {
         useJira = false
         jiraCredentialsFolder = ""
         makeReleaseNotesFromJira = false
+        makeJiraRelease = false
         debugMode = false
         //settings
         shell = defaultShell

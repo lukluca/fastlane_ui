@@ -23,7 +23,7 @@
 		4A51E7602A6AC8A000813308 /* FastlaneDeploy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */; };
 		4A51E7622A6ACAEB00813308 /* AppStorage+Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */; };
 		4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDB2AA62497000FE841 /* DeployApp.swift */; };
-		4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */; };
+		4A7F6BDE2AA71DEC000FE841 /* JiraReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDD2AA71DEC000FE841 /* JiraReleaseNotes.swift */; };
 		4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */; };
 		4A7F6BE32AA72203000FE841 /* Fastlane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BE22AA72203000FE841 /* Fastlane.swift */; };
 		4A7F6BE62AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BE52AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift */; };
@@ -41,6 +41,7 @@
 		4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9BDEA72AB07CDD006B9688 /* RM.swift */; };
 		4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */; };
 		4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C062B4DB4B300F69A0F /* String+.swift */; };
+		4ACC2D3E2B73B650002B1D9F /* Button+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC2D3D2B73B650002B1D9F /* Button+.swift */; };
 		4ACC352F2AB87A8A00DC013E /* Jira.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC352E2AB87A8A00DC013E /* Jira.swift */; };
 		4ACC35332AB87D9200DC013E /* JiraTiketsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */; };
 		4AD59B732B11002A0089A549 /* GitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD59B722B11002A0089A549 /* GitView.swift */; };
@@ -86,7 +87,7 @@
 		4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneDeploy.swift; sourceTree = "<group>"; };
 		4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppStorage+Defaults.swift"; sourceTree = "<group>"; };
 		4A7F6BDB2AA62497000FE841 /* DeployApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeployApp.swift; sourceTree = "<group>"; };
-		4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraRelaseNotes.swift; sourceTree = "<group>"; };
+		4A7F6BDD2AA71DEC000FE841 /* JiraReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraReleaseNotes.swift; sourceTree = "<group>"; };
 		4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneCommandView.swift; sourceTree = "<group>"; };
 		4A7F6BE22AA72203000FE841 /* Fastlane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane.swift; sourceTree = "<group>"; };
 		4A7F6BE52AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneGetJiraReleaseNotes.swift; sourceTree = "<group>"; };
@@ -104,6 +105,7 @@
 		4A9BDEA72AB07CDD006B9688 /* RM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RM.swift; sourceTree = "<group>"; };
 		4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynatrace.swift; sourceTree = "<group>"; };
 		4AC20C062B4DB4B300F69A0F /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
+		4ACC2D3D2B73B650002B1D9F /* Button+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+.swift"; sourceTree = "<group>"; };
 		4ACC352E2AB87A8A00DC013E /* Jira.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jira.swift; sourceTree = "<group>"; };
 		4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraTiketsStatus.swift; sourceTree = "<group>"; };
 		4AD59B722B11002A0089A549 /* GitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitView.swift; sourceTree = "<group>"; };
@@ -217,19 +219,18 @@
 		4A7F6BE12AA71EB9000FE841 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				4AE8645D2B6A60C400C5846D /* Bitbucket */,
-				4A7F6BFD2AA77552000FE841 /* Common */,
 				4A51E7302A6AC03600813308 /* ContentView.swift */,
 				4A7F6BDB2AA62497000FE841 /* DeployApp.swift */,
+				4A7F6C042AA8D3FB000FE841 /* Tools.swift */,
+				4AE8645D2B6A60C400C5846D /* Bitbucket */,
+				4A7F6BFD2AA77552000FE841 /* Common */,
 				4AC20C032B4D6E5400F69A0F /* Dynatrace */,
 				4A17F4582AD31457006094FA /* Firebase */,
+				4ACC2D3B2B73B60A002B1D9F /* Foundation+ */,
 				4AD59B712B11001E0089A549 /* Git */,
 				4ACC352D2AB87A0100DC013E /* Jira */,
-				4A17F45B2AD31B5F006094FA /* Sequence+.swift */,
 				4AD59B762B1119230089A549 /* Slack */,
-				4AC20C062B4DB4B300F69A0F /* String+.swift */,
-				4A7F6C042AA8D3FB000FE841 /* Tools.swift */,
-				4A3767852AAA298500880FBA /* View+.swift */,
+				4ACC2D3C2B73B632002B1D9F /* SwiftUI+ */,
 				4A51832A2B0504440080355F /* Wizard */,
 			);
 			path = Views;
@@ -305,11 +306,29 @@
 			path = Dynatrace;
 			sourceTree = "<group>";
 		};
+		4ACC2D3B2B73B60A002B1D9F /* Foundation+ */ = {
+			isa = PBXGroup;
+			children = (
+				4A17F45B2AD31B5F006094FA /* Sequence+.swift */,
+				4AC20C062B4DB4B300F69A0F /* String+.swift */,
+			);
+			path = "Foundation+";
+			sourceTree = "<group>";
+		};
+		4ACC2D3C2B73B632002B1D9F /* SwiftUI+ */ = {
+			isa = PBXGroup;
+			children = (
+				4ACC2D3D2B73B650002B1D9F /* Button+.swift */,
+				4A3767852AAA298500880FBA /* View+.swift */,
+			);
+			path = "SwiftUI+";
+			sourceTree = "<group>";
+		};
 		4ACC352D2AB87A0100DC013E /* Jira */ = {
 			isa = PBXGroup;
 			children = (
 				4ACC352E2AB87A8A00DC013E /* Jira.swift */,
-				4A7F6BDD2AA71DEC000FE841 /* JiraRelaseNotes.swift */,
+				4A7F6BDD2AA71DEC000FE841 /* JiraReleaseNotes.swift */,
 				4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */,
 			);
 			path = Jira;
@@ -484,7 +503,7 @@
 				4A17F45C2AD31B5F006094FA /* Sequence+.swift in Sources */,
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
 				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
-				4A7F6BDE2AA71DEC000FE841 /* JiraRelaseNotes.swift in Sources */,
+				4A7F6BDE2AA71DEC000FE841 /* JiraReleaseNotes.swift in Sources */,
 				4AE8645F2B6A611200C5846D /* BitbucketView.swift in Sources */,
 				4A3767862AAA298500880FBA /* View+.swift in Sources */,
 				4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */,
@@ -501,6 +520,7 @@
 				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,
 				4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */,
 				4AD59B782B1119360089A549 /* Slack.swift in Sources */,
+				4ACC2D3E2B73B650002B1D9F /* Button+.swift in Sources */,
 				4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */,
 				4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */,
 				4ACC352F2AB87A8A00DC013E /* Jira.swift in Sources */,

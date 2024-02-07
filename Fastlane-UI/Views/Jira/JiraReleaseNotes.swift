@@ -1,5 +1,5 @@
 //
-//  JiraRelaseNotes.swift
+//  Jira+ReleaseNotes.swift
 //  Fastlane-UI
 //
 //  Created by softwave on 05/09/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension Jira {
-    struct RelaseNotes: View {
+    struct ReleaseNotes: View {
         
         let shell = Defaults.shared.shell
         
@@ -43,7 +43,7 @@ extension Jira {
                     .disabled(projectFolder.isEmpty ||
                               credentialsFolder.isEmpty)
                     
-                    Button("Make relese notes") {
+                    Button("Make release notes") {
                         result = execute()
                     }
                     .disabled(projectFolder.isEmpty ||
@@ -74,9 +74,9 @@ extension Jira {
 }
 
 
-extension Jira.RelaseNotes: FastlaneWorkflow {}
+extension Jira.ReleaseNotes: FastlaneWorkflow {}
 
-private extension Jira.RelaseNotes {
+private extension Jira.ReleaseNotes {
     
     var fastlaneArguments: FastlaneGetJiraReleaseNotesArguments {
         FastlaneGetJiraReleaseNotesArguments(versionNumber: versionNumber)

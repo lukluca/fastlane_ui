@@ -21,6 +21,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let useDynatrace: Bool
     let notifySlack: Bool
     let makeReleaseNotesFromJira: Bool
+    let makeJiraRelease: Bool
     let debugMode: Bool
     
     let defaultParameters = DefaultParameters()
@@ -48,7 +49,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
         return "testers:\(testers)"
     }
     
-    private var relaseNotesArg: String? {
+    private var releaseNotesArg: String? {
         guard !releaseNotes.isEmpty else {
             return nil
         }
@@ -98,10 +99,17 @@ struct FastlaneDeployArguments: FastlaneArguments {
     }
     
     private var makeReleaseNotesFromJiraArg: String? {
-        guard makeReleaseNotesFromJira != defaultParameters.useJira else {
+        guard makeReleaseNotesFromJira != defaultParameters.useJiraReleaseNotes else {
             return nil
         }
-        return "use_jira:\(makeReleaseNotesFromJira)"
+        return "use_jira_release_notes:\(makeReleaseNotesFromJira)"
+    }
+    
+    private var makeJiraReleaseArg: String? {
+        guard makeJiraRelease != defaultParameters.makeJiraRelease else {
+            return nil
+        }
+        return "make_jira_release:\(makeJiraRelease)"
     }
     
     private var debugModeArg: String? {
@@ -118,7 +126,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
             buildNumberArg,
             branchNameArg,
             testersArg,
-            relaseNotesArg,
+            releaseNotesArg,
             pushOnGitArg,
             useBitbucketArg,
             uploadToFirebaseArg,
@@ -147,7 +155,8 @@ extension FastlaneDeployArguments {
         let useCrashlytics: Bool
         let useDynatrace: Bool
         let useSlack: Bool
-        let useJira: Bool
+        let useJiraReleaseNotes: Bool
+        let makeJiraRelease: Bool
         let debugMode: Bool
         
         init() {
@@ -162,7 +171,8 @@ extension FastlaneDeployArguments {
             var useCrashlytics: Bool?
             var useDynatrace: Bool?
             var useSlack: Bool?
-            var useJira: Bool?
+            var useJiraReleaseNotes: Bool?
+            var makeJiraRelease: Bool?
             var debugMode: Bool?
             
             func purge(value: String, parameter: Parameter) -> String? {
@@ -184,8 +194,10 @@ extension FastlaneDeployArguments {
                     useDynatrace = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useSlack) {
                     useSlack = Bool(value)
-                } else if let value = purge(value: $0, parameter: .useJira) {
-                    useJira = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useJiraReleaseNotes) {
+                    useJiraReleaseNotes = Bool(value)
+                } else if let value = purge(value: $0, parameter: .makeJiraRelease) {
+                    makeJiraRelease = Bool(value)
                 } else if let value = purge(value: $0, parameter: .debugMode) {
                     debugMode = Bool(value)
                 }
@@ -198,7 +210,8 @@ extension FastlaneDeployArguments {
             self.useCrashlytics = useCrashlytics ?? false
             self.useDynatrace = useDynatrace ?? false
             self.useSlack = useSlack ?? false
-            self.useJira = useJira ?? false
+            self.useJiraReleaseNotes = useJiraReleaseNotes ?? false
+            self.makeJiraRelease = makeJiraRelease ?? false
             self.debugMode = debugMode ?? false
         }
     }
@@ -214,7 +227,8 @@ extension FastlaneDeployArguments.DefaultParameters {
         case useCrashlytics
         case useDynatrace
         case useSlack
-        case useJira
+        case useJiraReleaseNotes
+        case makeJiraRelease
         case debugMode
         
         var key: String {
@@ -233,8 +247,10 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "USE_DYNATRACE"
             case .useSlack:
                 "USE_SLACK"
-            case .useJira:
-                "USE_JIRA"
+            case .useJiraReleaseNotes:
+                "USE_JIRA_RELEASE_NOTES"
+            case .makeJiraRelease:
+                "MAKE_JIRA_RELEASE"
             case .debugMode:
                 "DEBUG_MODE"
             }
