@@ -11,6 +11,10 @@ struct DeployApp: View {
     
     let shell = Defaults.shared.shell
     
+    @Default(\.xcode) private var selectedXcode: String
+    @State private var selectedXcodeVersion = ""
+    @Default(\.scheme) private var selectedScheme: String
+    
     @Default(\.versionNumber) private var versionNumber: String
     @Default(\.buildNumber) private var buildNumber: Int
 
@@ -38,8 +42,6 @@ struct DeployApp: View {
     @Default(\.useSlack) private var useSlack: Bool
     @Default(\.notifySlack) private var notifySlack: Bool
     
-    @Default(\.scheme) private var selectedScheme: String
-    
     @State private var result = ""
     
     @State private var fastlaneCommand = ""
@@ -50,10 +52,18 @@ struct DeployApp: View {
     
     private let schemes = Schemes().values
     
+    private let xcodes = XcodeVersions().values
+    
+    private var xcodeVersions: [String] {
+        xcodes.map { $0.1 }
+    }
+    
     var body: some View {
         VStack(spacing: 30) {
             
             VStack(spacing: 10) {
+                
+                XcodePicker(selected: $selectedXcodeVersion, xcodes: xcodeVersions)
                 
                 SchemePicker(selectedScheme: $selectedScheme, schemes: schemes)
                 
@@ -144,9 +154,23 @@ struct DeployApp: View {
             if selectedScheme.isEmpty {
                 selectedScheme = schemes.first ?? ""
             }
+            if selectedXcode.isEmpty || selectedXcodeVersion.isEmpty {
+                let xcode = xcodes.first
+                selectedXcode = xcode?.0 ?? ""
+                selectedXcodeVersion = xcode?.1 ?? ""
+            }
         }
         .onChange(of: selectedScheme) { _ in
             updateFastlaneCommand()
+        }
+        .onChange(of: selectedXcode) { _ in
+            updateFastlaneCommand()
+        }
+        .onChange(of: selectedXcodeVersion) { newValue in
+            selectedXcode = xcodes.first { (path, version) in
+               version == newValue
+            }?.0 ?? ""
+            
         }
         .onChange(of: versionNumber) { newValue in
             if newValue.isEmpty {
@@ -232,6 +256,24 @@ extension DeployApp {
             }
         }
     }
+    
+    struct XcodePicker: View {
+        
+        @Binding var selected: String
+        
+        let xcodes: [String]
+        
+        var body: some View {
+            
+            HStack {
+                Picker("Selected Xcode:", selection: $selected) {
+                    ForEach(xcodes, id: \.self) {
+                        Text($0).tag($0)
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension DeployApp: FastlaneWorkflow {}
@@ -240,6 +282,7 @@ private extension DeployApp {
     
     var fastlaneArguments: FastlaneDeployArguments {
         FastlaneDeployArguments(
+            xcode: selectedXcode,
             scheme: selectedScheme,
             versionNumber: versionNumber,
             buildNumber: buildNumber,
@@ -363,7 +406,7 @@ private struct GitBranches {
             
             let contents = (try? FileManager.default.contentsOfDirectory(atPath: path)) ?? []
             
-            if contents.isEmpty {
+            guard !contents.isEmpty else {
                 return []
             }
             
@@ -397,6 +440,53 @@ private struct GitBranches {
         self.values = values.filter {
             $0 != ".DS_Store"
         }.sorted()
+    }
+}
+
+
+private struct XcodeVersions {
+    
+    let values: [(String, String)]
+    
+    init() {
+        
+        func extract() -> [(String, String)] {
+            
+            let contents = (try? FileManager.default.contentsOfDirectory(atPath: "/Applications")) ?? []
+            
+            let xcodes = contents.filter {
+                $0.hasPrefix("Xcode") && $0.hasSuffix(".app")
+            }
+            
+            return xcodes.compactMap { xcode -> (String, String)? in
+                
+                let versionPath = "/Applications/\(xcode)/Contents/version.plist"
+                
+                let exists = FileManager.default.fileExists(atPath: versionPath)
+                
+                guard exists else {
+                    return nil
+                }
+                
+                let url = URL(fileURLWithPath: versionPath)
+                guard let data = try? Data(contentsOf: url) else {
+                    return nil
+                }
+                
+                let plist = try? PropertyListSerialization.propertyList(from: data, options: .mutableContainers, format: nil) as? [String:String]
+                
+                guard let plist else { return nil }
+                
+                let version = plist["CFBundleShortVersionString"] ?? ""
+                let build = plist["ProductBuildVersion"] ?? ""
+                
+                return ("/Applications/" + xcode, "Version \(version) (\(build))")
+            }
+        }
+        
+        values = extract().sorted(by: { lhs, rhs in
+            lhs.1 < rhs.1
+        })
     }
 }
 

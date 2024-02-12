@@ -13,6 +13,7 @@ class Defaults: ObservableObject {
         case showWizard
         //project
         case projectFolder
+        case xcode
         case scheme
         case versionNumber
         case buildNumber
@@ -52,6 +53,7 @@ class Defaults: ObservableObject {
     @AppStorage(.showWizard) var showWizard = true
     //project
     @AppStorage(.projectFolder) var projectFolder = ""
+    @AppStorage(.xcode) var xcode = ""
     @AppStorage(.scheme) var scheme = ""
     @AppStorage(.versionNumber) var versionNumber = ""
     @AppStorage(.buildNumber) var buildNumber = 0
@@ -93,6 +95,7 @@ class Defaults: ObservableObject {
         showWizard = true
         //project
         projectFolder = ""
+        xcode = ""
         scheme = ""
         versionNumber = ""
         buildNumber = 0

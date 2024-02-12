@@ -14,18 +14,31 @@ enum FastlaneCommand: String {
     case getJiraReleaseNotes = "get_jira_release_notes"
     case updatePlugins = "update_plugins"
     case update = "update fastlane"
+    case rubocop
     
     private var needsExec: Bool {
         self != .update
     }
     
+    private var needsFastlane: Bool {
+        self != .rubocop
+    }
+    
     fileprivate var arguments: [String] {
+        
+        var commands: [String] = []
+        
         if needsExec {
-            return ["exec",
-                    "fastlane",
-                    rawValue]
+            commands = ["exec"]
         }
-        return [rawValue]
+        
+        if needsFastlane {
+            commands.append("fastlane")
+        }
+    
+        commands.append(rawValue)
+        
+        return commands
     }
     
     func fullCommand(
@@ -55,6 +68,10 @@ extension CommandExecuting {
 
 struct EmptyFastlaneArguments: FastlaneArguments {
     let toArray: [String] = []
+}
+
+struct RubocopArguments: FastlaneArguments {
+    let toArray: [String] = ["-A"]
 }
 
 protocol FastlaneWorkflow: ShellWorkflow {}

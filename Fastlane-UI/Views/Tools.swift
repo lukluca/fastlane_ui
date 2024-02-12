@@ -49,6 +49,10 @@ struct Tools: View {
                         Button("Update all") {
                             result = updateAll()
                         }
+                        
+                        Button("Rubocop") {
+                            result = rubocop()
+                        }
                     }
                 }
             }
@@ -70,6 +74,10 @@ private extension Tools {
         FastlaneCommand.updatePlugins.fullCommand(needsSudo: needsSudo)
     }
     
+    private var rubocopCommand: String {
+        FastlaneCommand.rubocop.fullCommand(needsSudo: needsSudo, with: RubocopArguments())
+    }
+    
     private var cdProjectFolderCommand: String {
         shell.cd(folder: Defaults.shared.projectFolder)
     }
@@ -84,5 +92,9 @@ private extension Tools {
     
     func updatePlugins() -> String {
         runBundleScript(with: [cdProjectFolderCommand, updatePluginsCommand])
+    }
+    
+    func rubocop() -> String {
+        runBundleScript(with: [cdProjectFolderCommand, rubocopCommand])
     }
 }

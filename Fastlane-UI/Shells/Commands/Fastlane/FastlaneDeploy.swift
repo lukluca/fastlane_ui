@@ -8,6 +8,7 @@
 import Foundation
 
 struct FastlaneDeployArguments: FastlaneArguments {
+    let xcode: String
     let scheme: String
     let versionNumber: String
     let buildNumber: Int
@@ -25,6 +26,13 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let debugMode: Bool
     
     let defaultParameters = DefaultParameters()
+    
+    private var xcodeArg: String? {
+        guard xcode != defaultParameters.xcode else {
+            return nil
+        }
+        return "xcode:\(xcode)"
+    }
     
     private var envArg: String {
         "--env " + scheme.asEnvironment
@@ -121,6 +129,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     
     var toArray: [String] {
         [
+            xcodeArg,
             envArg,
             versionNumberArg,
             buildNumberArg,
@@ -148,6 +157,7 @@ extension CommandExecuting {
 extension FastlaneDeployArguments {
     struct DefaultParameters {
         
+        let xcode: String
         let pushOnGit: Bool
         let useGitFlow: Bool
         let useBitbucket: Bool
@@ -164,6 +174,7 @@ extension FastlaneDeployArguments {
             
             let values = (try? String.contentsOfFileSeparatedByNewLine(path: path)) ?? []
             
+            var xcode: String?
             var pushOnGit: Bool?
             var useGitFlow: Bool?
             var useBitbucket: Bool?
@@ -180,7 +191,9 @@ extension FastlaneDeployArguments {
             }
             
             values.forEach {
-                if let value = purge(value: $0, parameter: .pushOnGit) {
+                if let value = purge(value: $0, parameter: .xcode) {
+                    xcode = value
+                } else if let value = purge(value: $0, parameter: .pushOnGit) {
                     pushOnGit = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useGitFlow) {
                     useGitFlow = Bool(value)
@@ -203,6 +216,7 @@ extension FastlaneDeployArguments {
                 }
             }
             
+            self.xcode = xcode ?? ""
             self.pushOnGit = pushOnGit ?? false
             self.useGitFlow = useGitFlow ?? false
             self.useBitbucket = useBitbucket ?? false
@@ -220,6 +234,7 @@ extension FastlaneDeployArguments {
 extension FastlaneDeployArguments.DefaultParameters {
     enum Parameter {
         
+        case xcode
         case pushOnGit
         case useGitFlow
         case useBitbucket
@@ -233,6 +248,8 @@ extension FastlaneDeployArguments.DefaultParameters {
         
         var key: String {
             switch self {
+            case .xcode:
+                "XCODE"
             case .pushOnGit:
                 "PUSH_ON_GIT"
             case .useGitFlow:
