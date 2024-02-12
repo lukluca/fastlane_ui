@@ -36,7 +36,7 @@
 		4A7F6BF92AA74617000FE841 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BF82AA74617000FE841 /* Shell.swift */; };
 		4A7F6BFC2AA74946000FE841 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BFB2AA74946000FE841 /* Git.swift */; };
 		4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C042AA8D3FB000FE841 /* Tools.swift */; };
-		4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */; };
+		4A7F6C082AA8E0B2000FE841 /* PathComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C072AA8E0B2000FE841 /* PathComponents.swift */; };
 		4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A998F7C2ABAF1F400601FF4 /* Firebase.swift */; };
 		4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9BDEA72AB07CDD006B9688 /* RM.swift */; };
 		4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */; };
@@ -100,7 +100,7 @@
 		4A7F6BF82AA74617000FE841 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		4A7F6BFB2AA74946000FE841 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 		4A7F6C042AA8D3FB000FE841 /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
-		4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultValues.swift; sourceTree = "<group>"; };
+		4A7F6C072AA8E0B2000FE841 /* PathComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathComponents.swift; sourceTree = "<group>"; };
 		4A998F7C2ABAF1F400601FF4 /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
 		4A9BDEA72AB07CDD006B9688 /* RM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RM.swift; sourceTree = "<group>"; };
 		4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynatrace.swift; sourceTree = "<group>"; };
@@ -293,7 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */,
-				4A7F6C072AA8E0B2000FE841 /* DefaultValues.swift */,
+				4A7F6C072AA8E0B2000FE841 /* PathComponents.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -516,7 +516,7 @@
 				4A51E7622A6ACAEB00813308 /* AppStorage+Defaults.swift in Sources */,
 				4A7F6BE62AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift in Sources */,
 				4A17F45E2AD3351C006094FA /* ListView.swift in Sources */,
-				4A7F6C082AA8E0B2000FE841 /* DefaultValues.swift in Sources */,
+				4A7F6C082AA8E0B2000FE841 /* PathComponents.swift in Sources */,
 				4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */,
 				4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */,
 				4AD59B782B1119360089A549 /* Slack.swift in Sources */,

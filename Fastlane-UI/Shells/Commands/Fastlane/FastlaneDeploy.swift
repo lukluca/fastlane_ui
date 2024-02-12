@@ -170,7 +170,7 @@ extension FastlaneDeployArguments {
         let debugMode: Bool
         
         init() {
-            let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".default_parameters"
+            let path = projectFastlanePathComponent + "/" + ".default_parameters"
             
             let values = (try? String.contentsOfFileSeparatedByNewLine(path: path)) ?? []
             

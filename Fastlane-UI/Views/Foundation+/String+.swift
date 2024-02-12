@@ -31,7 +31,7 @@ extension String {
     }
     
     var asEnvironment: String {
-        let jsonPath = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".env_mapping.json"
+        let jsonPath = projectFastlanePathComponent + "/" + ".env_mapping.json"
        
         guard let data = try? Data(contentsOf: URL(filePath: jsonPath)) else {
             return self

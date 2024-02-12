@@ -94,3 +94,18 @@ extension CommandExecuting {
         try run(commandName: "git", arguments: ["add", file])
     }
 }
+
+protocol GitShellWorkflow: ShellWorkflow {}
+
+extension GitShellWorkflow {
+    func executeGitCommitAndPush(file: String, message: String) {
+        let branch = Defaults.shared.branchName
+        let cd = shell.cd(folder: Defaults.shared.projectFolder)
+        let checkout = shell.gitCheckout(branch: branch)
+        let add = shell.gitAdd(file: file)
+        let commit = shell.gitCommit(message: message)
+        let push = shell.gitPush(branch: branch)
+        
+        let _ = runBundleScript(with: [cd, checkout, add, commit, push])
+    }
+}

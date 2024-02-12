@@ -1014,7 +1014,7 @@ private enum FirebaseFolder {
     }
     
     static func containsGoogleCredentials() throws -> Bool {
-        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent
+        let path = projectFastlanePathComponent
         return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "google-creds.json" }
     }
 }
@@ -1067,7 +1067,7 @@ private enum SlackFolder {
     }
     
     static func containsCredentials() throws -> Bool {
-        let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/.slack"
+        let path = projectFastlanePathComponent + "/.slack"
         return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
     }
 }

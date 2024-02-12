@@ -130,7 +130,7 @@ extension BitbucketView {
         }
         
         func readFromFile() throws -> Configuration? {
-            let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".bitbucket/config"
+            let path = projectFastlanePathComponent + "/" + ".bitbucket/config"
             let values = try String.contentsOfFileSeparatedByNewLine(path: path)
             
             var companyHostName: String?

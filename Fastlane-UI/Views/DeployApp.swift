@@ -63,7 +63,9 @@ struct DeployApp: View {
             
             VStack(spacing: 10) {
                 
-                XcodePicker(selected: $selectedXcodeVersion, xcodes: xcodeVersions)
+                if !selectedXcodeVersion.isEmpty {
+                    XcodePicker(selected: $selectedXcodeVersion, xcodes: xcodeVersions)
+                }
                 
                 SchemePicker(selectedScheme: $selectedScheme, schemes: schemes)
                 

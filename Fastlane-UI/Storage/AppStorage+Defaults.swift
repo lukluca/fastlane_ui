@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+let defaultShell: Shell = .zsh
+
 class Defaults: ObservableObject {
     
     fileprivate enum Key: String, CaseIterable {

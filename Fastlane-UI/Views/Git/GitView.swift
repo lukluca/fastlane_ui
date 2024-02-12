@@ -9,13 +9,21 @@ import SwiftUI
 
 struct GitView: View {
     
-    private let manager = ConfigurationManager()
+    let shell = Defaults.shared.shell
+    
+    @ObservedObject private var manager = ConfigurationManager()
     
     @Default(\.pushOnGit) private var pushOnGit: Bool
     @Default(\.mainFolder) private var mainFolder: String
     @Default(\.remoteURL) private var remoteURL: String
     @Default(\.cloneFromRemote) private var cloneFromRemote: Bool
     @Default(\.useGitFlow) private var useGitFlow: Bool
+    
+    @State private var releaseBranchText: String = ""
+    @State private var tagText: String = ""
+    @State private var commitMessageText: String = ""
+    
+    @State private var isConfigurationChanged = false
     
     var body: some View {
         VStack(spacing: 30) {
@@ -24,8 +32,32 @@ struct GitView: View {
                 
                 if pushOnGit || useGitFlow {
                     ForEach(GitView.Config.allCases) {
-                        ConfigItem(config: $0, configuration: manager.current)
+                        switch $0 {
+                        case .releaseBranch:
+                            ConfigItem(title: $0.title, text: $releaseBranchText)
+                        case .tag:
+                            ConfigItem(title: $0.title, text: $tagText)
+                        case .commitMessage:
+                            ConfigItem(title: $0.title, text: $commitMessageText)
+                        }
                     }
+                    
+                    Button("Reset") {
+                        manager.reset()
+                        reset()
+                    }
+                    .disabled(!isConfigurationChanged)
+                    
+                    Button("Save changes") {
+                       save()
+                    }
+                    .disabled(!isConfigurationChanged)
+                    
+                    Button("Save, commit and push") {
+                        save()
+                        executeCommitAndPush()
+                    }
+                    .disabled(!isConfigurationChanged)
                 }
                 
                 if cloneFromRemote {
@@ -46,33 +78,55 @@ struct GitView: View {
             }
         }
         .padding()
+        .onAppear {
+            reset()
+        }
+        .onChange(of: manager.current) { _ in
+            isConfigurationChanged = manager.isChanged
+        }
+        .onChange(of: releaseBranchText) { newValue in
+            manager.current.releaseBranch = newValue
+        }
+        .onChange(of: tagText) { newValue in
+            manager.current.tag = newValue
+        }
+        .onChange(of: commitMessageText) { newValue in
+            manager.current.commitMessage = newValue
+        }
     }
 }
+
+private extension GitView {
+    
+    func save() {
+        try? manager.saveToFile()
+        reset()
+    }
+    
+    func reset() {
+        releaseBranchText = manager.current.releaseBranch
+        tagText = manager.current.tag
+        commitMessageText = manager.current.commitMessage
+    }
+    
+    func executeCommitAndPush() {
+        executeGitCommitAndPush(file: fastlanePathComponent + "/" + gitConfigNaming,
+                                message: "Update git naming convention")
+    }
+}
+
+extension GitView: GitShellWorkflow {}
 
 extension GitView {
     struct ConfigItem: View {
         
-        let config: Config
-        
-        @State private var text: String
-        
-        init(config: Config, configuration: Configuration) {
-            self.config = config
-            
-            switch config {
-            case .releaseBranch:
-                text = configuration.releaseBranch
-            case .tag:
-                text = configuration.tag
-            case .commitMessage:
-                text = configuration.commitMessage
-            }
-        }
+        let title: String
+        @Binding var text: String
         
         var body: some View {
             VStack(alignment: .leading) {
                 HStack {
-                    Text(config.title + ":")
+                    Text(title + ":")
                     
                     TextField("",
                               text: $text)
@@ -118,18 +172,41 @@ extension GitView {
         }
     }
     
-    private final class ConfigurationManager {
+    private final class ConfigurationManager: ObservableObject {
         
-        var current = Configuration(releaseBranch: "", tag: "", commitMessage: "")
+        private var file: Configuration
+        @Published var current: Configuration
         
+        var isChanged: Bool {
+            file != current
+        }
+ 
         init() {
-            if let config = try? readFromFile() {
+            if let config = try? ConfigurationManager.readFromFile() {
+                file = config
+                current = config
+            } else {
+                file = Configuration(releaseBranch: "", tag: "", commitMessage: "")
+                current = Configuration(releaseBranch: "", tag: "", commitMessage: "")
+            }
+        }
+        
+        func reset() {
+            current = file
+        }
+        
+        func saveToFile() throws {
+            let path = projectFastlanePathComponent + "/" + gitConfigNaming
+            try current.toFileContent.write(toFile: path, atomically: true, encoding: .utf8)
+            
+            if let config = try ConfigurationManager.readFromFile() {
+                file = config
                 current = config
             }
         }
         
-        func readFromFile() throws -> Configuration? {
-            let path = Defaults.shared.projectFolder + "/" + fastlanePathComponent + "/" + ".git_config/naming"
+        private static func readFromFile() throws -> Configuration? {
+            let path = projectFastlanePathComponent + "/" + gitConfigNaming
             let values = try String.contentsOfFileSeparatedByNewLine(path: path)
             
             var releaseBranch: String?
@@ -160,9 +237,9 @@ extension GitView {
     }
     
     struct Configuration {
-        let releaseBranch: String
-        let tag: String
-        let commitMessage: String
+        var releaseBranch: String
+        var tag: String
+        var commitMessage: String
         
         var toFileContent: String {
             
@@ -175,7 +252,7 @@ extension GitView {
                 case .commitMessage:
                     commitMessage
                 }
-                return "\(config.key)=\"\(value)\"\n"
+                return "\(config.key)=\(value)"
             }
             
             return """
@@ -186,6 +263,8 @@ extension GitView {
         }
     }
 }
+
+extension GitView.Configuration: Equatable {}
 
 extension GitView.Config: Identifiable {
     var id: Int {
