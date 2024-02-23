@@ -39,6 +39,9 @@
 		4A7F6C082AA8E0B2000FE841 /* PathComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6C072AA8E0B2000FE841 /* PathComponents.swift */; };
 		4A998F7D2ABAF1F400601FF4 /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A998F7C2ABAF1F400601FF4 /* Firebase.swift */; };
 		4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9BDEA72AB07CDD006B9688 /* RM.swift */; };
+		4AA3E77B2B88C74D00E19B19 /* JiraMakeVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA3E77A2B88C74D00E19B19 /* JiraMakeVersion.swift */; };
+		4AA3E77D2B88C7D000E19B19 /* FastlaneMakeJiraVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA3E77C2B88C7D000E19B19 /* FastlaneMakeJiraVersion.swift */; };
+		4AA3E77F2B88C99300E19B19 /* BuildNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA3E77E2B88C99300E19B19 /* BuildNumberView.swift */; };
 		4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */; };
 		4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC20C062B4DB4B300F69A0F /* String+.swift */; };
 		4ACC2D3E2B73B650002B1D9F /* Button+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACC2D3D2B73B650002B1D9F /* Button+.swift */; };
@@ -103,6 +106,9 @@
 		4A7F6C072AA8E0B2000FE841 /* PathComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathComponents.swift; sourceTree = "<group>"; };
 		4A998F7C2ABAF1F400601FF4 /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
 		4A9BDEA72AB07CDD006B9688 /* RM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RM.swift; sourceTree = "<group>"; };
+		4AA3E77A2B88C74D00E19B19 /* JiraMakeVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraMakeVersion.swift; sourceTree = "<group>"; };
+		4AA3E77C2B88C7D000E19B19 /* FastlaneMakeJiraVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneMakeJiraVersion.swift; sourceTree = "<group>"; };
+		4AA3E77E2B88C99300E19B19 /* BuildNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildNumberView.swift; sourceTree = "<group>"; };
 		4AC20C042B4D6E6D00F69A0F /* Dynatrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynatrace.swift; sourceTree = "<group>"; };
 		4AC20C062B4DB4B300F69A0F /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		4ACC2D3D2B73B650002B1D9F /* Button+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+.swift"; sourceTree = "<group>"; };
@@ -242,6 +248,7 @@
 				4A7F6BE22AA72203000FE841 /* Fastlane.swift */,
 				4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */,
 				4A7F6BE52AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift */,
+				4AA3E77C2B88C7D000E19B19 /* FastlaneMakeJiraVersion.swift */,
 			);
 			path = Fastlane;
 			sourceTree = "<group>";
@@ -285,6 +292,7 @@
 				4A7F6BE92AA72D3A000FE841 /* FolderViews.swift */,
 				4A17F4592AD31705006094FA /* TextFieldRow.swift */,
 				4A17F45D2AD3351C006094FA /* ListView.swift */,
+				4AA3E77E2B88C99300E19B19 /* BuildNumberView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -330,6 +338,7 @@
 				4ACC352E2AB87A8A00DC013E /* Jira.swift */,
 				4A7F6BDD2AA71DEC000FE841 /* JiraReleaseNotes.swift */,
 				4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */,
+				4AA3E77A2B88C74D00E19B19 /* JiraMakeVersion.swift */,
 			);
 			path = Jira;
 			sourceTree = "<group>";
@@ -503,6 +512,7 @@
 				4A17F45C2AD31B5F006094FA /* Sequence+.swift in Sources */,
 				4A51E7312A6AC03600813308 /* ContentView.swift in Sources */,
 				4A7F6BE82AA729DD000FE841 /* VersionNumberView.swift in Sources */,
+				4AA3E77D2B88C7D000E19B19 /* FastlaneMakeJiraVersion.swift in Sources */,
 				4A7F6BDE2AA71DEC000FE841 /* JiraReleaseNotes.swift in Sources */,
 				4AE8645F2B6A611200C5846D /* BitbucketView.swift in Sources */,
 				4A3767862AAA298500880FBA /* View+.swift in Sources */,
@@ -511,7 +521,9 @@
 				4A51832C2B051AFD0080355F /* Wizard.swift in Sources */,
 				4AD59B732B11002A0089A549 /* GitView.swift in Sources */,
 				4A7F6BF52AA744F0000FE841 /* CD.swift in Sources */,
+				4AA3E77B2B88C74D00E19B19 /* JiraMakeVersion.swift in Sources */,
 				4A7F6BF72AA744FA000FE841 /* CP.swift in Sources */,
+				4AA3E77F2B88C99300E19B19 /* BuildNumberView.swift in Sources */,
 				4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */,
 				4A51E7622A6ACAEB00813308 /* AppStorage+Defaults.swift in Sources */,
 				4A7F6BE62AA72360000FE841 /* FastlaneGetJiraReleaseNotes.swift in Sources */,

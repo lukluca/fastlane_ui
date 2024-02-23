@@ -7,16 +7,20 @@
 
 import Foundation
 
+let noSelection: String = "None"
+
 struct FastlaneDeployArguments: FastlaneArguments {
     let xcode: String
     let scheme: String
     let versionNumber: String
     let buildNumber: Int
     let branchName: String
+    let gitTag: String
     let testers: String
     let releaseNotes: String
+    let resetGit: Bool
     let pushOnGit: Bool
-    let useBitbucket: Bool
+    let makeBitbucketPr: Bool
     let uploadToFirebase: Bool
     let useCrashlytics: Bool
     let useDynatrace: Bool
@@ -46,8 +50,18 @@ struct FastlaneDeployArguments: FastlaneArguments {
         "build_number:\(buildNumber)"
     }
     
-    private var branchNameArg: String {
-        "branch_name:\\\"\(branchName)\\\""
+    private var branchNameArg: String? {
+        guard branchName != noSelection else {
+            return nil
+        }
+        return escape(key: "branch_name", value: branchName)
+    }
+    
+    private var gitTagArg: String? {
+        guard gitTag != noSelection else {
+            return nil
+        }
+        return escape(key: "git_tag", value: gitTag)
     }
     
     private var testersArg: String? {
@@ -61,7 +75,14 @@ struct FastlaneDeployArguments: FastlaneArguments {
         guard !releaseNotes.isEmpty else {
             return nil
         }
-        return "release_notes:\\\"\(releaseNotes)\\\""
+        return escape(key: "release_notes", value: releaseNotes)
+    }
+    
+    private var resetGitArg: String? {
+        guard resetGit != defaultParameters.resetGit else {
+            return nil
+        }
+        return "reset_git:\(resetGit)"
     }
     
     private var pushOnGitArg: String? {
@@ -72,10 +93,10 @@ struct FastlaneDeployArguments: FastlaneArguments {
     }
     
     private var useBitbucketArg: String? {
-        guard useBitbucket != defaultParameters.useBitbucket else {
+        guard makeBitbucketPr != defaultParameters.makeBitbucketPr else {
             return nil
         }
-        return "use_bitbucket:\(useBitbucket)"
+        return "make_bitbucket_pr:\(makeBitbucketPr)"
     }
     
     private var uploadToFirebaseArg: String? {
@@ -134,8 +155,10 @@ struct FastlaneDeployArguments: FastlaneArguments {
             versionNumberArg,
             buildNumberArg,
             branchNameArg,
+            gitTagArg,
             testersArg,
             releaseNotesArg,
+            resetGitArg,
             pushOnGitArg,
             useBitbucketArg,
             uploadToFirebaseArg,
@@ -145,6 +168,10 @@ struct FastlaneDeployArguments: FastlaneArguments {
             makeReleaseNotesFromJiraArg,
             debugModeArg
         ].compactMap{ $0 }
+    }
+    
+    private func escape(key: String, value: String) -> String {
+        "\(key):\\\"\(value)\\\""
     }
 }
 
@@ -158,9 +185,10 @@ extension FastlaneDeployArguments {
     struct DefaultParameters {
         
         let xcode: String
+        let resetGit: Bool
         let pushOnGit: Bool
         let useGitFlow: Bool
-        let useBitbucket: Bool
+        let makeBitbucketPr: Bool
         let uploadToFirebase: Bool
         let useCrashlytics: Bool
         let useDynatrace: Bool
@@ -175,9 +203,10 @@ extension FastlaneDeployArguments {
             let values = (try? String.contentsOfFileSeparatedByNewLine(path: path)) ?? []
             
             var xcode: String?
+            var resetGit: Bool?
             var pushOnGit: Bool?
             var useGitFlow: Bool?
-            var useBitbucket: Bool?
+            var makeBitbucketPr: Bool?
             var uploadToFirebase: Bool?
             var useCrashlytics: Bool?
             var useDynatrace: Bool?
@@ -195,10 +224,12 @@ extension FastlaneDeployArguments {
                     xcode = value
                 } else if let value = purge(value: $0, parameter: .pushOnGit) {
                     pushOnGit = Bool(value)
+                } else if let value = purge(value: $0, parameter: .resetGit) {
+                    resetGit = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useGitFlow) {
                     useGitFlow = Bool(value)
-                } else if let value = purge(value: $0, parameter: .useBitbucket) {
-                    useBitbucket = Bool(value)
+                } else if let value = purge(value: $0, parameter: .makeBitbucketPr) {
+                    makeBitbucketPr = Bool(value)
                 } else if let value = purge(value: $0, parameter: .uploadToFirebase) {
                     uploadToFirebase = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useCrashlytics) {
@@ -217,9 +248,10 @@ extension FastlaneDeployArguments {
             }
             
             self.xcode = xcode ?? ""
+            self.resetGit = resetGit ?? false
             self.pushOnGit = pushOnGit ?? false
             self.useGitFlow = useGitFlow ?? false
-            self.useBitbucket = useBitbucket ?? false
+            self.makeBitbucketPr = makeBitbucketPr ?? false
             self.uploadToFirebase = uploadToFirebase ?? false
             self.useCrashlytics = useCrashlytics ?? false
             self.useDynatrace = useDynatrace ?? false
@@ -235,9 +267,10 @@ extension FastlaneDeployArguments.DefaultParameters {
     enum Parameter {
         
         case xcode
+        case resetGit
         case pushOnGit
         case useGitFlow
-        case useBitbucket
+        case makeBitbucketPr
         case uploadToFirebase
         case useCrashlytics
         case useDynatrace
@@ -250,12 +283,14 @@ extension FastlaneDeployArguments.DefaultParameters {
             switch self {
             case .xcode:
                 "XCODE"
+            case .resetGit:
+                "RESET_GIT"
             case .pushOnGit:
                 "PUSH_ON_GIT"
             case .useGitFlow:
                 "USE_GIT_FLOW"
-            case .useBitbucket:
-                "USE_BITBUCKET"
+            case .makeBitbucketPr:
+                "MAKE_BITBUCKET_PR"
             case .uploadToFirebase:
                 "UPLOAD_TO_FIREBASE"
             case .useCrashlytics:

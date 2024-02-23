@@ -12,13 +12,10 @@ let bundleCommand = "bundle"
 enum FastlaneCommand: String {
     case deploy
     case getJiraReleaseNotes = "get_jira_release_notes"
+    case makeJiraVersion = "make_jira_version"
     case updatePlugins = "update_plugins"
-    case update = "update fastlane"
+    case update = "update_fastlane"
     case rubocop
-    
-    private var needsExec: Bool {
-        self != .update
-    }
     
     private var needsFastlane: Bool {
         self != .rubocop
@@ -26,11 +23,7 @@ enum FastlaneCommand: String {
     
     fileprivate var arguments: [String] {
         
-        var commands: [String] = []
-        
-        if needsExec {
-            commands = ["exec"]
-        }
+        var commands: [String] = ["exec"]
         
         if needsFastlane {
             commands.append("fastlane")

@@ -13,17 +13,20 @@ struct DeployApp: View {
     
     @Default(\.xcode) private var selectedXcode: String
     @State private var selectedXcodeVersion = ""
-    @Default(\.scheme) private var selectedScheme: String
+    @Default(\.firstScheme) private var firstSelectedScheme: String
+    @Default(\.secondScheme) private var secondSelectedScheme: String
     
     @Default(\.versionNumber) private var versionNumber: String
     @Default(\.buildNumber) private var buildNumber: Int
 
     @Default(\.useGit) private var useGit: Bool
     @Default(\.branchName) private var branchName: String
+    @Default(\.gitTag) private var gitTag: String
+    @Default(\.resetGit) private var resetGit: Bool
     @Default(\.pushOnGit) private var pushOnGit: Bool
     @Default(\.useGitFlow) private var useGitFlow: Bool
     
-    @Default(\.useBitbucket) private var useBitbucket: Bool
+    @Default(\.makeBitbucketPr) private var makeBitbucketPr: Bool
     
     @Default(\.useFirebase) private var useFirebase: Bool
     @Default(\.uploadToFirebase) private var uploadToFirebase: Bool
@@ -44,13 +47,20 @@ struct DeployApp: View {
     
     @State private var result = ""
     
-    @State private var fastlaneCommand = ""
+    @State private var firstSchemeFastlaneCommand = ""
+    @State private var secondSchemeFastlaneCommand = ""
     
     @State private var disableDeploy: Bool = false
     
     @State private var gitBranches = GitBranches().values
     
+    @State private var gitTags = GitTags().values
+    
     private let schemes = Schemes().values
+    
+    private var secondSchemes: [String] {
+        [noSelection] + schemes
+    }
     
     private let xcodes = XcodeVersions().values
     
@@ -67,25 +77,29 @@ struct DeployApp: View {
                     XcodePicker(selected: $selectedXcodeVersion, xcodes: xcodeVersions)
                 }
                 
-                SchemePicker(selectedScheme: $selectedScheme, schemes: schemes)
+                SchemePicker(selectedScheme: $firstSelectedScheme, schemes: schemes)
+                
+                SchemePicker(selectedScheme: $secondSelectedScheme, schemes: secondSchemes)
                 
                 VersionNumberView(versionNumber: $versionNumber)
                 
-                HStack {
-                    Text("Build number: ")
-                    TextField("Enter your build number",
-                              value: $buildNumber,
-                              formatter: NumberFormatter())
-                    
-                    Button(systemImage: "plus.circle.fill") {
-                        buildNumber += 1
-                    }
-                }
+                BuildNumberView(buildNumber: $buildNumber)
                 
                 if useGit {
-                    GitPicker(selectedBranch: $branchName, branches: gitBranches) {
-                        gitBranches = GitBranches().values
-                    }
+                    
+                    GitPicker(
+                        selected: $branchName,
+                        title: "Git Branch:",
+                        values: gitBranches) {
+                            gitBranches = GitBranches().values
+                        }
+                    
+                    GitPicker(
+                        selected: $gitTag,
+                        title: "Git Tag:",
+                        values: gitTags) {
+                            gitTags = GitTags().values
+                        }
                 }
                 
                 if useFirebase && uploadToFirebase {
@@ -103,8 +117,13 @@ struct DeployApp: View {
             
             VStack(alignment: .leading, spacing: 10) {
                 if useGit {
+                    Toggle(" Reset Git", isOn: $resetGit)
                     Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
                     Toggle(" Use GitFlow", isOn: $useGitFlow)
+                    
+                    if useGitFlow {
+                        Toggle(" Make Bitbucket Pr", isOn: $makeBitbucketPr)
+                    }
                 }
                 if useFirebase {
                     Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
@@ -137,32 +156,47 @@ struct DeployApp: View {
                 }
                 .disabled(disableDeploy)
                 Button("Show fastlane command") {
-                    fastlaneCommand = deploy()
+                    firstSchemeFastlaneCommand = deployFirstScheme(makeBitbucketPr: makeBitbucketPr)
+                    secondSchemeFastlaneCommand = deploySecondScheme(pushOnGit: pushOnGit)
                 }
                 .disabled(versionNumber.isEmpty ||
                           branchName.isEmpty)
+                Button("Reset to file") {
+                    Defaults.shared.resetToFile()
+                }
             }
             
-            FastlaneCommandView(command: $fastlaneCommand)
+            FastlaneCommandView(command: $firstSchemeFastlaneCommand)
+            
+            if secondSelectedScheme != noSelection {
+                FastlaneCommandView(command: $secondSchemeFastlaneCommand)
+            }
             
             Text(result)
         }
         .onAppear {
             updateDeployButtonActivity()
             
-            if branchName.isEmpty {
+            if branchName.isEmpty && gitTag.isEmpty {
                 branchName = gitBranches.first ?? ""
+                gitTag = noSelection
             }
-            if selectedScheme.isEmpty {
-                selectedScheme = schemes.first ?? ""
+            
+            if firstSelectedScheme.isEmpty && secondSelectedScheme.isEmpty {
+                firstSelectedScheme = schemes.first ?? ""
+                secondSelectedScheme = noSelection
             }
+          
             if selectedXcode.isEmpty || selectedXcodeVersion.isEmpty {
                 let xcode = xcodes.first
                 selectedXcode = xcode?.0 ?? ""
                 selectedXcodeVersion = xcode?.1 ?? ""
             }
         }
-        .onChange(of: selectedScheme) { _ in
+        .onChange(of: firstSelectedScheme) { _ in
+            updateFastlaneCommand()
+        }
+        .onChange(of: secondSelectedScheme) { _ in
             updateFastlaneCommand()
         }
         .onChange(of: selectedXcode) { _ in
@@ -176,7 +210,8 @@ struct DeployApp: View {
         }
         .onChange(of: versionNumber) { newValue in
             if newValue.isEmpty {
-                fastlaneCommand = ""
+                firstSchemeFastlaneCommand = ""
+                secondSchemeFastlaneCommand = ""
             }
             
             update()
@@ -185,16 +220,25 @@ struct DeployApp: View {
             update()
         }
         .onChange(of: branchName) { newValue in
-            if newValue.isEmpty {
-                fastlaneCommand = ""
+            if newValue != noSelection {
+                gitTags = GitTags().values
+                gitTag = noSelection
             }
-            
+            update()
+        }
+        .onChange(of: gitTag) { newValue in
+            if newValue != noSelection {
+                branchName = noSelection
+            }
             update()
         }
         .onChange(of: releaseNotes) { _ in
             update()
         }
         .onChange(of: pushOnGit) { _ in
+            update()
+        }
+        .onChange(of: resetGit) { _ in
             update()
         }
         .onChange(of: useGitFlow) { _ in
@@ -237,19 +281,20 @@ extension DeployApp {
             }
         }
     }
-    
+
     struct GitPicker: View {
         
-        @Binding var selectedBranch: String
+        @Binding var selected: String
         
-        let branches: [String]
+        let title: String
+        let values: [String]
         let action: () -> Void
         
         var body: some View {
             
             HStack {
-                Picker("Git Branch:", selection: $selectedBranch) {
-                    ForEach(branches, id: \.self) {
+                Picker(title, selection: $selected) {
+                    ForEach(values, id: \.self) {
                         Text($0).tag($0)
                     }
                 }
@@ -282,24 +327,46 @@ extension DeployApp: FastlaneWorkflow {}
 
 private extension DeployApp {
     
-    var fastlaneArguments: FastlaneDeployArguments {
+    func fastlaneArguments(
+        selectedScheme: String,
+        pushOnGit: Bool,
+        makeBitbucketPr: Bool
+    ) -> FastlaneDeployArguments {
         FastlaneDeployArguments(
             xcode: selectedXcode,
             scheme: selectedScheme,
             versionNumber: versionNumber,
             buildNumber: buildNumber,
             branchName: branchName,
+            gitTag: gitTag,
             testers: testers,
             releaseNotes: releaseNotes,
+            resetGit: resetGit,
             pushOnGit: pushOnGit,
-            useBitbucket: useBitbucket,
+            makeBitbucketPr: makeBitbucketPr,
             uploadToFirebase: uploadToFirebase,
             useCrashlytics: useCrashlytics,
             useDynatrace: uploadDsymToDynatrace,
             notifySlack: notifySlack,
-            makeReleaseNotesFromJira: makeReleaseNotesFromJira, 
+            makeReleaseNotesFromJira: makeReleaseNotesFromJira,
             makeJiraRelease: makeJiraRelease,
             debugMode: debugMode
+        )
+    }
+    
+    func firstFastlaneArguments(makeBitbucketPr: Bool) -> FastlaneDeployArguments {
+        fastlaneArguments(
+            selectedScheme: firstSelectedScheme,
+            pushOnGit: pushOnGit,
+            makeBitbucketPr: makeBitbucketPr
+        )
+    }
+    
+    func secondFastlaneArguments(pushOnGit: Bool) -> FastlaneDeployArguments {
+        fastlaneArguments(
+            selectedScheme: secondSelectedScheme,
+            pushOnGit: pushOnGit,
+            makeBitbucketPr: makeBitbucketPr
         )
     }
     
@@ -328,16 +395,24 @@ private extension DeployApp {
         }
         
         var commands = firstStep
-        if useBitbucket {
+        if makeBitbucketPr {
             commands.append(cpCredentialsBitbucket(projectFolder: folder))
         }
         if makeReleaseNotesFromJira || makeJiraRelease {
             commands.append(cpCredentialsJira(projectFolder: folder))
         }
         
-        commands.append(deploy())
-            
-        if useBitbucket {
+        let isSelectedSecondScheme = secondSelectedScheme != noSelection
+        
+        let makeBitbucketPr = isSelectedSecondScheme ? false : self.makeBitbucketPr
+        
+        commands.append(deployFirstScheme(makeBitbucketPr: makeBitbucketPr))
+        
+        if isSelectedSecondScheme {
+            commands.append(deploySecondScheme(pushOnGit: false))
+        }
+        
+        if makeBitbucketPr {
             commands.append(gitRestoreBitbucket())
         }
         
@@ -348,8 +423,12 @@ private extension DeployApp {
         return runBundleScript(with: commands)
     }
     
-    func deploy() -> String {
-        FastlaneCommand.deploy.fullCommand(with: fastlaneArguments)
+    func deployFirstScheme(makeBitbucketPr: Bool) -> String {
+        FastlaneCommand.deploy.fullCommand(with: firstFastlaneArguments(makeBitbucketPr: makeBitbucketPr))
+    }
+    
+    func deploySecondScheme(pushOnGit: Bool) -> String {
+        FastlaneCommand.deploy.fullCommand(with: secondFastlaneArguments(pushOnGit: pushOnGit))
     }
     
     func update() {
@@ -358,9 +437,13 @@ private extension DeployApp {
     }
     
     func updateFastlaneCommand() {
-        if !fastlaneCommand.isEmpty {
-            fastlaneCommand = ""
-            fastlaneCommand = deploy()
+        if !firstSchemeFastlaneCommand.isEmpty {
+            firstSchemeFastlaneCommand = ""
+            firstSchemeFastlaneCommand = deployFirstScheme(makeBitbucketPr: makeBitbucketPr)
+        }
+        if !secondSchemeFastlaneCommand.isEmpty {
+            secondSchemeFastlaneCommand = ""
+            secondSchemeFastlaneCommand = deploySecondScheme(pushOnGit: pushOnGit)
         }
     }
     
@@ -439,9 +522,22 @@ private struct GitBranches {
             $0.replacingOccurrences(of: "//", with: "/")
         }
         
-        self.values = values.filter {
+        let branches = values.filter {
             $0 != ".DS_Store"
         }.sorted()
+        
+        self.values = [noSelection] + branches
+    }
+}
+
+private struct GitTags {
+    
+    let values: [String]
+    
+    init() {
+        let path = Defaults.shared.projectFolder + "/" + gitPathComponent + "/refs/tags"
+        let tags = (try? FileManager.default.contentsOfDirectory(atPath: path))?.sorted() ?? []
+        self.values = [noSelection] + tags
     }
 }
 

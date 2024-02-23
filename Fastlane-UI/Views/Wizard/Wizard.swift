@@ -237,7 +237,7 @@ extension Wizard {
         
         @Binding var errorText: String
         
-        @Default(\.useBitbucket) private var useBitbucket: Bool
+        @Default(\.makeBitbucketPr) private var makeBitbucketPr: Bool
         @Default(\.bitbucketCredentialsFolder) private var bitbucketCredentialsFolder: String
       
         var body: some View {
@@ -275,9 +275,9 @@ extension Wizard {
                     .foregroundStyle(.red)
                 
             }.onAppear {
-                isChecked = useBitbucket
+                isChecked = makeBitbucketPr
             }.onChange(of: isChecked) { newValue in
-                useBitbucket = newValue
+                makeBitbucketPr = newValue
             }
         }
     }
@@ -698,7 +698,7 @@ final class BitbucketFolderStepState: ObservableObject {
         isDone = BitbucketFolder.validateEnabledPath()
         
         let isEnabled = Defaults.shared.objectWillChange.map {
-            Defaults.shared.useBitbucket
+            Defaults.shared.makeBitbucketPr
         }
             .removeDuplicates()
             .filter { $0 }
@@ -939,7 +939,7 @@ private enum GitFolder {
 private enum BitbucketFolder {
     
     static func validate() throws -> Bool {
-        guard Defaults.shared.useBitbucket else {
+        guard Defaults.shared.makeBitbucketPr else {
             return true
         }
         
@@ -947,7 +947,7 @@ private enum BitbucketFolder {
     }
     
     static func validateEnabledPath() -> Bool {
-        guard Defaults.shared.useBitbucket else {
+        guard Defaults.shared.makeBitbucketPr else {
             return true
         }
         return validatePath()

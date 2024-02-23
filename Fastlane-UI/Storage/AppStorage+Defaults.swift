@@ -16,19 +16,22 @@ class Defaults: ObservableObject {
         //project
         case projectFolder
         case xcode
-        case scheme
+        case firstScheme
+        case secondScheme
         case versionNumber
         case buildNumber
         //git
         case useGit
         case branchName
+        case gitTag
+        case resetGit
         case pushOnGit
         case cloneFromRemote
         case mainFolder
         case remoteURL
         case useGitFlow
         //bitbucket
-        case useBitbucket
+        case makeBitbucketPr
         case bitbucketCredentialsFolder
         //firebase
         case useFirebase
@@ -56,19 +59,22 @@ class Defaults: ObservableObject {
     //project
     @AppStorage(.projectFolder) var projectFolder = ""
     @AppStorage(.xcode) var xcode = ""
-    @AppStorage(.scheme) var scheme = ""
+    @AppStorage(.firstScheme) var firstScheme = ""
+    @AppStorage(.secondScheme) var secondScheme = ""
     @AppStorage(.versionNumber) var versionNumber = ""
     @AppStorage(.buildNumber) var buildNumber = 0
     //git
     @AppStorage(.useGit) var useGit = false
     @AppStorage(.branchName) var branchName = ""
+    @AppStorage(.gitTag) var gitTag = ""
+    @AppStorage(.resetGit) var resetGit = false
     @AppStorage(.pushOnGit) var pushOnGit = false
     @AppStorage(.cloneFromRemote) var cloneFromRemote = false
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
     @AppStorage(.useGitFlow) var useGitFlow = false
     //bitbucket
-    @AppStorage(.useBitbucket) var useBitbucket = false
+    @AppStorage(.makeBitbucketPr) var makeBitbucketPr = false
     @AppStorage(.bitbucketCredentialsFolder) var bitbucketCredentialsFolder = ""
     //firebase
     @AppStorage(.useFirebase) var useFirebase = false
@@ -93,25 +99,45 @@ class Defaults: ObservableObject {
     
     static let shared = Defaults()
     
+    func resetToFile() {
+        let defaultParameters = FastlaneDeployArguments.DefaultParameters()
+        
+        xcode = defaultParameters.xcode
+        resetGit = defaultParameters.resetGit
+        pushOnGit = defaultParameters.pushOnGit
+        useGitFlow = defaultParameters.useGitFlow
+        makeBitbucketPr = defaultParameters.makeBitbucketPr
+        uploadToFirebase = defaultParameters.uploadToFirebase
+        useCrashlytics = defaultParameters.useCrashlytics
+        uploadDsymToDynatrace = defaultParameters.useDynatrace
+        notifySlack = defaultParameters.useSlack
+        makeReleaseNotesFromJira = defaultParameters.useJiraReleaseNotes
+        makeJiraRelease = defaultParameters.makeJiraRelease
+        debugMode = defaultParameters.debugMode
+    }
+    
     func reset() {
         showWizard = true
         //project
         projectFolder = ""
         xcode = ""
-        scheme = ""
+        firstScheme = ""
+        secondScheme = ""
         versionNumber = ""
         buildNumber = 0
         //git
         useGit = false
         branchName = ""
+        gitTag = ""
+        resetGit = false
         pushOnGit = false
         cloneFromRemote = false
         mainFolder = ""
         remoteURL = ""
         useGitFlow = false
-        bitbucketCredentialsFolder = ""
         //bitbucket
-        useBitbucket = false
+        bitbucketCredentialsFolder = ""
+        makeBitbucketPr = false
         //firebase
         useFirebase = false
         uploadToFirebase = false

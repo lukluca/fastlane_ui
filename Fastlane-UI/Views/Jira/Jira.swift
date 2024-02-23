@@ -18,6 +18,10 @@ struct Jira: View {
                 Section("Release notes") {
                     ReleaseNotes()
                 }
+                
+                Section("Make version") {
+                    MakeVersion()
+                }
             }
         }
     }

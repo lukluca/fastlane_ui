@@ -24,7 +24,7 @@ enum Segment: String, CaseIterable {
         if defaults.useGit {
             cases.append(.git)
         }
-        if defaults.useBitbucket {
+        if defaults.makeBitbucketPr {
             cases.append(.bitbucket)
         }
         if defaults.useFirebase {
