@@ -19,7 +19,8 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let testers: String
     let releaseNotes: String
     let resetGit: Bool
-    let pushOnGit: Bool
+    let pushOnGitMessage: Bool
+    let pushOnGitTag: Bool
     let makeBitbucketPr: Bool
     let uploadToFirebase: Bool
     let useCrashlytics: Bool
@@ -85,11 +86,18 @@ struct FastlaneDeployArguments: FastlaneArguments {
         return "reset_git:\(resetGit)"
     }
     
-    private var pushOnGitArg: String? {
-        guard pushOnGit != defaultParameters.pushOnGit else {
+    private var pushOnGitMessageArg: String? {
+        guard pushOnGitMessage != defaultParameters.pushOnGitMessage else {
             return nil
         }
-        return "push_on_git:\(pushOnGit)"
+        return "push_commit:\(pushOnGitMessage)"
+    }
+    
+    private var pushOnGitTagArg: String? {
+        guard pushOnGitTag != defaultParameters.pushOnGitTag else {
+            return nil
+        }
+        return "push_tag:\(pushOnGitTag)"
     }
     
     private var useBitbucketArg: String? {
@@ -159,7 +167,8 @@ struct FastlaneDeployArguments: FastlaneArguments {
             testersArg,
             releaseNotesArg,
             resetGitArg,
-            pushOnGitArg,
+            pushOnGitMessageArg,
+            pushOnGitTagArg,
             useBitbucketArg,
             uploadToFirebaseArg,
             useCrashlyticsArg,
@@ -186,7 +195,8 @@ extension FastlaneDeployArguments {
         
         let xcode: String
         let resetGit: Bool
-        let pushOnGit: Bool
+        let pushOnGitMessage: Bool
+        let pushOnGitTag: Bool
         let useGitFlow: Bool
         let makeBitbucketPr: Bool
         let uploadToFirebase: Bool
@@ -204,7 +214,8 @@ extension FastlaneDeployArguments {
             
             var xcode: String?
             var resetGit: Bool?
-            var pushOnGit: Bool?
+            var pushOnGitMessage: Bool?
+            var pushOnGitTag: Bool?
             var useGitFlow: Bool?
             var makeBitbucketPr: Bool?
             var uploadToFirebase: Bool?
@@ -222,8 +233,10 @@ extension FastlaneDeployArguments {
             values.forEach {
                 if let value = purge(value: $0, parameter: .xcode) {
                     xcode = value
-                } else if let value = purge(value: $0, parameter: .pushOnGit) {
-                    pushOnGit = Bool(value)
+                } else if let value = purge(value: $0, parameter: .pushOnGitMessage) {
+                    pushOnGitMessage = Bool(value)
+                } else if let value = purge(value: $0, parameter: .pushOnGitTag) {
+                    pushOnGitTag = Bool(value)
                 } else if let value = purge(value: $0, parameter: .resetGit) {
                     resetGit = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useGitFlow) {
@@ -249,7 +262,8 @@ extension FastlaneDeployArguments {
             
             self.xcode = xcode ?? ""
             self.resetGit = resetGit ?? false
-            self.pushOnGit = pushOnGit ?? false
+            self.pushOnGitMessage = pushOnGitMessage ?? false
+            self.pushOnGitTag = pushOnGitTag ?? false
             self.useGitFlow = useGitFlow ?? false
             self.makeBitbucketPr = makeBitbucketPr ?? false
             self.uploadToFirebase = uploadToFirebase ?? false
@@ -268,7 +282,8 @@ extension FastlaneDeployArguments.DefaultParameters {
         
         case xcode
         case resetGit
-        case pushOnGit
+        case pushOnGitMessage
+        case pushOnGitTag
         case useGitFlow
         case makeBitbucketPr
         case uploadToFirebase
@@ -285,8 +300,10 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "XCODE"
             case .resetGit:
                 "RESET_GIT"
-            case .pushOnGit:
-                "PUSH_ON_GIT"
+            case .pushOnGitMessage:
+                "PUSH_MESSAGE"
+            case .pushOnGitTag:
+                "PUSH_TAG"
             case .useGitFlow:
                 "USE_GIT_FLOW"
             case .makeBitbucketPr:

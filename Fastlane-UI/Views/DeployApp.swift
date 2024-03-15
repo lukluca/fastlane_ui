@@ -23,7 +23,8 @@ struct DeployApp: View {
     @Default(\.branchName) private var branchName: String
     @Default(\.gitTag) private var gitTag: String
     @Default(\.resetGit) private var resetGit: Bool
-    @Default(\.pushOnGit) private var pushOnGit: Bool
+    @Default(\.pushOnGitMessage) private var pushOnGitMessage: Bool
+    @Default(\.pushOnGitTag) private var pushOnGitTag: Bool
     @Default(\.useGitFlow) private var useGitFlow: Bool
     
     @Default(\.makeBitbucketPr) private var makeBitbucketPr: Bool
@@ -118,7 +119,8 @@ struct DeployApp: View {
             VStack(alignment: .leading, spacing: 10) {
                 if useGit {
                     Toggle(" Reset Git", isOn: $resetGit)
-                    Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
+                    Toggle(" Push on Git commit", isOn: $pushOnGitMessage)
+                    Toggle(" Push on Git tag", isOn: $pushOnGitTag)
                     Toggle(" Use GitFlow", isOn: $useGitFlow)
                     
                     if useGitFlow {
@@ -157,7 +159,7 @@ struct DeployApp: View {
                 .disabled(disableDeploy)
                 Button("Show fastlane command") {
                     firstSchemeFastlaneCommand = deployFirstScheme(makeBitbucketPr: makeBitbucketPr)
-                    secondSchemeFastlaneCommand = deploySecondScheme(pushOnGit: pushOnGit)
+                    secondSchemeFastlaneCommand = deploySecondScheme(pushOnGitMessage: pushOnGitMessage)
                 }
                 .disabled(versionNumber.isEmpty ||
                           branchName.isEmpty)
@@ -235,7 +237,10 @@ struct DeployApp: View {
         .onChange(of: releaseNotes) { _ in
             update()
         }
-        .onChange(of: pushOnGit) { _ in
+        .onChange(of: pushOnGitMessage) { _ in
+            update()
+        }
+        .onChange(of: pushOnGitTag) { _ in
             update()
         }
         .onChange(of: resetGit) { _ in
@@ -329,7 +334,7 @@ private extension DeployApp {
     
     func fastlaneArguments(
         selectedScheme: String,
-        pushOnGit: Bool,
+        pushOnGitMessage: Bool,
         makeBitbucketPr: Bool
     ) -> FastlaneDeployArguments {
         FastlaneDeployArguments(
@@ -342,7 +347,8 @@ private extension DeployApp {
             testers: testers,
             releaseNotes: releaseNotes,
             resetGit: resetGit,
-            pushOnGit: pushOnGit,
+            pushOnGitMessage: pushOnGitMessage,
+            pushOnGitTag: pushOnGitTag,
             makeBitbucketPr: makeBitbucketPr,
             uploadToFirebase: uploadToFirebase,
             useCrashlytics: useCrashlytics,
@@ -357,15 +363,15 @@ private extension DeployApp {
     func firstFastlaneArguments(makeBitbucketPr: Bool) -> FastlaneDeployArguments {
         fastlaneArguments(
             selectedScheme: firstSelectedScheme,
-            pushOnGit: pushOnGit,
+            pushOnGitMessage: pushOnGitMessage,
             makeBitbucketPr: makeBitbucketPr
         )
     }
     
-    func secondFastlaneArguments(pushOnGit: Bool) -> FastlaneDeployArguments {
+    func secondFastlaneArguments(pushOnGitMessage: Bool) -> FastlaneDeployArguments {
         fastlaneArguments(
             selectedScheme: secondSelectedScheme,
-            pushOnGit: pushOnGit,
+            pushOnGitMessage: pushOnGitMessage,
             makeBitbucketPr: makeBitbucketPr
         )
     }
@@ -409,7 +415,7 @@ private extension DeployApp {
         commands.append(deployFirstScheme(makeBitbucketPr: makeBitbucketPr))
         
         if isSelectedSecondScheme {
-            commands.append(deploySecondScheme(pushOnGit: false))
+            commands.append(deploySecondScheme(pushOnGitMessage: false))
         }
         
         if makeBitbucketPr {
@@ -427,8 +433,8 @@ private extension DeployApp {
         FastlaneCommand.deploy.fullCommand(with: firstFastlaneArguments(makeBitbucketPr: makeBitbucketPr))
     }
     
-    func deploySecondScheme(pushOnGit: Bool) -> String {
-        FastlaneCommand.deploy.fullCommand(with: secondFastlaneArguments(pushOnGit: pushOnGit))
+    func deploySecondScheme(pushOnGitMessage: Bool) -> String {
+        FastlaneCommand.deploy.fullCommand(with: secondFastlaneArguments(pushOnGitMessage: pushOnGitMessage))
     }
     
     func update() {
@@ -443,7 +449,7 @@ private extension DeployApp {
         }
         if !secondSchemeFastlaneCommand.isEmpty {
             secondSchemeFastlaneCommand = ""
-            secondSchemeFastlaneCommand = deploySecondScheme(pushOnGit: pushOnGit)
+            secondSchemeFastlaneCommand = deploySecondScheme(pushOnGitMessage: pushOnGitMessage)
         }
     }
     

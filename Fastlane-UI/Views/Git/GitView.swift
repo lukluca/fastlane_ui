@@ -13,7 +13,8 @@ struct GitView: View {
     
     @ObservedObject private var manager = ConfigurationManager()
     
-    @Default(\.pushOnGit) private var pushOnGit: Bool
+    @Default(\.pushOnGitMessage) private var pushOnGitMessage: Bool
+    @Default(\.pushOnGitTag) private var pushOnGitTag: Bool
     @Default(\.mainFolder) private var mainFolder: String
     @Default(\.remoteURL) private var remoteURL: String
     @Default(\.cloneFromRemote) private var cloneFromRemote: Bool
@@ -30,7 +31,7 @@ struct GitView: View {
             
             VStack(spacing: 10) {
                 
-                if pushOnGit || useGitFlow {
+                if pushOnGitMessage || pushOnGitTag || useGitFlow {
                     ForEach(GitView.Config.allCases) {
                         switch $0 {
                         case .releaseBranch:
@@ -70,7 +71,8 @@ struct GitView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 10) {
-                    Toggle(" Push on Git tag and commit", isOn: $pushOnGit)
+                    Toggle(" Push on Git commit", isOn: $pushOnGitMessage)
+                    Toggle(" Push on Git tag", isOn: $pushOnGitTag)
                     Toggle(" Use GitFlow", isOn: $useGitFlow)
                     Toggle(" Clone git from remote", isOn: $cloneFromRemote)
                 }

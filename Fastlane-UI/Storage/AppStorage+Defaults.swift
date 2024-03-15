@@ -25,7 +25,8 @@ class Defaults: ObservableObject {
         case branchName
         case gitTag
         case resetGit
-        case pushOnGit
+        case pushOnGitMessage
+        case pushOnGitTag
         case cloneFromRemote
         case mainFolder
         case remoteURL
@@ -68,7 +69,8 @@ class Defaults: ObservableObject {
     @AppStorage(.branchName) var branchName = ""
     @AppStorage(.gitTag) var gitTag = ""
     @AppStorage(.resetGit) var resetGit = false
-    @AppStorage(.pushOnGit) var pushOnGit = false
+    @AppStorage(.pushOnGitMessage) var pushOnGitMessage = false
+    @AppStorage(.pushOnGitTag) var pushOnGitTag = false
     @AppStorage(.cloneFromRemote) var cloneFromRemote = false
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
@@ -104,7 +106,8 @@ class Defaults: ObservableObject {
         
         xcode = defaultParameters.xcode
         resetGit = defaultParameters.resetGit
-        pushOnGit = defaultParameters.pushOnGit
+        pushOnGitMessage = defaultParameters.pushOnGitMessage
+        pushOnGitTag = defaultParameters.pushOnGitTag
         useGitFlow = defaultParameters.useGitFlow
         makeBitbucketPr = defaultParameters.makeBitbucketPr
         uploadToFirebase = defaultParameters.uploadToFirebase
@@ -130,7 +133,8 @@ class Defaults: ObservableObject {
         branchName = ""
         gitTag = ""
         resetGit = false
-        pushOnGit = false
+        pushOnGitMessage = false
+        pushOnGitTag = false
         cloneFromRemote = false
         mainFolder = ""
         remoteURL = ""
