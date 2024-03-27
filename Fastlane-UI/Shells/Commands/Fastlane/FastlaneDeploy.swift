@@ -21,6 +21,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let resetGit: Bool
     let pushOnGitMessage: Bool
     let pushOnGitTag: Bool
+    let makeGitBranch: Bool
     let makeBitbucketPr: Bool
     let uploadToFirebase: Bool
     let useCrashlytics: Bool
@@ -28,6 +29,8 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let notifySlack: Bool
     let makeReleaseNotesFromJira: Bool
     let makeJiraRelease: Bool
+    let updateJiraTickets: Bool
+    let sprint: Network.Jira.Sprint
     let debugMode: Bool
     
     let defaultParameters = DefaultParameters()
@@ -100,6 +103,13 @@ struct FastlaneDeployArguments: FastlaneArguments {
         return "push_tag:\(pushOnGitTag)"
     }
     
+    private var makeGitBranchArg: String? {
+        guard makeGitBranch != defaultParameters.makeGitBranch else {
+            return nil
+        }
+        return "make_git_branch:\(makeGitBranch)"
+    }
+    
     private var useBitbucketArg: String? {
         guard makeBitbucketPr != defaultParameters.makeBitbucketPr else {
             return nil
@@ -149,6 +159,20 @@ struct FastlaneDeployArguments: FastlaneArguments {
         return "make_jira_release:\(makeJiraRelease)"
     }
     
+    private var sprintArg: String? {
+        guard sprint != .none else {
+            return nil
+        }
+        return "sprint:\(sprint.id)"
+    }
+    
+    private var updateJiraTicketsArg: String? {
+        guard updateJiraTickets != defaultParameters.updateJiraTickets else {
+            return nil
+        }
+        return "update_jira_tickets:\(updateJiraTickets)"
+    }
+    
     private var debugModeArg: String? {
         guard debugMode != defaultParameters.debugMode else {
             return nil
@@ -169,11 +193,15 @@ struct FastlaneDeployArguments: FastlaneArguments {
             resetGitArg,
             pushOnGitMessageArg,
             pushOnGitTagArg,
+            makeGitBranchArg,
             useBitbucketArg,
             uploadToFirebaseArg,
             useCrashlyticsArg,
             useDynatraceArg,
             notifySlackArg,
+            makeJiraReleaseArg,
+            sprintArg,
+            updateJiraTicketsArg,
             makeReleaseNotesFromJiraArg,
             debugModeArg
         ].compactMap{ $0 }
@@ -197,7 +225,7 @@ extension FastlaneDeployArguments {
         let resetGit: Bool
         let pushOnGitMessage: Bool
         let pushOnGitTag: Bool
-        let useGitFlow: Bool
+        let makeGitBranch: Bool
         let makeBitbucketPr: Bool
         let uploadToFirebase: Bool
         let useCrashlytics: Bool
@@ -205,6 +233,7 @@ extension FastlaneDeployArguments {
         let useSlack: Bool
         let useJiraReleaseNotes: Bool
         let makeJiraRelease: Bool
+        let updateJiraTickets: Bool
         let debugMode: Bool
         
         init() {
@@ -216,7 +245,7 @@ extension FastlaneDeployArguments {
             var resetGit: Bool?
             var pushOnGitMessage: Bool?
             var pushOnGitTag: Bool?
-            var useGitFlow: Bool?
+            var makeGitBranch: Bool?
             var makeBitbucketPr: Bool?
             var uploadToFirebase: Bool?
             var useCrashlytics: Bool?
@@ -224,6 +253,7 @@ extension FastlaneDeployArguments {
             var useSlack: Bool?
             var useJiraReleaseNotes: Bool?
             var makeJiraRelease: Bool?
+            var updateJiraTickets: Bool?
             var debugMode: Bool?
             
             func purge(value: String, parameter: Parameter) -> String? {
@@ -239,8 +269,8 @@ extension FastlaneDeployArguments {
                     pushOnGitTag = Bool(value)
                 } else if let value = purge(value: $0, parameter: .resetGit) {
                     resetGit = Bool(value)
-                } else if let value = purge(value: $0, parameter: .useGitFlow) {
-                    useGitFlow = Bool(value)
+                } else if let value = purge(value: $0, parameter: .makeGitBranch) {
+                    makeGitBranch = Bool(value)
                 } else if let value = purge(value: $0, parameter: .makeBitbucketPr) {
                     makeBitbucketPr = Bool(value)
                 } else if let value = purge(value: $0, parameter: .uploadToFirebase) {
@@ -255,6 +285,8 @@ extension FastlaneDeployArguments {
                     useJiraReleaseNotes = Bool(value)
                 } else if let value = purge(value: $0, parameter: .makeJiraRelease) {
                     makeJiraRelease = Bool(value)
+                } else if let value = purge(value: $0, parameter: .updateJiraTickets) {
+                    updateJiraTickets = Bool(value)
                 } else if let value = purge(value: $0, parameter: .debugMode) {
                     debugMode = Bool(value)
                 }
@@ -264,7 +296,7 @@ extension FastlaneDeployArguments {
             self.resetGit = resetGit ?? false
             self.pushOnGitMessage = pushOnGitMessage ?? false
             self.pushOnGitTag = pushOnGitTag ?? false
-            self.useGitFlow = useGitFlow ?? false
+            self.makeGitBranch = makeGitBranch ?? false
             self.makeBitbucketPr = makeBitbucketPr ?? false
             self.uploadToFirebase = uploadToFirebase ?? false
             self.useCrashlytics = useCrashlytics ?? false
@@ -272,6 +304,7 @@ extension FastlaneDeployArguments {
             self.useSlack = useSlack ?? false
             self.useJiraReleaseNotes = useJiraReleaseNotes ?? false
             self.makeJiraRelease = makeJiraRelease ?? false
+            self.updateJiraTickets = updateJiraTickets ?? false
             self.debugMode = debugMode ?? false
         }
     }
@@ -284,7 +317,7 @@ extension FastlaneDeployArguments.DefaultParameters {
         case resetGit
         case pushOnGitMessage
         case pushOnGitTag
-        case useGitFlow
+        case makeGitBranch
         case makeBitbucketPr
         case uploadToFirebase
         case useCrashlytics
@@ -292,6 +325,7 @@ extension FastlaneDeployArguments.DefaultParameters {
         case useSlack
         case useJiraReleaseNotes
         case makeJiraRelease
+        case updateJiraTickets
         case debugMode
         
         var key: String {
@@ -304,8 +338,8 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "PUSH_MESSAGE"
             case .pushOnGitTag:
                 "PUSH_TAG"
-            case .useGitFlow:
-                "USE_GIT_FLOW"
+            case .makeGitBranch:
+                "MAKE_GIT_BRANCH"
             case .makeBitbucketPr:
                 "MAKE_BITBUCKET_PR"
             case .uploadToFirebase:
@@ -320,6 +354,8 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "USE_JIRA_RELEASE_NOTES"
             case .makeJiraRelease:
                 "MAKE_JIRA_RELEASE"
+            case .updateJiraTickets:
+                "UPDATE_JIRA_TICKETS"
             case .debugMode:
                 "DEBUG_MODE"
             }

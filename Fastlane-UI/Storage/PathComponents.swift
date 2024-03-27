@@ -28,8 +28,8 @@ var firebaseTestersPathComponent: String {
     firebasePathComponent + "/" + "testers"
 }
 
-var jiraWorkflowStatusPathComponent: String {
-    jiraPathComponent + "/" + "workflow_status"
+var jiraReleaseNotesStatusPathComponent: String {
+    jiraPathComponent + "/" + "release_notes_status"
 }
 
 var dynatracePathComponent: String {

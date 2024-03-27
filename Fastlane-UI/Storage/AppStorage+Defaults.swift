@@ -30,7 +30,7 @@ class Defaults: ObservableObject {
         case cloneFromRemote
         case mainFolder
         case remoteURL
-        case useGitFlow
+        case makeGitBranch
         //bitbucket
         case makeBitbucketPr
         case bitbucketCredentialsFolder
@@ -50,6 +50,7 @@ class Defaults: ObservableObject {
         case jiraCredentialsFolder
         case makeReleaseNotesFromJira
         case makeJiraRelease
+        case updateJiraTickets
         case debugMode
         //settings
         case shell
@@ -74,7 +75,7 @@ class Defaults: ObservableObject {
     @AppStorage(.cloneFromRemote) var cloneFromRemote = false
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
-    @AppStorage(.useGitFlow) var useGitFlow = false
+    @AppStorage(.makeGitBranch) var makeGitBranch = false
     //bitbucket
     @AppStorage(.makeBitbucketPr) var makeBitbucketPr = false
     @AppStorage(.bitbucketCredentialsFolder) var bitbucketCredentialsFolder = ""
@@ -94,6 +95,7 @@ class Defaults: ObservableObject {
     @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
     @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
     @AppStorage(.makeJiraRelease) var makeJiraRelease = false
+    @AppStorage(.updateJiraTickets) var updateJiraTickets = false
     @AppStorage(.debugMode) var debugMode = false
     //settings
     @AppStorage(.shell) var shell = defaultShell
@@ -108,7 +110,7 @@ class Defaults: ObservableObject {
         resetGit = defaultParameters.resetGit
         pushOnGitMessage = defaultParameters.pushOnGitMessage
         pushOnGitTag = defaultParameters.pushOnGitTag
-        useGitFlow = defaultParameters.useGitFlow
+        makeGitBranch = defaultParameters.makeGitBranch
         makeBitbucketPr = defaultParameters.makeBitbucketPr
         uploadToFirebase = defaultParameters.uploadToFirebase
         useCrashlytics = defaultParameters.useCrashlytics
@@ -116,6 +118,7 @@ class Defaults: ObservableObject {
         notifySlack = defaultParameters.useSlack
         makeReleaseNotesFromJira = defaultParameters.useJiraReleaseNotes
         makeJiraRelease = defaultParameters.makeJiraRelease
+        updateJiraTickets = defaultParameters.updateJiraTickets
         debugMode = defaultParameters.debugMode
     }
     
@@ -138,7 +141,7 @@ class Defaults: ObservableObject {
         cloneFromRemote = false
         mainFolder = ""
         remoteURL = ""
-        useGitFlow = false
+        makeGitBranch = false
         //bitbucket
         bitbucketCredentialsFolder = ""
         makeBitbucketPr = false
@@ -158,6 +161,7 @@ class Defaults: ObservableObject {
         jiraCredentialsFolder = ""
         makeReleaseNotesFromJira = false
         makeJiraRelease = false
+        updateJiraTickets = false
         debugMode = false
         //settings
         shell = defaultShell

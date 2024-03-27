@@ -25,7 +25,7 @@ struct DeployApp: View {
     @Default(\.resetGit) private var resetGit: Bool
     @Default(\.pushOnGitMessage) private var pushOnGitMessage: Bool
     @Default(\.pushOnGitTag) private var pushOnGitTag: Bool
-    @Default(\.useGitFlow) private var useGitFlow: Bool
+    @Default(\.makeGitBranch) private var makeGitBranch: Bool
     
     @Default(\.makeBitbucketPr) private var makeBitbucketPr: Bool
     
@@ -41,6 +41,7 @@ struct DeployApp: View {
     @Default(\.useJira) private var useJira: Bool
     @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
     @Default(\.makeJiraRelease) private var makeJiraRelease: Bool
+    @Default(\.updateJiraTickets) private var updateJiraTickets: Bool
     @Default(\.debugMode) private var debugMode: Bool
     
     @Default(\.useSlack) private var useSlack: Bool
@@ -58,6 +59,10 @@ struct DeployApp: View {
     @State private var gitTags = GitTags().values
     
     private let schemes = Schemes().values
+    
+    @State private var selectedSprint: Network.Jira.Sprint = .none
+    
+    @Binding var sprints: Result<[Network.Jira.Sprint], Error>?
     
     private var secondSchemes: [String] {
         [noSelection] + schemes
@@ -114,43 +119,32 @@ struct DeployApp: View {
                         TextField("Enter your release notes (optional)", text: $releaseNotes)
                     }
                 }
-            }
-            
-            VStack(alignment: .leading, spacing: 10) {
-                if useGit {
-                    Toggle(" Reset Git", isOn: $resetGit)
-                    Toggle(" Push on Git commit", isOn: $pushOnGitMessage)
-                    Toggle(" Push on Git tag", isOn: $pushOnGitTag)
-                    Toggle(" Use GitFlow", isOn: $useGitFlow)
-                    
-                    if useGitFlow {
-                        Toggle(" Make Bitbucket Pr", isOn: $makeBitbucketPr)
-                    }
-                }
-                if useFirebase {
-                    Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
-                    if uploadToFirebase {
-                        Toggle(" Use Crashlytics", isOn: $useCrashlytics)
-                    }
-                }
-                
-                if useDynatrace {
-                    Toggle(" Upload dsym to Dynatrace", isOn: $uploadDsymToDynatrace)
-                }
-                
-                if useSlack {
-                    Toggle(" Notify Slack", isOn: $notifySlack)
-                }
                 
                 if useJira {
-                    if useFirebase && uploadToFirebase {
-                        Toggle(" Make release notes from Jira", isOn: $makeReleaseNotesFromJira)
-                    }
-                    Toggle(" Make Jira release", isOn: $makeJiraRelease)
+                    SprintPicker(selected: $selectedSprint, result: $sprints)
                 }
-               
-                Toggle(" Enable debug mode", isOn: $debugMode)
             }
+            
+            ToggleSettings(
+                useGit: $useGit,
+                resetGit: $resetGit,
+                pushOnGitMessage: $pushOnGitMessage,
+                pushOnGitTag: $pushOnGitTag,
+                makeGitBranch: $makeGitBranch,
+                makeBitbucketPr: $makeBitbucketPr,
+                useFirebase: $useFirebase,
+                uploadToFirebase: $uploadToFirebase,
+                useCrashlytics: $useCrashlytics,
+                useDynatrace: $useDynatrace,
+                uploadDsymToDynatrace: $uploadDsymToDynatrace,
+                useSlack: $useSlack,
+                notifySlack: $notifySlack,
+                useJira: $useJira,
+                makeReleaseNotesFromJira: $makeReleaseNotesFromJira,
+                makeJiraRelease: $makeJiraRelease,
+                updateJiraTickets: $updateJiraTickets,
+                debugMode: $debugMode
+            )
             
             VStack(spacing: 10) {
                 Button("Deploy app") {
@@ -159,7 +153,10 @@ struct DeployApp: View {
                 .disabled(disableDeploy)
                 Button("Show fastlane command") {
                     firstSchemeFastlaneCommand = deployFirstScheme(makeBitbucketPr: makeBitbucketPr)
-                    secondSchemeFastlaneCommand = deploySecondScheme(pushOnGitMessage: pushOnGitMessage)
+                    secondSchemeFastlaneCommand = deploySecondScheme(
+                        pushOnGitMessage: pushOnGitMessage,
+                        updateJiraTickets: updateJiraTickets
+                    )
                 }
                 .disabled(versionNumber.isEmpty ||
                           branchName.isEmpty)
@@ -246,7 +243,7 @@ struct DeployApp: View {
         .onChange(of: resetGit) { _ in
             update()
         }
-        .onChange(of: useGitFlow) { _ in
+        .onChange(of: makeGitBranch) { _ in
             update()
         }
         .onChange(of: uploadToFirebase) { _ in
@@ -267,10 +264,78 @@ struct DeployApp: View {
         .onChange(of: debugMode) { _ in
             update()
         }
+        .onChange(of: selectedSprint) { _ in
+            update()
+        }
         .padding()
     }
 }
+// MARK: Toogle
+extension DeployApp {
+    struct ToggleSettings: View {
+        
+        @Binding var useGit: Bool
+        @Binding var resetGit: Bool
+        @Binding var pushOnGitMessage: Bool
+        @Binding var pushOnGitTag: Bool
+        @Binding var makeGitBranch: Bool
+        @Binding var makeBitbucketPr: Bool
+        @Binding var useFirebase: Bool
+        @Binding var uploadToFirebase: Bool
+        @Binding var useCrashlytics: Bool
+        @Binding var useDynatrace: Bool
+        @Binding var uploadDsymToDynatrace: Bool
+        @Binding var useSlack: Bool
+        @Binding var notifySlack: Bool
+        @Binding var useJira: Bool
+        @Binding var makeReleaseNotesFromJira: Bool
+        @Binding var makeJiraRelease: Bool
+        @Binding var updateJiraTickets: Bool
+        @Binding var debugMode: Bool
+       
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                if useGit {
+                    Toggle(" Reset Git", isOn: $resetGit)
+                    Toggle(" Push on Git commit", isOn: $pushOnGitMessage)
+                    Toggle(" Push on Git tag", isOn: $pushOnGitTag)
+                    Toggle(" Make Git branch", isOn: $makeGitBranch)
+                    
+                    if makeGitBranch {
+                        Toggle(" Make Bitbucket Pr", isOn: $makeBitbucketPr)
+                    }
+                }
+                
+                if useFirebase {
+                    Toggle(" Upload to Firebase", isOn: $uploadToFirebase)
+                    if uploadToFirebase {
+                        Toggle(" Use Crashlytics", isOn: $useCrashlytics)
+                    }
+                }
+                
+                if useDynatrace {
+                    Toggle(" Upload dsym to Dynatrace", isOn: $uploadDsymToDynatrace)
+                }
+                
+                if useSlack {
+                    Toggle(" Notify Slack", isOn: $notifySlack)
+                }
+                
+                if useJira {
+                    if useFirebase && uploadToFirebase {
+                        Toggle(" Make release notes from Jira", isOn: $makeReleaseNotesFromJira)
+                    }
+                    Toggle(" Make Jira release", isOn: $makeJiraRelease)
+                    Toggle(" Update Jira tickets", isOn: $updateJiraTickets)
+                }
+                
+                Toggle(" Enable debug mode", isOn: $debugMode)
+            }
+        }
+    }
+}
 
+// MARK: Pickers
 extension DeployApp {
     
     struct SchemePicker: View {
@@ -326,6 +391,58 @@ extension DeployApp {
             }
         }
     }
+    
+    struct SprintPicker: View {
+        
+        private let network = Network.Jira()
+        
+        @Binding var selected: Network.Jira.Sprint
+        
+        @Binding var result: Result<[Network.Jira.Sprint], Error>?
+        
+        var body: some View {
+            
+            HStack {
+                
+                switch result {
+                case .success(let sprints):
+                    Picker("Selected Sprint:", selection: $selected) {
+                        ForEach(sprints, id: \.self) {
+                            Text($0.name).tag($0)
+                        }
+                    }
+                case .failure(let error):
+                    Text("Error while loading sprints")
+                    Text(error.localizedDescription)
+                case nil:
+                    ProgressView()
+                }
+                
+                if result != nil {
+                    Button(systemImage: "arrow.counterclockwise") {
+                        result = nil
+                        Task {
+                            await loadSprints()
+                        }
+                    }
+                }
+            }
+            .task {
+                switch result {
+                case .success:
+                    break
+                default:
+                    await loadSprints()
+                }
+            }
+        }
+        
+        private func loadSprints() async {
+            result = await network.fetchSprints().map {
+                [.none] + Array($0)
+            }
+        }
+    }
 }
 
 extension DeployApp: FastlaneWorkflow {}
@@ -335,7 +452,8 @@ private extension DeployApp {
     func fastlaneArguments(
         selectedScheme: String,
         pushOnGitMessage: Bool,
-        makeBitbucketPr: Bool
+        makeBitbucketPr: Bool,
+        updateJiraTickets: Bool
     ) -> FastlaneDeployArguments {
         FastlaneDeployArguments(
             xcode: selectedXcode,
@@ -349,13 +467,16 @@ private extension DeployApp {
             resetGit: resetGit,
             pushOnGitMessage: pushOnGitMessage,
             pushOnGitTag: pushOnGitTag,
+            makeGitBranch: makeGitBranch,
             makeBitbucketPr: makeBitbucketPr,
             uploadToFirebase: uploadToFirebase,
             useCrashlytics: useCrashlytics,
             useDynatrace: uploadDsymToDynatrace,
             notifySlack: notifySlack,
             makeReleaseNotesFromJira: makeReleaseNotesFromJira,
-            makeJiraRelease: makeJiraRelease,
+            makeJiraRelease: makeJiraRelease, 
+            updateJiraTickets: updateJiraTickets,
+            sprint: selectedSprint,
             debugMode: debugMode
         )
     }
@@ -364,15 +485,18 @@ private extension DeployApp {
         fastlaneArguments(
             selectedScheme: firstSelectedScheme,
             pushOnGitMessage: pushOnGitMessage,
-            makeBitbucketPr: makeBitbucketPr
+            makeBitbucketPr: makeBitbucketPr,
+            updateJiraTickets: updateJiraTickets
         )
     }
     
-    func secondFastlaneArguments(pushOnGitMessage: Bool) -> FastlaneDeployArguments {
+    func secondFastlaneArguments(pushOnGitMessage: Bool,
+                                 updateJiraTickets: Bool) -> FastlaneDeployArguments {
         fastlaneArguments(
             selectedScheme: secondSelectedScheme,
             pushOnGitMessage: pushOnGitMessage,
-            makeBitbucketPr: makeBitbucketPr
+            makeBitbucketPr: makeBitbucketPr,
+            updateJiraTickets: updateJiraTickets
         )
     }
     
@@ -415,7 +539,7 @@ private extension DeployApp {
         commands.append(deployFirstScheme(makeBitbucketPr: makeBitbucketPr))
         
         if isSelectedSecondScheme {
-            commands.append(deploySecondScheme(pushOnGitMessage: false))
+            commands.append(deploySecondScheme(pushOnGitMessage: false, updateJiraTickets: false))
         }
         
         if makeBitbucketPr {
@@ -433,8 +557,11 @@ private extension DeployApp {
         FastlaneCommand.deploy.fullCommand(with: firstFastlaneArguments(makeBitbucketPr: makeBitbucketPr))
     }
     
-    func deploySecondScheme(pushOnGitMessage: Bool) -> String {
-        FastlaneCommand.deploy.fullCommand(with: secondFastlaneArguments(pushOnGitMessage: pushOnGitMessage))
+    func deploySecondScheme(pushOnGitMessage: Bool, updateJiraTickets: Bool) -> String {
+        FastlaneCommand.deploy.fullCommand(with: secondFastlaneArguments(
+            pushOnGitMessage: pushOnGitMessage,
+            updateJiraTickets: updateJiraTickets
+        ))
     }
     
     func update() {
@@ -449,7 +576,10 @@ private extension DeployApp {
         }
         if !secondSchemeFastlaneCommand.isEmpty {
             secondSchemeFastlaneCommand = ""
-            secondSchemeFastlaneCommand = deploySecondScheme(pushOnGitMessage: pushOnGitMessage)
+            secondSchemeFastlaneCommand = deploySecondScheme(
+                pushOnGitMessage: pushOnGitMessage,
+                updateJiraTickets: updateJiraTickets
+            )
         }
     }
     
@@ -596,7 +726,7 @@ private struct XcodeVersions {
 
 struct DeployApp_Previews: PreviewProvider {
     static var previews: some View {
-        DeployApp()
+        DeployApp(sprints: .constant(nil))
     }
 }
 

@@ -53,7 +53,7 @@ private class TicketStatus {
     private let separator = ", "
     
     private var path: String {
-        Defaults.shared.projectFolder + "/" + jiraWorkflowStatusPathComponent
+        Defaults.shared.projectFolder + "/" + jiraReleaseNotesStatusPathComponent
     }
     
     init() {

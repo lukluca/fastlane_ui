@@ -84,11 +84,13 @@ extension ContentView {
 struct SegmentView: View {
     
     @Binding var selectedSement: Segment
+    
+    @State private var sprints: Result<[Network.Jira.Sprint], Error>?
 
     var body: some View {
         switch selectedSement {
         case .deployApp:
-            DeployApp()
+            DeployApp(sprints: $sprints)
         case .git:
             GitView()
         case .bitbucket:

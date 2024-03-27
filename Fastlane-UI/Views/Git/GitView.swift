@@ -18,7 +18,7 @@ struct GitView: View {
     @Default(\.mainFolder) private var mainFolder: String
     @Default(\.remoteURL) private var remoteURL: String
     @Default(\.cloneFromRemote) private var cloneFromRemote: Bool
-    @Default(\.useGitFlow) private var useGitFlow: Bool
+    @Default(\.makeGitBranch) private var makeGitBranch: Bool
     
     @State private var releaseBranchText: String = ""
     @State private var tagText: String = ""
@@ -31,7 +31,7 @@ struct GitView: View {
             
             VStack(spacing: 10) {
                 
-                if pushOnGitMessage || pushOnGitTag || useGitFlow {
+                if pushOnGitMessage || pushOnGitTag || makeGitBranch {
                     ForEach(GitView.Config.allCases) {
                         switch $0 {
                         case .releaseBranch:
@@ -73,7 +73,7 @@ struct GitView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Toggle(" Push on Git commit", isOn: $pushOnGitMessage)
                     Toggle(" Push on Git tag", isOn: $pushOnGitTag)
-                    Toggle(" Use GitFlow", isOn: $useGitFlow)
+                    Toggle(" Make Git branch", isOn: $makeGitBranch)
                     Toggle(" Clone git from remote", isOn: $cloneFromRemote)
                 }
                 .padding(.top, 5)
@@ -176,6 +176,8 @@ extension GitView {
     
     private final class ConfigurationManager: ObservableObject {
         
+        typealias Configuration = Files.Git.Naming
+        
         private var file: Configuration
         @Published var current: Configuration
         
@@ -184,7 +186,7 @@ extension GitView {
         }
  
         init() {
-            if let config = try? ConfigurationManager.readFromFile() {
+            if let config = try? Configuration.read() {
                 file = config
                 current = config
             } else {
@@ -198,75 +200,14 @@ extension GitView {
         }
         
         func saveToFile() throws {
-            let path = projectFastlanePathComponent + "/" + gitConfigNaming
-            try current.toFileContent.write(toFile: path, atomically: true, encoding: .utf8)
+            try Configuration.write(current)
             
-            if let config = try ConfigurationManager.readFromFile() {
-                file = config
-                current = config
-            }
-        }
-        
-        private static func readFromFile() throws -> Configuration? {
-            let path = projectFastlanePathComponent + "/" + gitConfigNaming
-            let values = try String.contentsOfFileSeparatedByNewLine(path: path)
-            
-            var releaseBranch: String?
-            var tag: String?
-            var commitMessage: String?
-            
-            func purge(value: String, config: GitView.Config) -> String? {
-                value.purge(using: config.key)
-            }
-            
-            values.forEach {
-                if let value = purge(value: $0, config: .releaseBranch) {
-                    releaseBranch = value
-                } else if let value = purge(value: $0, config: .tag) {
-                    tag = value
-                } else if let value = purge(value: $0, config: .commitMessage) {
-                    commitMessage = value
-                }
-            }
-            
-            guard let releaseBranch, let tag, let commitMessage
-            else { return nil }
-              
-            return Configuration(releaseBranch: releaseBranch,
-                                 tag: tag,
-                                 commitMessage: commitMessage)
-        }
-    }
-    
-    struct Configuration {
-        var releaseBranch: String
-        var tag: String
-        var commitMessage: String
-        
-        var toFileContent: String {
-            
-            func line(config: GitView.Config) -> String {
-                let value = switch config {
-                case .releaseBranch:
-                    releaseBranch
-                case .tag:
-                    tag
-                case .commitMessage:
-                    commitMessage
-                }
-                return "\(config.key)=\(value)"
-            }
-            
-            return """
-            \(line(config: .releaseBranch))
-            \(line(config: .tag))
-            \(line(config: .commitMessage))
-            """
+            let config = try Configuration.read()
+            file = config
+            current = config
         }
     }
 }
-
-extension GitView.Configuration: Equatable {}
 
 extension GitView.Config: Identifiable {
     var id: Int {

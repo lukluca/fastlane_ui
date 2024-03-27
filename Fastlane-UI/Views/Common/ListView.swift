@@ -71,7 +71,7 @@ private extension ListView {
         let branch = Defaults.shared.branchName
         let cd = shell.cd(folder: Defaults.shared.projectFolder)
         let checkout = shell.gitCheckout(branch: branch)
-        let add = shell.gitAdd(file: jiraWorkflowStatusPathComponent)
+        let add = shell.gitAdd(file: jiraReleaseNotesStatusPathComponent)
         let commit = shell.gitCommit(message: gitMessage)
         let push = shell.gitPush(branch: branch)
         

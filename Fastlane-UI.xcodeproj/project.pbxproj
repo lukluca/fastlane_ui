@@ -22,6 +22,11 @@
 		4A51E74D2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */; };
 		4A51E7602A6AC8A000813308 /* FastlaneDeploy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */; };
 		4A51E7622A6ACAEB00813308 /* AppStorage+Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */; };
+		4A6A63BF2BAAF5A000332B88 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6A63BE2BAAF5A000332B88 /* Network.swift */; };
+		4A6A63C12BAB2C9600332B88 /* Network+Jira.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6A63C02BAB2C9600332B88 /* Network+Jira.swift */; };
+		4A6A63C42BAF48E700332B88 /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6A63C32BAF48E700332B88 /* Files.swift */; };
+		4A6A63C62BAF490600332B88 /* Files+Jira.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6A63C52BAF490600332B88 /* Files+Jira.swift */; };
+		4A6A63C82BAF578600332B88 /* Files+Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6A63C72BAF578600332B88 /* Files+Git.swift */; };
 		4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDB2AA62497000FE841 /* DeployApp.swift */; };
 		4A7F6BDE2AA71DEC000FE841 /* JiraReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDD2AA71DEC000FE841 /* JiraReleaseNotes.swift */; };
 		4A7F6BE02AA71EA2000FE841 /* FastlaneCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */; };
@@ -89,6 +94,11 @@
 		4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		4A51E75F2A6AC8A000813308 /* FastlaneDeploy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneDeploy.swift; sourceTree = "<group>"; };
 		4A51E7612A6ACAEB00813308 /* AppStorage+Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppStorage+Defaults.swift"; sourceTree = "<group>"; };
+		4A6A63BE2BAAF5A000332B88 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		4A6A63C02BAB2C9600332B88 /* Network+Jira.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Network+Jira.swift"; sourceTree = "<group>"; };
+		4A6A63C32BAF48E700332B88 /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
+		4A6A63C52BAF490600332B88 /* Files+Jira.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Files+Jira.swift"; sourceTree = "<group>"; };
+		4A6A63C72BAF578600332B88 /* Files+Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Files+Git.swift"; sourceTree = "<group>"; };
 		4A7F6BDB2AA62497000FE841 /* DeployApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeployApp.swift; sourceTree = "<group>"; };
 		4A7F6BDD2AA71DEC000FE841 /* JiraReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraReleaseNotes.swift; sourceTree = "<group>"; };
 		4A7F6BDF2AA71EA2000FE841 /* FastlaneCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastlaneCommandView.swift; sourceTree = "<group>"; };
@@ -186,6 +196,8 @@
 		4A51E72D2A6AC03600813308 /* Fastlane-UI */ = {
 			isa = PBXGroup;
 			children = (
+				4A6A63C22BAF485400332B88 /* Files */,
+				4A6A63BD2BAAF57F00332B88 /* Network */,
 				4A7F6C062AA8E09C000FE841 /* Storage */,
 				4A7F6BF02AA74482000FE841 /* Shells */,
 				4A7F6BE12AA71EB9000FE841 /* Views */,
@@ -220,6 +232,25 @@
 				4A51E74C2A6AC03700813308 /* Fastlane_UIUITestsLaunchTests.swift */,
 			);
 			path = "Fastlane-UIUITests";
+			sourceTree = "<group>";
+		};
+		4A6A63BD2BAAF57F00332B88 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				4A6A63BE2BAAF5A000332B88 /* Network.swift */,
+				4A6A63C02BAB2C9600332B88 /* Network+Jira.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		4A6A63C22BAF485400332B88 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				4A6A63C32BAF48E700332B88 /* Files.swift */,
+				4A6A63C52BAF490600332B88 /* Files+Jira.swift */,
+				4A6A63C72BAF578600332B88 /* Files+Git.swift */,
+			);
+			path = Files;
 			sourceTree = "<group>";
 		};
 		4A7F6BE12AA71EB9000FE841 /* Views */ = {
@@ -516,10 +547,12 @@
 				4A7F6BDE2AA71DEC000FE841 /* JiraReleaseNotes.swift in Sources */,
 				4AE8645F2B6A611200C5846D /* BitbucketView.swift in Sources */,
 				4A3767862AAA298500880FBA /* View+.swift in Sources */,
+				4A6A63BF2BAAF5A000332B88 /* Network.swift in Sources */,
 				4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */,
 				4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */,
 				4A51832C2B051AFD0080355F /* Wizard.swift in Sources */,
 				4AD59B732B11002A0089A549 /* GitView.swift in Sources */,
+				4A6A63C42BAF48E700332B88 /* Files.swift in Sources */,
 				4A7F6BF52AA744F0000FE841 /* CD.swift in Sources */,
 				4AA3E77B2B88C74D00E19B19 /* JiraMakeVersion.swift in Sources */,
 				4A7F6BF72AA744FA000FE841 /* CP.swift in Sources */,
@@ -534,12 +567,15 @@
 				4AD59B782B1119360089A549 /* Slack.swift in Sources */,
 				4ACC2D3E2B73B650002B1D9F /* Button+.swift in Sources */,
 				4A7F6C052AA8D3FB000FE841 /* Tools.swift in Sources */,
+				4A6A63C82BAF578600332B88 /* Files+Git.swift in Sources */,
 				4AC20C052B4D6E6D00F69A0F /* Dynatrace.swift in Sources */,
 				4ACC352F2AB87A8A00DC013E /* Jira.swift in Sources */,
 				4A17F45A2AD31705006094FA /* TextFieldRow.swift in Sources */,
+				4A6A63C12BAB2C9600332B88 /* Network+Jira.swift in Sources */,
 				4AD59B752B11093A0089A549 /* FirebaseTesters.swift in Sources */,
 				4A7F6BF92AA74617000FE841 /* Shell.swift in Sources */,
 				4A9BDEA82AB07CDD006B9688 /* RM.swift in Sources */,
+				4A6A63C62BAF490600332B88 /* Files+Jira.swift in Sources */,
 				4A7F6BF32AA744B3000FE841 /* CommandExecuting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
