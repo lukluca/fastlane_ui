@@ -17,7 +17,23 @@ struct DeployApp: View {
     @Default(\.secondScheme) private var secondSelectedScheme: String
     
     @Default(\.versionNumber) private var versionNumber: String
+    @Default(\.automaticVersionNumber) private var automaticVersionNumber: Bool
     @Default(\.buildNumber) private var buildNumber: Int
+    @Default(\.automaticBuildNumber) private var automaticBuildNumber: Bool
+    
+    private var versionNumberArg: String? {
+        guard !automaticVersionNumber else {
+            return nil
+        }
+        return versionNumber
+    }
+    
+    private var buildNumberArg: Int? {
+        guard !automaticBuildNumber else {
+            return nil
+        }
+        return buildNumber
+    }
 
     @Default(\.useGit) private var useGit: Bool
     @Default(\.branchName) private var branchName: String
@@ -87,9 +103,21 @@ struct DeployApp: View {
                 
                 SchemePicker(selectedScheme: $secondSelectedScheme, schemes: secondSchemes)
                 
-                VersionNumberView(versionNumber: $versionNumber)
+                HStack {
+                    VersionNumberView(versionNumber: $versionNumber)
+                        .opacity(automaticVersionNumber ? 0.5 : 1)
+                        .disabled(automaticVersionNumber)
+                    
+                    Toggle(" Automatic", isOn: $automaticVersionNumber)
+                }
                 
-                BuildNumberView(buildNumber: $buildNumber)
+                HStack {
+                    BuildNumberView(buildNumber: $buildNumber)
+                        .opacity(automaticBuildNumber ? 0.5 : 1)
+                        .disabled(automaticBuildNumber)
+                    
+                    Toggle(" Automatic", isOn: $automaticBuildNumber)
+                }
                 
                 if useGit {
                     
@@ -265,6 +293,12 @@ struct DeployApp: View {
             update()
         }
         .onChange(of: selectedSprint) { _ in
+            update()
+        }
+        .onChange(of: automaticVersionNumber) { newValue in
+            update()
+        }
+        .onChange(of: automaticBuildNumber) { _ in
             update()
         }
         .padding()
@@ -451,6 +485,8 @@ private extension DeployApp {
     
     func fastlaneArguments(
         selectedScheme: String,
+        buildNumber: Int?,
+        incrementBuildNumber: Bool?,
         pushOnGitMessage: Bool,
         makeBitbucketPr: Bool,
         updateJiraTickets: Bool
@@ -458,8 +494,9 @@ private extension DeployApp {
         FastlaneDeployArguments(
             xcode: selectedXcode,
             scheme: selectedScheme,
-            versionNumber: versionNumber,
-            buildNumber: buildNumber,
+            versionNumber: versionNumberArg,
+            buildNumber: buildNumber, 
+            incrementBuildNumber: incrementBuildNumber,
             branchName: branchName,
             gitTag: gitTag,
             testers: testers,
@@ -482,8 +519,11 @@ private extension DeployApp {
     }
     
     func firstFastlaneArguments(makeBitbucketPr: Bool) -> FastlaneDeployArguments {
-        fastlaneArguments(
+        let buildNumber = buildNumberArg
+        return fastlaneArguments(
             selectedScheme: firstSelectedScheme,
+            buildNumber: buildNumber,
+            incrementBuildNumber: buildNumber == nil ? true : nil,
             pushOnGitMessage: pushOnGitMessage,
             makeBitbucketPr: makeBitbucketPr,
             updateJiraTickets: updateJiraTickets
@@ -492,8 +532,11 @@ private extension DeployApp {
     
     func secondFastlaneArguments(pushOnGitMessage: Bool,
                                  updateJiraTickets: Bool) -> FastlaneDeployArguments {
-        fastlaneArguments(
+        let buildNumber = buildNumberArg
+        return fastlaneArguments(
             selectedScheme: secondSelectedScheme,
+            buildNumber: buildNumber,
+            incrementBuildNumber: buildNumber == nil ? false : nil,
             pushOnGitMessage: pushOnGitMessage,
             makeBitbucketPr: makeBitbucketPr,
             updateJiraTickets: updateJiraTickets

@@ -19,7 +19,9 @@ class Defaults: ObservableObject {
         case firstScheme
         case secondScheme
         case versionNumber
+        case automaticVersionNumber
         case buildNumber
+        case automaticBuildNumber
         //git
         case useGit
         case branchName
@@ -64,7 +66,9 @@ class Defaults: ObservableObject {
     @AppStorage(.firstScheme) var firstScheme = ""
     @AppStorage(.secondScheme) var secondScheme = ""
     @AppStorage(.versionNumber) var versionNumber = ""
+    @AppStorage(.automaticVersionNumber) var automaticVersionNumber = false
     @AppStorage(.buildNumber) var buildNumber = 0
+    @AppStorage(.automaticBuildNumber) var automaticBuildNumber = false
     //git
     @AppStorage(.useGit) var useGit = false
     @AppStorage(.branchName) var branchName = ""
@@ -130,7 +134,9 @@ class Defaults: ObservableObject {
         firstScheme = ""
         secondScheme = ""
         versionNumber = ""
+        automaticVersionNumber = false
         buildNumber = 0
+        automaticBuildNumber = false
         //git
         useGit = false
         branchName = ""

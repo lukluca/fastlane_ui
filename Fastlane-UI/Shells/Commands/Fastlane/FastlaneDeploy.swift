@@ -12,8 +12,9 @@ let noSelection: String = "None"
 struct FastlaneDeployArguments: FastlaneArguments {
     let xcode: String
     let scheme: String
-    let versionNumber: String
-    let buildNumber: Int
+    let versionNumber: String?
+    let buildNumber: Int?
+    let incrementBuildNumber: Bool?
     let branchName: String
     let gitTag: String
     let testers: String
@@ -46,12 +47,25 @@ struct FastlaneDeployArguments: FastlaneArguments {
         "--env " + scheme.asEnvironment
     }
     
-    private var versionNumberArg: String {
-        "version_number:\(versionNumber)"
+    private var versionNumberArg: String? {
+        guard let versionNumber else {
+            return nil
+        }
+        return "version_number:\(versionNumber)"
     }
     
-    private var buildNumberArg: String {
-        "build_number:\(buildNumber)"
+    private var buildNumberArg: String? {
+        guard let buildNumber else {
+            return nil
+        }
+        return "build_number:\(buildNumber)"
+    }
+    
+    private var incrementBuildNumberArg: String? {
+        guard let incrementBuildNumber, defaultParameters.incrementBuildNumber else {
+            return nil
+        }
+        return "increment_build_number:\(incrementBuildNumber)"
     }
     
     private var branchNameArg: String? {
@@ -186,6 +200,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
             envArg,
             versionNumberArg,
             buildNumberArg,
+            incrementBuildNumberArg,
             branchNameArg,
             gitTagArg,
             testersArg,
@@ -223,6 +238,7 @@ extension FastlaneDeployArguments {
         
         let xcode: String
         let resetGit: Bool
+        let incrementBuildNumber: Bool
         let pushOnGitMessage: Bool
         let pushOnGitTag: Bool
         let makeGitBranch: Bool
@@ -243,6 +259,7 @@ extension FastlaneDeployArguments {
             
             var xcode: String?
             var resetGit: Bool?
+            var incrementBuildNumber: Bool?
             var pushOnGitMessage: Bool?
             var pushOnGitTag: Bool?
             var makeGitBranch: Bool?
@@ -263,12 +280,14 @@ extension FastlaneDeployArguments {
             values.forEach {
                 if let value = purge(value: $0, parameter: .xcode) {
                     xcode = value
+                } else if let value = purge(value: $0, parameter: .resetGit) {
+                    resetGit = Bool(value)
+                } else if let value = purge(value: $0, parameter: .incrementBuildNumber) {
+                    incrementBuildNumber = Bool(value)
                 } else if let value = purge(value: $0, parameter: .pushOnGitMessage) {
                     pushOnGitMessage = Bool(value)
                 } else if let value = purge(value: $0, parameter: .pushOnGitTag) {
                     pushOnGitTag = Bool(value)
-                } else if let value = purge(value: $0, parameter: .resetGit) {
-                    resetGit = Bool(value)
                 } else if let value = purge(value: $0, parameter: .makeGitBranch) {
                     makeGitBranch = Bool(value)
                 } else if let value = purge(value: $0, parameter: .makeBitbucketPr) {
@@ -294,6 +313,7 @@ extension FastlaneDeployArguments {
             
             self.xcode = xcode ?? ""
             self.resetGit = resetGit ?? false
+            self.incrementBuildNumber = incrementBuildNumber ?? false
             self.pushOnGitMessage = pushOnGitMessage ?? false
             self.pushOnGitTag = pushOnGitTag ?? false
             self.makeGitBranch = makeGitBranch ?? false
@@ -315,6 +335,7 @@ extension FastlaneDeployArguments.DefaultParameters {
         
         case xcode
         case resetGit
+        case incrementBuildNumber
         case pushOnGitMessage
         case pushOnGitTag
         case makeGitBranch
@@ -334,6 +355,8 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "XCODE"
             case .resetGit:
                 "RESET_GIT"
+            case .incrementBuildNumber:
+                "INCREMENT_BUILD_NUMBER"
             case .pushOnGitMessage:
                 "PUSH_MESSAGE"
             case .pushOnGitTag:
