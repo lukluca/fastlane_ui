@@ -13,17 +13,27 @@ enum FastlaneCommand: String {
     case deploy
     case getJiraReleaseNotes = "get_jira_release_notes"
     case makeJiraVersion = "make_jira_version"
+    case updateBundle = "update --bundler"
+    case updateFastlane = "update fastlane"
     case updatePlugins = "update_plugins"
-    case update = "update_fastlane"
+    case updateFastlaneTools = "update_fastlane"
     case rubocop
     
     private var needsFastlane: Bool {
-        self != .rubocop
+        self != .rubocop && self != .updateBundle && self != .updateFastlane
+    }
+    
+    private var needsExec: Bool {
+        self != .updateBundle && self != .updateFastlane
     }
     
     fileprivate var arguments: [String] {
+    
+        var commands = [String]()
         
-        var commands: [String] = ["exec"]
+        if needsExec {
+            commands.append("exec")
+        }
         
         if needsFastlane {
             commands.append("fastlane")

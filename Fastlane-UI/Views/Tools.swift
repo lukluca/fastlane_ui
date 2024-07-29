@@ -38,8 +38,16 @@ struct Tools: View {
                         
                         Toggle(" Needs sudo", isOn: $needsSudo)
                         
-                        Button("Update") {
-                            result = update()
+                        Button("Update bundle") {
+                            result = updateBundle()
+                        }
+                        
+                        Button("Update fastlane") {
+                            result = updateFastlane()
+                        }
+                        
+                        Button("Update fastlane tools") {
+                            result = updateFastlaneTools()
                         }
                         
                         Button("Update plugins") {
@@ -66,32 +74,48 @@ extension Tools: FastlaneWorkflow {}
 
 private extension Tools {
     
-    private var updateCommand: String {
-        FastlaneCommand.update.fullCommand(needsSudo: needsSudo)
+    var updateBundleCommand: String {
+        FastlaneCommand.updateBundle.fullCommand(needsSudo: needsSudo)
     }
     
-    private var updatePluginsCommand: String {
+    var updateFastlaneCommand: String {
+        FastlaneCommand.updateFastlane.fullCommand(needsSudo: needsSudo)
+    }
+    
+    var updateFastlaneToolsCommand: String {
+        FastlaneCommand.updateFastlaneTools.fullCommand(needsSudo: needsSudo)
+    }
+    
+    var updatePluginsCommand: String {
         FastlaneCommand.updatePlugins.fullCommand(needsSudo: needsSudo)
     }
     
-    private var rubocopCommand: String {
+    var rubocopCommand: String {
         FastlaneCommand.rubocop.fullCommand(needsSudo: needsSudo, with: RubocopArguments())
     }
     
-    private var cdProjectFolderCommand: String {
+    var cdProjectFolderCommand: String {
         shell.cd(folder: Defaults.shared.projectFolder)
     }
     
-    func update() -> String {
-        runBundleScript(with: [cdProjectFolderCommand, updateCommand])
+    func updateBundle() -> String {
+        runBundleScript(with: [cdProjectFolderCommand, updateBundleCommand])
     }
     
-    func updateAll() -> String {
-        runBundleScript(with: [cdProjectFolderCommand, updateCommand, updatePluginsCommand])
+    func updateFastlane() -> String {
+        runBundleScript(with: [cdProjectFolderCommand, updateFastlaneCommand])
+    }
+    
+    func updateFastlaneTools() -> String {
+        runBundleScript(with: [cdProjectFolderCommand, updateFastlaneToolsCommand])
     }
     
     func updatePlugins() -> String {
         runBundleScript(with: [cdProjectFolderCommand, updatePluginsCommand])
+    }
+    
+    func updateAll() -> String {
+        runBundleScript(with: [cdProjectFolderCommand, updateBundleCommand, updateFastlaneCommand, updateFastlaneToolsCommand, updatePluginsCommand])
     }
     
     func rubocop() -> String {
