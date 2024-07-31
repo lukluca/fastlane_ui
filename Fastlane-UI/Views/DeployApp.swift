@@ -186,8 +186,7 @@ struct DeployApp: View {
                         updateJiraTickets: updateJiraTickets
                     )
                 }
-                .disabled(versionNumber.isEmpty ||
-                          branchName.isEmpty)
+                .disabled(disableDeploy)
                 Button("Reset to file") {
                     Defaults.shared.resetToFile()
                 }
@@ -627,6 +626,11 @@ private extension DeployApp {
     }
     
     func updateDeployButtonActivity() {
+        if automaticVersionNumber {
+            disableDeploy = branchName.isEmpty
+            return
+        }
+        
         disableDeploy = versionNumber.isEmpty ||
                         branchName.isEmpty
     }
