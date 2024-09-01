@@ -63,6 +63,12 @@ struct DeployApp: View {
     @Default(\.useSlack) private var useSlack: Bool
     @Default(\.notifySlack) private var notifySlack: Bool
     
+    @Default(\.openTicketServiceNow) private var openTicketServiceNow: Bool
+    
+    @Default(\.sendDeployEmail) private var sendDeployEmail: Bool
+    
+    @Default(\.uploadToAirWatch) private var uploadToAirWatch: Bool
+    
     @State private var result = ""
     
     @State private var firstSchemeFastlaneCommand = ""
@@ -103,21 +109,12 @@ struct DeployApp: View {
                 
                 SchemePicker(selectedScheme: $secondSelectedScheme, schemes: secondSchemes)
                 
-                HStack {
-                    VersionNumberView(versionNumber: $versionNumber)
-                        .opacity(automaticVersionNumber ? 0.5 : 1)
-                        .disabled(automaticVersionNumber)
-                    
-                    Toggle(" Automatic", isOn: $automaticVersionNumber)
-                }
-                
-                HStack {
-                    BuildNumberView(buildNumber: $buildNumber)
-                        .opacity(automaticBuildNumber ? 0.5 : 1)
-                        .disabled(automaticBuildNumber)
-                    
-                    Toggle(" Automatic", isOn: $automaticBuildNumber)
-                }
+                VersionAndBuildNumberView(
+                    versionNumber: $versionNumber,
+                    automaticVersionNumber: $automaticVersionNumber,
+                    buildNumber: $buildNumber,
+                    automaticBuildNumber: $automaticBuildNumber
+                )
                 
                 if useGit {
                     
@@ -171,6 +168,9 @@ struct DeployApp: View {
                 makeReleaseNotesFromJira: $makeReleaseNotesFromJira,
                 makeJiraRelease: $makeJiraRelease,
                 updateJiraTickets: $updateJiraTickets,
+                openTicketServiceNow: $openTicketServiceNow,
+                sendDeployEmail: $sendDeployEmail,
+                uploadToAirWatch: $uploadToAirWatch,
                 debugMode: $debugMode
             )
             
@@ -180,7 +180,12 @@ struct DeployApp: View {
                 }
                 .disabled(disableDeploy)
                 Button("Show fastlane command") {
-                    firstSchemeFastlaneCommand = deployFirstScheme(makeBitbucketPr: makeBitbucketPr)
+                    firstSchemeFastlaneCommand = deployFirstScheme(
+                        makeBitbucketPr: makeBitbucketPr,
+                        openTicketServiceNow: openTicketServiceNow,
+                        sendDeployEmail: sendDeployEmail,
+                        uploadToAirWatch: uploadToAirWatch
+                    )
                     secondSchemeFastlaneCommand = deploySecondScheme(
                         pushOnGitMessage: pushOnGitMessage,
                         updateJiraTickets: updateJiraTickets
@@ -294,10 +299,19 @@ struct DeployApp: View {
         .onChange(of: selectedSprint) { _ in
             update()
         }
-        .onChange(of: automaticVersionNumber) { newValue in
+        .onChange(of: automaticVersionNumber) { _ in
             update()
         }
         .onChange(of: automaticBuildNumber) { _ in
+            update()
+        }
+        .onChange(of: openTicketServiceNow) { _ in
+            update()
+        }
+        .onChange(of: sendDeployEmail) { _ in
+            update()
+        }
+        .onChange(of: uploadToAirWatch) { _ in
             update()
         }
         .padding()
@@ -324,6 +338,9 @@ extension DeployApp {
         @Binding var makeReleaseNotesFromJira: Bool
         @Binding var makeJiraRelease: Bool
         @Binding var updateJiraTickets: Bool
+        @Binding var openTicketServiceNow: Bool
+        @Binding var sendDeployEmail: Bool
+        @Binding var uploadToAirWatch: Bool
         @Binding var debugMode: Bool
        
         var body: some View {
@@ -362,7 +379,40 @@ extension DeployApp {
                     Toggle(" Update Jira tickets", isOn: $updateJiraTickets)
                 }
                 
+                Toggle(" Open ticket service now", isOn: $openTicketServiceNow)
+                Toggle(" Send deploy email", isOn: $sendDeployEmail)
+                Toggle(" Upload to AirWatch", isOn: $uploadToAirWatch)
                 Toggle(" Enable debug mode", isOn: $debugMode)
+            }
+        }
+    }
+}
+
+extension DeployApp {
+    struct VersionAndBuildNumberView: View {
+        
+        @Binding var versionNumber: String
+        @Binding var automaticVersionNumber: Bool
+        @Binding var buildNumber: Int
+        @Binding var automaticBuildNumber: Bool
+        
+        var body: some View {
+            Group {
+                HStack {
+                    VersionNumberView(versionNumber: $versionNumber)
+                        .opacity(automaticVersionNumber ? 0.5 : 1)
+                        .disabled(automaticVersionNumber)
+                    
+                    Toggle(" Automatic", isOn: $automaticVersionNumber)
+                }
+                
+                HStack {
+                    BuildNumberView(buildNumber: $buildNumber)
+                        .opacity(automaticBuildNumber ? 0.5 : 1)
+                        .disabled(automaticBuildNumber)
+                    
+                    Toggle(" Automatic", isOn: $automaticBuildNumber)
+                }
             }
         }
     }
@@ -488,7 +538,10 @@ private extension DeployApp {
         incrementBuildNumber: Bool?,
         pushOnGitMessage: Bool,
         makeBitbucketPr: Bool,
-        updateJiraTickets: Bool
+        updateJiraTickets: Bool,
+        openTicketServiceNow: Bool,
+        sendDeployEmail: Bool,
+        uploadToAirWatch: Bool
     ) -> FastlaneDeployArguments {
         FastlaneDeployArguments(
             xcode: selectedXcode,
@@ -513,11 +566,19 @@ private extension DeployApp {
             makeJiraRelease: makeJiraRelease, 
             updateJiraTickets: updateJiraTickets,
             sprint: selectedSprint,
+            openTicketServiceNow: openTicketServiceNow,
+            sendDeployEmail: sendDeployEmail, 
+            uploadToAirWatch: uploadToAirWatch,
             debugMode: debugMode
         )
     }
     
-    func firstFastlaneArguments(makeBitbucketPr: Bool) -> FastlaneDeployArguments {
+    func firstFastlaneArguments(
+        makeBitbucketPr: Bool,
+        openTicketServiceNow: Bool,
+        sendDeployEmail: Bool,
+        uploadToAirWatch: Bool
+    ) -> FastlaneDeployArguments {
         let buildNumber = buildNumberArg
         return fastlaneArguments(
             selectedScheme: firstSelectedScheme,
@@ -525,12 +586,17 @@ private extension DeployApp {
             incrementBuildNumber: buildNumber == nil ? true : nil,
             pushOnGitMessage: pushOnGitMessage,
             makeBitbucketPr: makeBitbucketPr,
-            updateJiraTickets: updateJiraTickets
+            updateJiraTickets: updateJiraTickets,
+            openTicketServiceNow: openTicketServiceNow,
+            sendDeployEmail: sendDeployEmail,
+            uploadToAirWatch: uploadToAirWatch
         )
     }
     
-    func secondFastlaneArguments(pushOnGitMessage: Bool,
-                                 updateJiraTickets: Bool) -> FastlaneDeployArguments {
+    func secondFastlaneArguments(
+        pushOnGitMessage: Bool,
+        updateJiraTickets: Bool
+    ) -> FastlaneDeployArguments {
         let buildNumber = buildNumberArg
         return fastlaneArguments(
             selectedScheme: secondSelectedScheme,
@@ -538,7 +604,10 @@ private extension DeployApp {
             incrementBuildNumber: buildNumber == nil ? false : nil,
             pushOnGitMessage: pushOnGitMessage,
             makeBitbucketPr: makeBitbucketPr,
-            updateJiraTickets: updateJiraTickets
+            updateJiraTickets: updateJiraTickets,
+            openTicketServiceNow: openTicketServiceNow,
+            sendDeployEmail: sendDeployEmail,
+            uploadToAirWatch: uploadToAirWatch
         )
     }
     
@@ -577,8 +646,16 @@ private extension DeployApp {
         let isSelectedSecondScheme = secondSelectedScheme != noSelection
         
         let makeBitbucketPr = isSelectedSecondScheme ? false : self.makeBitbucketPr
+        let openTicketServiceNow = isSelectedSecondScheme ? false : self.openTicketServiceNow
+        let sendDeployEmail = isSelectedSecondScheme ? false : self.sendDeployEmail
+        let uploadToAirWatch = isSelectedSecondScheme ? false : self.uploadToAirWatch
         
-        commands.append(deployFirstScheme(makeBitbucketPr: makeBitbucketPr))
+        commands.append(deployFirstScheme(
+            makeBitbucketPr: makeBitbucketPr, 
+            openTicketServiceNow: openTicketServiceNow,
+            sendDeployEmail: sendDeployEmail,
+            uploadToAirWatch: uploadToAirWatch
+        ))
         
         if isSelectedSecondScheme {
             commands.append(deploySecondScheme(pushOnGitMessage: false, updateJiraTickets: false))
@@ -595,8 +672,18 @@ private extension DeployApp {
         return runBundleScript(with: commands)
     }
     
-    func deployFirstScheme(makeBitbucketPr: Bool) -> String {
-        FastlaneCommand.deploy.fullCommand(with: firstFastlaneArguments(makeBitbucketPr: makeBitbucketPr))
+    func deployFirstScheme(
+        makeBitbucketPr: Bool,
+        openTicketServiceNow: Bool,
+        sendDeployEmail: Bool,
+        uploadToAirWatch: Bool
+    ) -> String {
+        FastlaneCommand.deploy.fullCommand(with: firstFastlaneArguments(
+            makeBitbucketPr: makeBitbucketPr, 
+            openTicketServiceNow: openTicketServiceNow,
+            sendDeployEmail: sendDeployEmail,
+            uploadToAirWatch: uploadToAirWatch
+        ))
     }
     
     func deploySecondScheme(pushOnGitMessage: Bool, updateJiraTickets: Bool) -> String {
@@ -614,7 +701,12 @@ private extension DeployApp {
     func updateFastlaneCommand() {
         if !firstSchemeFastlaneCommand.isEmpty {
             firstSchemeFastlaneCommand = ""
-            firstSchemeFastlaneCommand = deployFirstScheme(makeBitbucketPr: makeBitbucketPr)
+            firstSchemeFastlaneCommand = deployFirstScheme(
+                makeBitbucketPr: makeBitbucketPr,
+                openTicketServiceNow: openTicketServiceNow,
+                sendDeployEmail: sendDeployEmail,
+                uploadToAirWatch: uploadToAirWatch
+            )
         }
         if !secondSchemeFastlaneCommand.isEmpty {
             secondSchemeFastlaneCommand = ""
@@ -699,7 +791,9 @@ private struct GitBranches {
             } + others
         }
         
-        let values = extract(at: path).map {
+        let extracted = extract(at: path)
+        
+        let values = extracted.map {
             $0.replacingOccurrences(of: path + "/", with: "")
         }.map {
             $0.replacingOccurrences(of: "//", with: "/")

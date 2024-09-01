@@ -57,6 +57,12 @@ class Defaults: ObservableObject {
         //settings
         case shell
         case needsSudo
+        //serviceNow
+        case openTicketServiceNow
+        //mail
+        case sendDeployEmail
+        //AirWatch
+        case uploadToAirWatch
     }
     
     @AppStorage(.showWizard) var showWizard = true
@@ -104,6 +110,12 @@ class Defaults: ObservableObject {
     //settings
     @AppStorage(.shell) var shell = defaultShell
     @AppStorage(.needsSudo) var needsSudo = false
+    //serviceNow
+    @AppStorage(.openTicketServiceNow) var openTicketServiceNow = false
+    //mail
+    @AppStorage(.sendDeployEmail) var sendDeployEmail = false
+    //AirWatch
+    @AppStorage(.uploadToAirWatch) var uploadToAirWatch = false
     
     static let shared = Defaults()
     
@@ -124,6 +136,9 @@ class Defaults: ObservableObject {
         makeJiraRelease = defaultParameters.makeJiraRelease
         updateJiraTickets = defaultParameters.updateJiraTickets
         debugMode = defaultParameters.debugMode
+        openTicketServiceNow = defaultParameters.openTicketServiceNow
+        sendDeployEmail = defaultParameters.sendDeployEmail
+        uploadToAirWatch = defaultParameters.uploadToAirWatch
     }
     
     func reset() {
@@ -172,6 +187,12 @@ class Defaults: ObservableObject {
         //settings
         shell = defaultShell
         needsSudo = false
+        //serviceNow
+        openTicketServiceNow = false
+        //email
+        sendDeployEmail = false
+        //AirWatch
+        uploadToAirWatch = false
     }
 }
 

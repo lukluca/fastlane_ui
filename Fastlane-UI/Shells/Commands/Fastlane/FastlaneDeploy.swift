@@ -32,6 +32,9 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let makeJiraRelease: Bool
     let updateJiraTickets: Bool
     let sprint: Network.Jira.Sprint
+    let openTicketServiceNow: Bool
+    let sendDeployEmail: Bool
+    let uploadToAirWatch: Bool
     let debugMode: Bool
     
     let defaultParameters = DefaultParameters()
@@ -187,6 +190,27 @@ struct FastlaneDeployArguments: FastlaneArguments {
         return "update_jira_tickets:\(updateJiraTickets)"
     }
     
+    private var openTicketServiceNowArg: String? {
+        guard openTicketServiceNow != defaultParameters.openTicketServiceNow else {
+            return nil
+        }
+        return "open_ticket_servicenow:\(openTicketServiceNow)"
+    }
+    
+    private var sendDeployEmailArg: String? {
+        guard sendDeployEmail != defaultParameters.sendDeployEmail else {
+            return nil
+        }
+        return "send_deploy_email:\(sendDeployEmail)"
+    }
+    
+    private var uploadToAirWatchArg: String? {
+        guard uploadToAirWatch != defaultParameters.uploadToAirWatch else {
+            return nil
+        }
+        return "upload_to_airwatch:\(uploadToAirWatch)"
+    }
+    
     private var debugModeArg: String? {
         guard debugMode != defaultParameters.debugMode else {
             return nil
@@ -218,6 +242,9 @@ struct FastlaneDeployArguments: FastlaneArguments {
             sprintArg,
             updateJiraTicketsArg,
             makeReleaseNotesFromJiraArg,
+            openTicketServiceNowArg,
+            sendDeployEmailArg,
+            uploadToAirWatchArg,
             debugModeArg
         ].compactMap{ $0 }
     }
@@ -251,6 +278,9 @@ extension FastlaneDeployArguments {
         let makeJiraRelease: Bool
         let updateJiraTickets: Bool
         let debugMode: Bool
+        let openTicketServiceNow: Bool
+        let sendDeployEmail: Bool
+        let uploadToAirWatch: Bool
         
         init() {
             let path = projectFastlanePathComponent + "/" + ".default_parameters"
@@ -272,6 +302,9 @@ extension FastlaneDeployArguments {
             var makeJiraRelease: Bool?
             var updateJiraTickets: Bool?
             var debugMode: Bool?
+            var openTicketServiceNow: Bool?
+            var sendDeployEmail: Bool?
+            var uploadToAirWatch: Bool?
             
             func purge(value: String, parameter: Parameter) -> String? {
                 value.purge(using: parameter.key)
@@ -308,6 +341,12 @@ extension FastlaneDeployArguments {
                     updateJiraTickets = Bool(value)
                 } else if let value = purge(value: $0, parameter: .debugMode) {
                     debugMode = Bool(value)
+                } else if let value = purge(value: $0, parameter: .openTicketServiceNow) {
+                    openTicketServiceNow = Bool(value)
+                } else if let value = purge(value: $0, parameter: .sendDeployEmail) {
+                    sendDeployEmail = Bool(value)
+                } else if let value = purge(value: $0, parameter: .uploadToAirWatch) {
+                    uploadToAirWatch = Bool(value)
                 }
             }
             
@@ -326,6 +365,9 @@ extension FastlaneDeployArguments {
             self.makeJiraRelease = makeJiraRelease ?? false
             self.updateJiraTickets = updateJiraTickets ?? false
             self.debugMode = debugMode ?? false
+            self.openTicketServiceNow = openTicketServiceNow ?? false
+            self.sendDeployEmail = sendDeployEmail ?? false
+            self.uploadToAirWatch = uploadToAirWatch ?? false
         }
     }
 }
@@ -348,6 +390,9 @@ extension FastlaneDeployArguments.DefaultParameters {
         case makeJiraRelease
         case updateJiraTickets
         case debugMode
+        case openTicketServiceNow
+        case sendDeployEmail
+        case uploadToAirWatch
         
         var key: String {
             switch self {
@@ -381,6 +426,12 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "UPDATE_JIRA_TICKETS"
             case .debugMode:
                 "DEBUG_MODE"
+            case .openTicketServiceNow:
+                "OPEN_TICKET_SERVICENOW"
+            case .sendDeployEmail:
+                "SEND_DEPLOY_EMAIL"
+            case .uploadToAirWatch:
+                "UPLOAD_TO_AIRWATCH"
             }
         }
     }
