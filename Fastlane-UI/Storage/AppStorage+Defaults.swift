@@ -12,7 +12,14 @@ let defaultShell: Shell = .zsh
 class Defaults: ObservableObject {
     
     fileprivate enum Key: String, CaseIterable {
+        //wizard
         case showWizard
+        case isGitChoosen
+        case isBitBucketChoosen
+        case isFirebaseChoosen
+        case isDynatraceChoosen
+        case isJiraChoosen
+        case isSlackChoosen
         //project
         case projectFolder
         case xcode
@@ -65,7 +72,14 @@ class Defaults: ObservableObject {
         case uploadToAirWatch
     }
     
+    //wizard
     @AppStorage(.showWizard) var showWizard = true
+    @AppStorage(.isGitChoosen) var isGitChoosen = false
+    @AppStorage(.isBitBucketChoosen) var isBitBucketChoosen = false
+    @AppStorage(.isFirebaseChoosen) var isFirebaseChoosen = false
+    @AppStorage(.isDynatraceChoosen) var isDynatraceChoosen = false
+    @AppStorage(.isJiraChoosen) var isJiraChoosen = false
+    @AppStorage(.isSlackChoosen) var isSlackChoosen = false
     //project
     @AppStorage(.projectFolder) var projectFolder = ""
     @AppStorage(.xcode) var xcode = ""
@@ -143,6 +157,12 @@ class Defaults: ObservableObject {
     
     func reset() {
         showWizard = true
+        isGitChoosen = false
+        isBitBucketChoosen = false
+        isFirebaseChoosen = false
+        isDynatraceChoosen = false
+        isJiraChoosen = false
+        isSlackChoosen = false
         //project
         projectFolder = ""
         xcode = ""

@@ -227,6 +227,7 @@ extension Wizard {
                 isChecked = useGit
             }.onChange(of: isChecked) { newValue in
                 useGit = newValue
+                Defaults.shared.isGitChoosen = true
             }
         }
     }
@@ -278,6 +279,7 @@ extension Wizard {
                 isChecked = makeBitbucketPr
             }.onChange(of: isChecked) { newValue in
                 makeBitbucketPr = newValue
+                Defaults.shared.isBitBucketChoosen = true
             }
         }
     }
@@ -307,6 +309,7 @@ extension Wizard {
                 isChecked = useFirebase
             }.onChange(of: isChecked) { newValue in
                 useFirebase = newValue
+                Defaults.shared.isFirebaseChoosen = true
             }
         }
     }
@@ -336,6 +339,7 @@ extension Wizard {
                 isChecked = useDynatrace
             }.onChange(of: isChecked) { newValue in
                 useDynatrace = newValue
+                Defaults.shared.isDynatraceChoosen = true
             }
         }
     }
@@ -380,6 +384,7 @@ extension Wizard {
                 isChecked = useJira
             }.onChange(of: isChecked) { newValue in
                 useJira = newValue
+                Defaults.shared.isJiraChoosen = true
             }
         }
     }
@@ -409,6 +414,7 @@ extension Wizard {
                 isChecked = useSlack
             }.onChange(of: isChecked) { newValue in
                 useSlack = newValue
+                Defaults.shared.isSlackChoosen = true
             }
         }
     }
@@ -862,7 +868,13 @@ private final class StepCompleted: ObservableObject {
             .assign(to: \.isCompleted, on: self)
             .store(in: &bag)
         
-        count = validate().filter { $0 }.count
+        let validateValues = validate()
+        
+        if validateValues.first == false {
+            count = 0
+        } else {
+            count = validate().filter { $0 }.count
+        }
     }
     
     func validate() -> [Bool] {
@@ -912,6 +924,9 @@ private enum ProjectFolder {
 private enum GitFolder {
     
     static func validate() throws -> Bool {
+        guard Defaults.shared.isGitChoosen else {
+            return false
+        }
         guard Defaults.shared.useGit else {
             return true
         }
@@ -939,6 +954,9 @@ private enum GitFolder {
 private enum BitbucketFolder {
     
     static func validate() throws -> Bool {
+        guard Defaults.shared.isBitBucketChoosen else {
+            return false
+        }
         guard Defaults.shared.makeBitbucketPr else {
             return true
         }
@@ -995,6 +1013,9 @@ private enum BitbucketFolder {
 private enum FirebaseFolder {
     
     static func validate() throws -> Bool {
+        guard Defaults.shared.isFirebaseChoosen else {
+            return false
+        }
         guard Defaults.shared.useFirebase else {
             return true
         }
@@ -1022,6 +1043,9 @@ private enum FirebaseFolder {
 private enum DynatraceFolder {
     
     static func validate() throws -> Bool {
+        guard Defaults.shared.isDynatraceChoosen else {
+            return false
+        }
         guard Defaults.shared.useDynatrace else {
             return true
         }
@@ -1048,6 +1072,9 @@ private enum DynatraceFolder {
 private enum SlackFolder {
     
     static func validate() throws -> Bool {
+        guard Defaults.shared.isSlackChoosen else {
+            return false
+        }
         guard Defaults.shared.useSlack else {
             return true
         }
@@ -1076,6 +1103,9 @@ private enum SlackFolder {
 private enum JiraFolder {
     
     static func validate() throws -> Bool {
+        guard Defaults.shared.isJiraChoosen else {
+            return false
+        }
         guard Defaults.shared.useJira else {
             return true
         }
