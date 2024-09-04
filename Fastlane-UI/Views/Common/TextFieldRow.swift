@@ -42,11 +42,11 @@ struct TextFieldRow: View {
             text = model.text
             isEnabled = model.enable
         }
-        .onChange(of: text) { newValue in
+        .onChange(of: text) { _, newValue in
             model.text = newValue
             commitAction()
         }
-        .onChange(of: isEnabled) { newValue in
+        .onChange(of: isEnabled) { _, newValue in
             model.enable = newValue
             commitAction()
         }

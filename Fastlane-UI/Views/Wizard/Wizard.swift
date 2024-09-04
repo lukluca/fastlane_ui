@@ -14,7 +14,7 @@ private let TOKEN_PR_W = "TOKEN_PR_W"
 
 struct Wizard: View {
     
-    @ObservedObject private var currentStep: Step = .initial
+    @Bindable private var currentStep: Step = .initial
     
     @State private var isBackButtonDisabled = true
     @State private var isNextButtonDisabled = true
@@ -23,7 +23,7 @@ struct Wizard: View {
     
     @State private var isCompleted = false
     
-    @ObservedObject private var stepCompleted = StepCompleted()
+    private var stepCompleted = StepCompleted()
     
     private var bag = [AnyCancellable]()
     
@@ -78,7 +78,7 @@ struct Wizard: View {
                 } else {
                     Button {
                         
-                        func goToNextStep() {
+                        @MainActor func goToNextStep() {
                             isBackButtonDisabled = false
                             if let kind = Step.Kind(rawValue: currentStep.kind.rawValue + 1) {
                                 currentStep.kind = kind
@@ -111,15 +111,15 @@ struct Wizard: View {
                 isNextButtonDisabled = !currentStep.isDone
                 isBackButtonDisabled = currentStep.kind.rawValue == 0
                 isCompleted = stepCompleted.isCompleted
-            }.onChange(of: currentStep.kind) { newValue in
+            }.onChange(of: currentStep.kind) { _, newValue in
                 errorText = ""
                 isBackButtonDisabled = newValue.rawValue == 0
                 isNextButtonDisabled = newValue.rawValue == (Step.Kind.allCases.count - 1)
             }
-            .onReceive(currentStep.$isDone) { value in
+            .onReceive(currentStep.$isDonePublisher) { value in
                 isNextButtonDisabled = !value
             }
-            .onChange(of: stepCompleted.isCompleted) { newValue in
+            .onChange(of: stepCompleted.isCompleted) { _, newValue in
                 isCompleted = newValue
             }
         }
@@ -225,7 +225,7 @@ extension Wizard {
                 
             }.onAppear {
                 isChecked = useGit
-            }.onChange(of: isChecked) { newValue in
+            }.onChange(of: isChecked) { _, newValue in
                 useGit = newValue
                 Defaults.shared.isGitChoosen = true
             }
@@ -277,7 +277,7 @@ extension Wizard {
                 
             }.onAppear {
                 isChecked = makeBitbucketPr
-            }.onChange(of: isChecked) { newValue in
+            }.onChange(of: isChecked) { _, newValue in
                 makeBitbucketPr = newValue
                 Defaults.shared.isBitBucketChoosen = true
             }
@@ -307,7 +307,7 @@ extension Wizard {
                 
             }.onAppear {
                 isChecked = useFirebase
-            }.onChange(of: isChecked) { newValue in
+            }.onChange(of: isChecked) { _, newValue in
                 useFirebase = newValue
                 Defaults.shared.isFirebaseChoosen = true
             }
@@ -337,7 +337,7 @@ extension Wizard {
                 
             }.onAppear {
                 isChecked = useDynatrace
-            }.onChange(of: isChecked) { newValue in
+            }.onChange(of: isChecked) { _, newValue in
                 useDynatrace = newValue
                 Defaults.shared.isDynatraceChoosen = true
             }
@@ -382,7 +382,7 @@ extension Wizard {
                 
             }.onAppear {
                 isChecked = useJira
-            }.onChange(of: isChecked) { newValue in
+            }.onChange(of: isChecked) { _, newValue in
                 useJira = newValue
                 Defaults.shared.isJiraChoosen = true
             }
@@ -412,7 +412,7 @@ extension Wizard {
                 
             }.onAppear {
                 isChecked = useSlack
-            }.onChange(of: isChecked) { newValue in
+            }.onChange(of: isChecked) { _, newValue in
                 useSlack = newValue
                 Defaults.shared.isSlackChoosen = true
             }
@@ -429,24 +429,39 @@ extension Wizard {
 
 extension Wizard {
     
+    @Observable
+    @MainActor
     final class Step {
         
-        @Published var isDone = false
+        var isDone = false {
+            didSet {
+                isDonePublisher = isDone
+            }
+        }
+        
+        @ObservationIgnored
+        @Published var isDonePublisher = false
         
         private var state: Any?
         
-        private var bag = [AnyCancellable]()
+        private var isDoneBag = [AnyCancellable]()
+        private var stateBag = [AnyCancellable]()
     
-        @Published var kind: Kind {
+        var kind: Kind {
             didSet {
                 state = nil
-                bag.removeAll()
+                stateBag.removeAll()
                 bindIsDone()
             }
         }
         
         init(kind: Kind) {
             self.kind = kind
+            
+            $isDonePublisher
+                 .removeDuplicates()
+                 .sink { self.isDone = $0 }
+                 .store(in: &isDoneBag)
             
             bindIsDone()
         }
@@ -464,45 +479,45 @@ extension Wizard {
             switch kind {
             case .projectFolder:
                 let state = ProjectFolderStepState()
-                state.$isDone
+                state.$isDonePublisher
                     .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
+                    .store(in: &stateBag)
                 self.state = state
             case .git:
                 let state = GitFolderStepState()
-                state.$isDone
+                state.$isDonePublisher
                     .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
+                    .store(in: &stateBag)
                 self.state = state
             case .bitbucket:
                 let state = BitbucketFolderStepState()
-                state.$isDone
+                state.$isDonePublisher
                     .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
+                    .store(in: &stateBag)
                 self.state = state
             case .firebase:
                 let state = FirebaseFolderStepState()
-                state.$isDone
+                state.$isDonePublisher
                     .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
+                    .store(in: &stateBag)
                 self.state = state
             case .dynatrace:
                 let state = DynatraceFolderStepState()
-                state.$isDone
+                state.$isDonePublisher
                     .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
+                    .store(in: &stateBag)
                 self.state = state
             case .jira:
                 let state = JiraFolderStepState()
-                state.$isDone
+                state.$isDonePublisher
                     .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
+                    .store(in: &stateBag)
                 self.state = state
             case .slack:
                 let state = SlackStepState()
-                state.$isDone
+                state.$isDonePublisher
                     .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
+                    .store(in: &stateBag)
                 self.state = state
               case .completed:
                 break
@@ -513,7 +528,7 @@ extension Wizard {
 
 extension Wizard.Step {
     enum Kind: Int {
-        case projectFolder = 0
+        case projectFolder
         case git
         case bitbucket
         case firebase
@@ -618,39 +633,50 @@ extension Wizard.Step.Kind {
     }
 }
 
-extension Wizard.Step: ObservableObject {}
-
 extension Wizard.Step {
     static let initial = Wizard.Step(kind: .projectFolder)
 }
 
-extension Wizard.Step: Equatable {
+extension Wizard.Step: @preconcurrency Equatable {
     static func == (lhs: Wizard.Step, rhs: Wizard.Step) -> Bool {
         lhs.kind == rhs.kind
     }
 }
 
-extension Wizard.Step: Hashable {
-    func hash(into hasher: inout Hasher) {
+extension Wizard.Step: @preconcurrency Hashable {
+   func hash(into hasher: inout Hasher) {
         hasher.combine(kind)
     }
 }
 
-extension Wizard.Step: Identifiable {
+extension Wizard.Step: @preconcurrency Identifiable {
     var id: Kind {
         kind
     }
 }
 
-final class ProjectFolderStepState: ObservableObject {
+@Observable
+final class ProjectFolderStepState {
     
-    @Published var isDone = false
+    var isDone = false {
+        didSet {
+            isDonePublisher = isDone
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var isDonePublisher = false
     
     private var bag = [AnyCancellable]()
     
     init() {
         
         isDone = ProjectFolder.validatePath()
+        
+        $isDonePublisher
+             .removeDuplicates()
+             .sink { self.isDone = $0 }
+             .store(in: &bag)
         
         Defaults.shared.objectWillChange.map {
             Defaults.shared.projectFolder
@@ -664,15 +690,28 @@ final class ProjectFolderStepState: ObservableObject {
     }
 }
 
-final class GitFolderStepState: ObservableObject {
+@Observable
+final class GitFolderStepState {
     
-    @Published var isDone = false
+    var isDone = false {
+        didSet {
+            isDonePublisher = isDone
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var isDonePublisher = false
     
     private var bag = [AnyCancellable]()
     
     init() {
         
         isDone = GitFolder.validateEnabledPath()
+        
+        $isDonePublisher
+             .removeDuplicates()
+             .sink { self.isDone = $0 }
+             .store(in: &bag)
         
         let isEnabled = Defaults.shared.objectWillChange.map {
             Defaults.shared.useGit
@@ -693,15 +732,28 @@ final class GitFolderStepState: ObservableObject {
     }
 }
 
-final class BitbucketFolderStepState: ObservableObject {
+@Observable
+final class BitbucketFolderStepState {
     
-    @Published var isDone = false
+    var isDone = false {
+        didSet {
+            isDonePublisher = isDone
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var isDonePublisher = false
     
     private var bag = [AnyCancellable]()
     
     init() {
         
         isDone = BitbucketFolder.validateEnabledPath()
+        
+        $isDonePublisher
+             .removeDuplicates()
+             .sink { self.isDone = $0 }
+             .store(in: &bag)
         
         let isEnabled = Defaults.shared.objectWillChange.map {
             Defaults.shared.makeBitbucketPr
@@ -722,15 +774,28 @@ final class BitbucketFolderStepState: ObservableObject {
     }
 }
 
-final class FirebaseFolderStepState: ObservableObject {
+@Observable
+final class FirebaseFolderStepState {
     
-    @Published var isDone = false
+    var isDone = false {
+        didSet {
+            isDonePublisher = isDone
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var isDonePublisher = false
     
     private var bag = [AnyCancellable]()
     
     init() {
         
         isDone = FirebaseFolder.validateEnabledPath()
+        
+        $isDonePublisher
+             .removeDuplicates()
+             .sink { self.isDone = $0 }
+             .store(in: &bag)
         
         let isEnabled = Defaults.shared.objectWillChange.map {
             Defaults.shared.useFirebase
@@ -751,15 +816,28 @@ final class FirebaseFolderStepState: ObservableObject {
     }
 }
 
-final class DynatraceFolderStepState: ObservableObject {
+@Observable
+final class DynatraceFolderStepState {
     
-    @Published var isDone = false
+    var isDone = false {
+        didSet {
+            isDonePublisher = isDone
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var isDonePublisher = false
     
     private var bag = [AnyCancellable]()
     
     init() {
         
         isDone = DynatraceFolder.validateEnabledPath()
+        
+        $isDonePublisher
+             .removeDuplicates()
+             .sink { self.isDone = $0 }
+             .store(in: &bag)
         
         let isEnabled = Defaults.shared.objectWillChange.map {
             Defaults.shared.useDynatrace
@@ -780,13 +858,26 @@ final class DynatraceFolderStepState: ObservableObject {
     }
 }
 
-final class JiraFolderStepState: ObservableObject {
+@Observable
+final class JiraFolderStepState {
     
-    @Published var isDone = false
+    var isDone = false {
+        didSet {
+            isDonePublisher = isDone
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var isDonePublisher = false
     
     private var bag = [AnyCancellable]()
     
     init() {
+        
+        $isDonePublisher
+             .removeDuplicates()
+             .sink { self.isDone = $0 }
+             .store(in: &bag)
         
         isDone = JiraFolder.validateEnabledPath()
         
@@ -809,15 +900,28 @@ final class JiraFolderStepState: ObservableObject {
     }
 }
 
-final class SlackStepState: ObservableObject {
+@Observable
+final class SlackStepState {
     
-    @Published var isDone = false
+    var isDone = false {
+        didSet {
+            isDonePublisher = isDone
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var isDonePublisher = false
     
     private var bag = [AnyCancellable]()
     
     init() {
         
         isDone = SlackFolder.validateEnabledPath()
+        
+        $isDonePublisher
+             .removeDuplicates()
+             .sink { self.isDone = $0 }
+             .store(in: &bag)
         
         let isEnabled = Defaults.shared.objectWillChange.map {
             Defaults.shared.useSlack
@@ -838,11 +942,19 @@ final class SlackStepState: ObservableObject {
     }
 }
 
-private final class StepCompleted: ObservableObject {
+@Observable
+final class StepCompleted {
     
-    @Published var isCompleted = false
+    var isCompleted = false
     
-    @Published var count = 0
+    var count = 0 {
+        didSet {
+            countPublisher = count
+        }
+    }
+    
+    @ObservationIgnored
+    @Published var countPublisher = 0
     
     private var bag = [AnyCancellable]()
     
@@ -853,17 +965,23 @@ private final class StepCompleted: ObservableObject {
     
     init() {
         
-        project.$isDone
-            .merge(with: bitbucket.$isDone)
-            .merge(with: jira.$isDone)
-            .merge(with: firebase.$isDone)
+        $countPublisher
+             .removeDuplicates()
+             .sink { self.count = $0 }
+             .store(in: &bag)
+        
+        project.$isDonePublisher
+            .merge(with: bitbucket.$isDonePublisher)
+            .merge(with: jira.$isDonePublisher)
+            .merge(with: firebase.$isDonePublisher)
             .filter { $0 }
             .count()
             .removeDuplicates()
             .assign(to: \.count, on: self)
             .store(in: &bag)
         
-        $count
+        
+        $countPublisher
             .map { $0 == (Wizard.Step.Kind.allCases.count - 1) }
             .assign(to: \.isCompleted, on: self)
             .store(in: &bag)

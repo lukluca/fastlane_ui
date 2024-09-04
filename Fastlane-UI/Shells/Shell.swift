@@ -24,6 +24,7 @@ extension Shell: Identifiable {
     }
 }
 
+@MainActor
 protocol ShellWorkflow {
     var shell: Shell { get }
 }

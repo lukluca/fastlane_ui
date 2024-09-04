@@ -21,15 +21,19 @@ extension Files.Git {
 }
 
 extension Files.Git.Naming {
-
-    static var path = projectFastlanePathComponent + "/" + gitConfigNaming
     
-    static func read() throws -> Files.Git.Naming {
-        try Files.decode(Files.Git.Naming.self, from: path)
+    static func path() async -> String {
+        await Task {
+            projectFastlanePathComponent + "/" + gitConfigNaming
+        }.value
+    }
+
+    static func read() async throws -> Files.Git.Naming {
+        try Files.decode(Files.Git.Naming.self, from: await path())
     }
     
-    static func write(_ obj: Files.Git.Naming) throws {
-        try Files.save(obj, to: path)
+    static func write(_ obj: Files.Git.Naming) async throws {
+        try Files.save(obj, to: await path())
     }
 }
 

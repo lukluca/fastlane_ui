@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 protocol TextFieldRowsGetter {
     var readRows: [TextFieldRow.Model] { get }
     var currentRows: [TextFieldRow.Model] { get }
@@ -59,7 +60,7 @@ struct ListView: View {
         }
         .onAppear {
             rows = rowsGetter.currentRows
-        }.onChange(of: rows) { newValue in
+        }.onChange(of: rows) { _, newValue in
             isMainActionDisabled = isCommitActionDisabled(newValue)
         }
     }

@@ -58,8 +58,7 @@ struct DeployApp: View {
     @Default(\.makeReleaseNotesFromJira) private var makeReleaseNotesFromJira: Bool
     @Default(\.makeJiraRelease) private var makeJiraRelease: Bool
     @Default(\.updateJiraTickets) private var updateJiraTickets: Bool
-    @Default(\.debugMode) private var debugMode: Bool
-    
+   
     @Default(\.useSlack) private var useSlack: Bool
     @Default(\.notifySlack) private var notifySlack: Bool
     
@@ -68,6 +67,8 @@ struct DeployApp: View {
     @Default(\.sendDeployEmail) private var sendDeployEmail: Bool
     
     @Default(\.uploadToAirWatch) private var uploadToAirWatch: Bool
+    
+    @Default(\.debugMode) private var debugMode: Bool
     
     @State private var result = ""
     
@@ -94,6 +95,26 @@ struct DeployApp: View {
     
     private var xcodeVersions: [String] {
         xcodes.map { $0.1 }
+    }
+    
+    private var userDefaults: [Bool] {
+        [automaticVersionNumber,
+         automaticBuildNumber,
+         resetGit,
+         pushOnGitMessage,
+         pushOnGitTag,
+         makeGitBranch,
+         makeBitbucketPr,
+         uploadToFirebase,
+         uploadDsymToDynatrace,
+         notifySlack,
+         makeJiraRelease,
+         updateJiraTickets,
+         openTicketServiceNow,
+         sendDeployEmail,
+         uploadToAirWatch,
+         debugMode
+        ]
     }
     
     var body: some View {
@@ -224,22 +245,22 @@ struct DeployApp: View {
                 selectedXcodeVersion = xcode?.1 ?? ""
             }
         }
-        .onChange(of: firstSelectedScheme) { _ in
+        .onChange(of: firstSelectedScheme) {
             updateFastlaneCommand()
         }
-        .onChange(of: secondSelectedScheme) { _ in
+        .onChange(of: secondSelectedScheme) {
             updateFastlaneCommand()
         }
-        .onChange(of: selectedXcode) { _ in
+        .onChange(of: selectedXcode) {
             updateFastlaneCommand()
         }
-        .onChange(of: selectedXcodeVersion) { newValue in
+        .onChange(of: selectedXcodeVersion) { _, newValue in
             selectedXcode = xcodes.first { (path, version) in
                version == newValue
             }?.0 ?? ""
             
         }
-        .onChange(of: versionNumber) { newValue in
+        .onChange(of: versionNumber) { _, newValue in
             if newValue.isEmpty {
                 firstSchemeFastlaneCommand = ""
                 secondSchemeFastlaneCommand = ""
@@ -247,71 +268,26 @@ struct DeployApp: View {
             
             update()
         }
-        .onChange(of: buildNumber) { _ in
+        .onChange(of: buildNumber) {
             update()
         }
-        .onChange(of: branchName) { newValue in
+        .onChange(of: branchName) { _, newValue in
             if newValue != noSelection {
                 gitTags = GitTags().values
                 gitTag = noSelection
             }
             update()
         }
-        .onChange(of: gitTag) { newValue in
+        .onChange(of: gitTag) { _, newValue in
             if newValue != noSelection {
                 branchName = noSelection
             }
             update()
         }
-        .onChange(of: releaseNotes) { _ in
+        .onChange(of: userDefaults) {
             update()
         }
-        .onChange(of: pushOnGitMessage) { _ in
-            update()
-        }
-        .onChange(of: pushOnGitTag) { _ in
-            update()
-        }
-        .onChange(of: resetGit) { _ in
-            update()
-        }
-        .onChange(of: makeGitBranch) { _ in
-            update()
-        }
-        .onChange(of: uploadToFirebase) { _ in
-            update()
-        }
-        .onChange(of: useCrashlytics) { _ in
-            update()
-        }
-        .onChange(of: uploadDsymToDynatrace) { _ in
-            update()
-        }
-        .onChange(of: notifySlack) { _ in
-            update()
-        }
-        .onChange(of: makeReleaseNotesFromJira) { _ in
-            update()
-        }
-        .onChange(of: debugMode) { _ in
-            update()
-        }
-        .onChange(of: selectedSprint) { _ in
-            update()
-        }
-        .onChange(of: automaticVersionNumber) { _ in
-            update()
-        }
-        .onChange(of: automaticBuildNumber) { _ in
-            update()
-        }
-        .onChange(of: openTicketServiceNow) { _ in
-            update()
-        }
-        .onChange(of: sendDeployEmail) { _ in
-            update()
-        }
-        .onChange(of: uploadToAirWatch) { _ in
+        .onChange(of: releaseNotes) {
             update()
         }
         .padding()

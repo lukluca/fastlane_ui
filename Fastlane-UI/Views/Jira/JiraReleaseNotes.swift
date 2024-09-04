@@ -60,7 +60,7 @@ extension Jira {
                 
                 Text(result)
             }
-            .onChange(of: versionNumber) { newValue in
+            .onChange(of: versionNumber) { _, newValue in
                 
                 if newValue.isEmpty {
                     fastlaneCommand = ""

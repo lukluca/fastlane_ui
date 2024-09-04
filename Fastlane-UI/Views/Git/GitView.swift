@@ -11,7 +11,7 @@ struct GitView: View {
     
     let shell = Defaults.shared.shell
     
-    @ObservedObject private var manager = ConfigurationManager()
+    private var manager = ConfigurationManager()
     
     @Default(\.pushOnGitMessage) private var pushOnGitMessage: Bool
     @Default(\.pushOnGitTag) private var pushOnGitTag: Bool
@@ -81,18 +81,22 @@ struct GitView: View {
         }
         .padding()
         .onAppear {
-            reset()
+            let manager = self.manager
+            Task {
+                await manager.setup()
+                reset()
+            }
         }
-        .onChange(of: manager.current) { _ in
+        .onChange(of: manager.current) {
             isConfigurationChanged = manager.isChanged
         }
-        .onChange(of: releaseBranchText) { newValue in
+        .onChange(of: releaseBranchText) { _, newValue in
             manager.current.releaseBranch = newValue
         }
-        .onChange(of: tagText) { newValue in
+        .onChange(of: tagText) { _, newValue in
             manager.current.tag = newValue
         }
-        .onChange(of: commitMessageText) { newValue in
+        .onChange(of: commitMessageText) { _, newValue in
             manager.current.commitMessage = newValue
         }
     }
@@ -101,8 +105,11 @@ struct GitView: View {
 private extension GitView {
     
     func save() {
-        try? manager.saveToFile()
-        reset()
+        let manager = self.manager
+        Task {
+            try? await manager.saveToFile()
+            reset()
+        }
     }
     
     func reset() {
@@ -174,24 +181,27 @@ extension GitView {
         }
     }
     
-    private final class ConfigurationManager: ObservableObject {
+    @Observable
+    final class ConfigurationManager {
         
         typealias Configuration = Files.Git.Naming
         
         private var file: Configuration
-        @Published var current: Configuration
+        var current: Configuration
         
         var isChanged: Bool {
             file != current
         }
  
         init() {
-            if let config = try? Configuration.read() {
+            file = Configuration(releaseBranch: "", tag: "", commitMessage: "")
+            current = Configuration(releaseBranch: "", tag: "", commitMessage: "")
+        }
+        
+        func setup() async {
+            if let config = try? await Configuration.read() {
                 file = config
                 current = config
-            } else {
-                file = Configuration(releaseBranch: "", tag: "", commitMessage: "")
-                current = Configuration(releaseBranch: "", tag: "", commitMessage: "")
             }
         }
         
@@ -199,10 +209,10 @@ extension GitView {
             current = file
         }
         
-        func saveToFile() throws {
-            try Configuration.write(current)
+        func saveToFile() async throws {
+            try await Configuration.write(current)
             
-            let config = try Configuration.read()
+            let config = try await Configuration.read()
             file = config
             current = config
         }

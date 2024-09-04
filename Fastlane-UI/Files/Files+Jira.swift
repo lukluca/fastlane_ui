@@ -26,21 +26,29 @@ extension Files.Jira {
 
 extension Files.Jira.Credentials {
 
-    static var path = Defaults.shared.projectFolder + "/" + jiraPathComponent + "/" + "credentials"
+    static func path() async -> String {
+        await Task {
+            Defaults.shared.projectFolder + "/" + jiraPathComponent + "/" + "credentials"
+        }.value
+    }
     
-    static func read() throws -> Files.Jira.Credentials {
-        try Files.decode(Files.Jira.Credentials.self, from: path)
+    static func read() async throws -> Files.Jira.Credentials {
+        return try Files.decode(Files.Jira.Credentials.self, from:  await path())
     }
 }
 
 extension Files.Jira.Credentials: Decodable {}
 
 extension Files.Jira.Host {
-
-    static var path = Defaults.shared.projectFolder + "/" + jiraPathComponent + "/" + "host"
     
-    static func read() throws -> Files.Jira.Host {
-        try Files.decode(Files.Jira.Host.self, from: path)
+    static func path() async -> String {
+        await Task {
+            Defaults.shared.projectFolder + "/" + jiraPathComponent + "/" + "host"
+        }.value
+    }
+
+    static func read() async throws -> Files.Jira.Host {
+        try Files.decode(Files.Jira.Host.self, from: await path())
     }
 }
 

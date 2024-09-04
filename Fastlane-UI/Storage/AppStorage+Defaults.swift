@@ -9,7 +9,8 @@ import SwiftUI
 
 let defaultShell: Shell = .zsh
 
-class Defaults: ObservableObject {
+// we can not use new macro Observable because is incompatible with @AppStorage
+final class Defaults: ObservableObject, @unchecked Sendable {
     
     fileprivate enum Key: String, CaseIterable {
         //wizard
@@ -217,7 +218,7 @@ class Defaults: ObservableObject {
 }
 
 @propertyWrapper
-struct Default<T>: DynamicProperty {
+@MainActor struct Default<T>: DynamicProperty {
     @ObservedObject private var defaults: Defaults
     private let keyPath: ReferenceWritableKeyPath<Defaults, T>
     init(_ keyPath: ReferenceWritableKeyPath<Defaults, T>, defaults: Defaults = .shared) {
