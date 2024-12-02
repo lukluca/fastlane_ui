@@ -114,6 +114,7 @@ extension BitbucketView {
         }
     }
     
+    @MainActor
     private final class ConfigurationManager {
         
         var current = Configuration(companyHostName: "", 

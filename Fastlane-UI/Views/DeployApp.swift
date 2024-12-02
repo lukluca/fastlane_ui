@@ -728,6 +728,7 @@ private extension DeployApp {
     }
 }
 
+@MainActor
 private struct Schemes {
     let values: [String]
     
@@ -754,6 +755,7 @@ private struct Schemes {
     }
 }
 
+@MainActor
 private struct GitBranches {
     
     let values: [String]
@@ -807,6 +809,7 @@ private struct GitBranches {
     }
 }
 
+@MainActor
 private struct GitTags {
     
     let values: [String]

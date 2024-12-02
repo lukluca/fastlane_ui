@@ -30,6 +30,7 @@ extension String {
         try String(contentsOfFile: path).components(separatedBy: "\n")
     }
     
+    @MainActor
     var asEnvironment: String {
         let jsonPath = projectFastlanePathComponent + "/" + ".env_mapping.json"
        
@@ -46,6 +47,7 @@ extension String {
         return mapped?.envName ?? self
     }
     
+    @MainActor
     var replace: String {
         let defaults = Defaults.shared
         let version = replacingOccurrences(of: "{VERSION_NUMBER}", with: defaults.versionNumber)

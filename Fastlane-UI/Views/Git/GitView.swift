@@ -174,6 +174,7 @@ extension GitView {
         }
     }
     
+    @MainActor
     private final class ConfigurationManager: ObservableObject {
         
         typealias Configuration = Files.Git.Naming

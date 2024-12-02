@@ -9,7 +9,8 @@ import SwiftUI
 
 let defaultShell: Shell = .zsh
 
-class Defaults: ObservableObject {
+@MainActor
+final class Defaults: ObservableObject {
     
     fileprivate enum Key: String, CaseIterable {
         //wizard
@@ -216,6 +217,7 @@ class Defaults: ObservableObject {
     }
 }
 
+@MainActor
 @propertyWrapper
 struct Default<T>: DynamicProperty {
     @ObservedObject private var defaults: Defaults

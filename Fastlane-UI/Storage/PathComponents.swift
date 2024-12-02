@@ -36,6 +36,7 @@ var dynatracePathComponent: String {
     fastlanePathComponent + "/" + ".dynatrace"
 }
 
+@MainActor
 var projectFastlanePathComponent: String {
     Defaults.shared.projectFolder + "/" + fastlanePathComponent
 }

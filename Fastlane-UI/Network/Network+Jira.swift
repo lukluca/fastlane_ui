@@ -37,7 +37,7 @@ extension Network {
         
         private func fetchSprintFieldName() async throws -> String?  {
             
-            let host = try Files.Jira.Host.read()
+            let host = try await Files.Jira.Host.Reader.read()
             
             guard let url = URL(string: "\(host.url)/rest/api/3/field") else {
                 throw NetworkError.invalidURL
@@ -55,7 +55,7 @@ extension Network {
         
         private func search(customField: String) async throws -> Jira.SearchResponse {
             
-            let host = try Files.Jira.Host.read()
+            let host = try await Files.Jira.Host.Reader.read()
             
             guard var components = URLComponents(string: "\(host.url)/rest/api/2/search") else {
                 throw NetworkError.invalidComponents
@@ -85,10 +85,10 @@ extension Network.Jira {
     struct Request {
         let url: URL
         
-        func asURLRequest() throws -> URLRequest {
+        func asURLRequest() async throws -> URLRequest {
             var request = URLRequest(url: url)
             
-            let credentials = try Files.Jira.Credentials.read()
+            let credentials = try await Files.Jira.Credentials.Reader.read()
             
             let basicAuth = "\(credentials.username):\(credentials.token)"
             let basicEncoded = basicAuth.data(using: .utf8)?.base64EncodedString() ?? ""
@@ -132,7 +132,7 @@ extension Network.Jira.SearchResponse {
     }
 }
 
-struct FieldsConfigurationProviding: DecodingConfigurationProviding {
+actor FieldsConfigurationProviding: DecodingConfigurationProviding {
     static var decodingConfiguration = ""
 }
 

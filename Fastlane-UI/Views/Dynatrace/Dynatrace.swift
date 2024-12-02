@@ -93,6 +93,7 @@ extension Dynatrace {
         }
     }
     
+    @MainActor
     private final class ConfigurationManager {
         
         var current = Configuration(appId: "", server: "", apiToken: "")

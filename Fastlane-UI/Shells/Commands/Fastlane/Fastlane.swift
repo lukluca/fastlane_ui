@@ -44,6 +44,7 @@ enum FastlaneCommand: String {
         return commands
     }
     
+    @MainActor
     func fullCommand(
         needsSudo: Bool = false,
         with arguments: FastlaneArguments = EmptyFastlaneArguments()
@@ -53,11 +54,13 @@ enum FastlaneCommand: String {
     }
 }
 
+@MainActor
 protocol FastlaneArguments {
     var toArray: [String] { get }
 }
 
 extension CommandExecuting {
+    @MainActor
     func fastlane(command: FastlaneCommand, arguments: FastlaneArguments) throws -> String {
         
         let allArguments = command.arguments + arguments.toArray

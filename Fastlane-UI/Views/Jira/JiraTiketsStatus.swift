@@ -46,6 +46,7 @@ extension Jira.TiketsStatus: TextFieldRowsGetter {
     }
 }
 
+@MainActor
 private class TicketStatus {
     
     private(set) var current = [String]()

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 protocol TextFieldRowsGetter {
     var readRows: [TextFieldRow.Model] { get }
     var currentRows: [TextFieldRow.Model] { get }

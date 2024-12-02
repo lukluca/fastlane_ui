@@ -9,6 +9,7 @@ import Foundation
 
 let noSelection: String = "None"
 
+@MainActor
 struct FastlaneDeployArguments: FastlaneArguments {
     let xcode: String
     let scheme: String
@@ -255,12 +256,14 @@ struct FastlaneDeployArguments: FastlaneArguments {
 }
 
 extension CommandExecuting {
+    @MainActor
     func fastlaneDeploy(arguments: FastlaneDeployArguments) throws -> String {
         try fastlane(command: .deploy, arguments: arguments)
     }
 }
 
 extension FastlaneDeployArguments {
+    @MainActor
     struct DefaultParameters {
         
         let xcode: String

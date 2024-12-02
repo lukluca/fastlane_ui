@@ -21,6 +21,7 @@ struct FastlaneGetJiraReleaseNotesArguments: FastlaneArguments {
 }
 
 extension CommandExecuting {
+    @MainActor
     func fastlaneGetJiraReleaseNotes(arguments: FastlaneGetJiraReleaseNotesArguments) throws -> String {
         try fastlane(command: .getJiraReleaseNotes, arguments: arguments)
     }

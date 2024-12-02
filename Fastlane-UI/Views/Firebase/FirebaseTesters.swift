@@ -46,6 +46,7 @@ extension Firebase.Testers: TextFieldRowsGetter {
     }
 }
 
+@MainActor
 private class TestersManager {
     
     @Default(\.projectFolder) private var projectFolder: String

@@ -78,6 +78,7 @@ struct Wizard: View {
                 } else {
                     Button {
                         
+                        @MainActor
                         func goToNextStep() {
                             isBackButtonDisabled = false
                             if let kind = Step.Kind(rawValue: currentStep.kind.rawValue + 1) {
@@ -429,6 +430,7 @@ extension Wizard {
 
 extension Wizard {
     
+    @MainActor
     final class Step {
         
         @Published var isDone = false
@@ -512,6 +514,7 @@ extension Wizard {
 }
 
 extension Wizard.Step {
+    @MainActor
     enum Kind: Int {
         case projectFolder = 0
         case git
@@ -530,7 +533,7 @@ extension Wizard.Step {
 
 extension Wizard.Step.Kind: Hashable {}
 
-extension Wizard.Step.Kind: Identifiable {
+extension Wizard.Step.Kind: @preconcurrency Identifiable {
     var id: Int {
         rawValue
     }
@@ -624,24 +627,25 @@ extension Wizard.Step {
     static let initial = Wizard.Step(kind: .projectFolder)
 }
 
-extension Wizard.Step: Equatable {
+extension Wizard.Step: @preconcurrency Equatable {
     static func == (lhs: Wizard.Step, rhs: Wizard.Step) -> Bool {
         lhs.kind == rhs.kind
     }
 }
 
-extension Wizard.Step: Hashable {
+extension Wizard.Step: @preconcurrency Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(kind)
     }
 }
 
-extension Wizard.Step: Identifiable {
+extension Wizard.Step: @preconcurrency Identifiable {
     var id: Kind {
         kind
     }
 }
 
+@MainActor
 final class ProjectFolderStepState: ObservableObject {
     
     @Published var isDone = false
@@ -664,6 +668,7 @@ final class ProjectFolderStepState: ObservableObject {
     }
 }
 
+@MainActor
 final class GitFolderStepState: ObservableObject {
     
     @Published var isDone = false
@@ -693,6 +698,7 @@ final class GitFolderStepState: ObservableObject {
     }
 }
 
+@MainActor
 final class BitbucketFolderStepState: ObservableObject {
     
     @Published var isDone = false
@@ -722,6 +728,7 @@ final class BitbucketFolderStepState: ObservableObject {
     }
 }
 
+@MainActor
 final class FirebaseFolderStepState: ObservableObject {
     
     @Published var isDone = false
@@ -751,6 +758,7 @@ final class FirebaseFolderStepState: ObservableObject {
     }
 }
 
+@MainActor
 final class DynatraceFolderStepState: ObservableObject {
     
     @Published var isDone = false
@@ -780,6 +788,7 @@ final class DynatraceFolderStepState: ObservableObject {
     }
 }
 
+@MainActor
 final class JiraFolderStepState: ObservableObject {
     
     @Published var isDone = false
@@ -809,6 +818,7 @@ final class JiraFolderStepState: ObservableObject {
     }
 }
 
+@MainActor
 final class SlackStepState: ObservableObject {
     
     @Published var isDone = false
@@ -838,6 +848,7 @@ final class SlackStepState: ObservableObject {
     }
 }
 
+@MainActor
 private final class StepCompleted: ObservableObject {
     
     @Published var isCompleted = false
@@ -901,6 +912,7 @@ private final class StepCompleted: ObservableObject {
     }
 }
 
+@MainActor
 private enum ProjectFolder {
     
     static func validate() throws -> Bool {
@@ -921,6 +933,7 @@ private enum ProjectFolder {
     }
 }
 
+@MainActor
 private enum GitFolder {
     
     static func validate() throws -> Bool {
@@ -951,6 +964,7 @@ private enum GitFolder {
     }
 }
 
+@MainActor
 private enum BitbucketFolder {
     
     static func validate() throws -> Bool {
@@ -1010,6 +1024,7 @@ private enum BitbucketFolder {
     }
 }
 
+@MainActor
 private enum FirebaseFolder {
     
     static func validate() throws -> Bool {
@@ -1040,6 +1055,7 @@ private enum FirebaseFolder {
     }
 }
 
+@MainActor
 private enum DynatraceFolder {
     
     static func validate() throws -> Bool {
@@ -1069,6 +1085,7 @@ private enum DynatraceFolder {
     }
 }
 
+@MainActor
 private enum SlackFolder {
     
     static func validate() throws -> Bool {
@@ -1099,7 +1116,7 @@ private enum SlackFolder {
     }
 }
 
-
+@MainActor
 private enum JiraFolder {
     
     static func validate() throws -> Bool {

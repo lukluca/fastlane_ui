@@ -22,12 +22,15 @@ extension Files.Git {
 
 extension Files.Git.Naming {
 
+    @MainActor
     static var path = projectFastlanePathComponent + "/" + gitConfigNaming
     
+    @MainActor
     static func read() throws -> Files.Git.Naming {
         try Files.decode(Files.Git.Naming.self, from: path)
     }
     
+    @MainActor
     static func write(_ obj: Files.Git.Naming) throws {
         try Files.save(obj, to: path)
     }

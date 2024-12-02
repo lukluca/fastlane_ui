@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-enum Segment: String, CaseIterable {
+@MainActor
+enum Segment: String, @preconcurrency CaseIterable {
     case deployApp = "Deploy App"
     case git = "Git"
     case bitbucket = "Bitbucket"

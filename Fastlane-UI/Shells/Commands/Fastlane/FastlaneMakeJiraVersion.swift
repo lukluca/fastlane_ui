@@ -26,6 +26,7 @@ struct FastlaneMakeJiraVersionArguments: FastlaneArguments {
 }
 
 extension CommandExecuting {
+    @MainActor
     func fastlaneMakeJiraVersion(arguments: FastlaneMakeJiraVersionArguments) throws -> String {
         try fastlane(command: .getJiraReleaseNotes, arguments: arguments)
     }
