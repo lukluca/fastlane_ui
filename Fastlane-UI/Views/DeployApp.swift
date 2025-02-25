@@ -15,6 +15,7 @@ struct DeployApp: View {
     @State private var selectedXcodeVersion = ""
     @Default(\.firstScheme) private var firstSelectedScheme: String
     @Default(\.secondScheme) private var secondSelectedScheme: String
+    @Default(\.thirdScheme) private var thirdSelectedScheme: String
     
     @Default(\.versionNumber) private var versionNumber: String
     @Default(\.automaticVersionNumber) private var automaticVersionNumber: Bool
@@ -73,6 +74,7 @@ struct DeployApp: View {
     
     @State private var firstSchemeFastlaneCommand = ""
     @State private var secondSchemeFastlaneCommand = ""
+    @State private var thirdSchemeFastlaneCommand = ""
     
     @State private var disableDeploy: Bool = false
     
@@ -86,7 +88,7 @@ struct DeployApp: View {
     
     @Binding var sprints: Result<[Network.Jira.Sprint], Error>?
     
-    private var secondSchemes: [String] {
+    private var otherSchemes: [String] {
         [noSelection] + schemes
     }
     
@@ -97,113 +99,121 @@ struct DeployApp: View {
     }
     
     var body: some View {
-        VStack(spacing: 30) {
-            
-            VStack(spacing: 10) {
+        ScrollView {
+            VStack(spacing: 30) {
                 
-                if !selectedXcodeVersion.isEmpty {
-                    XcodePicker(selected: $selectedXcodeVersion, xcodes: xcodeVersions)
+                VStack(spacing: 10) {
+                    
+                    if !selectedXcodeVersion.isEmpty {
+                        XcodePicker(selected: $selectedXcodeVersion, xcodes: xcodeVersions)
+                    }
+                    
+                    SchemePicker(selectedScheme: $firstSelectedScheme, schemes: schemes)
+                    
+                    SchemePicker(selectedScheme: $secondSelectedScheme, schemes: otherSchemes)
+                    
+                    SchemePicker(selectedScheme: $thirdSelectedScheme, schemes: otherSchemes)
+                    
+                    VersionAndBuildNumberView(
+                        versionNumber: $versionNumber,
+                        automaticVersionNumber: $automaticVersionNumber,
+                        buildNumber: $buildNumber,
+                        automaticBuildNumber: $automaticBuildNumber
+                    )
+                    
+                    if useGit {
+                        
+                        GitPicker(
+                            selected: $branchName,
+                            title: "Git Branch:",
+                            values: gitBranches) {
+                                gitBranches = GitBranches().values
+                            }
+                        
+                        GitPicker(
+                            selected: $gitTag,
+                            title: "Git Tag:",
+                            values: gitTags) {
+                                gitTags = GitTags().values
+                            }
+                    }
+                    
+                    if useFirebase && uploadToFirebase {
+                        HStack {
+                            Text("Testers: ")
+                            TextField("Enter additional testers splited using comma and space", text: $testers)
+                        }
+                        
+                        HStack {
+                            Text("Release notes: ")
+                            TextField("Enter your release notes (optional)", text: $releaseNotes)
+                        }
+                    }
+                    
+                    if useJira {
+                        SprintPicker(selected: $selectedSprint, result: $sprints)
+                    }
                 }
                 
-                SchemePicker(selectedScheme: $firstSelectedScheme, schemes: schemes)
-                
-                SchemePicker(selectedScheme: $secondSelectedScheme, schemes: secondSchemes)
-                
-                VersionAndBuildNumberView(
-                    versionNumber: $versionNumber,
-                    automaticVersionNumber: $automaticVersionNumber,
-                    buildNumber: $buildNumber,
-                    automaticBuildNumber: $automaticBuildNumber
+                ToggleSettings(
+                    useGit: $useGit,
+                    resetGit: $resetGit,
+                    pushOnGitMessage: $pushOnGitMessage,
+                    pushOnGitTag: $pushOnGitTag,
+                    makeGitBranch: $makeGitBranch,
+                    makeBitbucketPr: $makeBitbucketPr,
+                    useFirebase: $useFirebase,
+                    uploadToFirebase: $uploadToFirebase,
+                    useCrashlytics: $useCrashlytics,
+                    useDynatrace: $useDynatrace,
+                    uploadDsymToDynatrace: $uploadDsymToDynatrace,
+                    useSlack: $useSlack,
+                    notifySlack: $notifySlack,
+                    useJira: $useJira,
+                    makeReleaseNotesFromJira: $makeReleaseNotesFromJira,
+                    makeJiraRelease: $makeJiraRelease,
+                    updateJiraTickets: $updateJiraTickets,
+                    openTicketServiceNow: $openTicketServiceNow,
+                    sendDeployEmail: $sendDeployEmail,
+                    uploadToAirWatch: $uploadToAirWatch,
+                    debugMode: $debugMode
                 )
                 
-                if useGit {
-                    
-                    GitPicker(
-                        selected: $branchName,
-                        title: "Git Branch:",
-                        values: gitBranches) {
-                            gitBranches = GitBranches().values
-                        }
-                    
-                    GitPicker(
-                        selected: $gitTag,
-                        title: "Git Tag:",
-                        values: gitTags) {
-                            gitTags = GitTags().values
-                        }
-                }
-                
-                if useFirebase && uploadToFirebase {
-                    HStack {
-                        Text("Testers: ")
-                        TextField("Enter additional testers splited using comma and space", text: $testers)
+                VStack(spacing: 10) {
+                    Button("Deploy app") {
+                        result = execute()
                     }
-                    
-                    HStack {
-                        Text("Release notes: ")
-                        TextField("Enter your release notes (optional)", text: $releaseNotes)
+                    .disabled(disableDeploy)
+                    Button("Show fastlane command") {
+                        firstSchemeFastlaneCommand = deployFirstScheme(
+                            makeBitbucketPr: makeBitbucketPr,
+                            openTicketServiceNow: openTicketServiceNow,
+                            sendDeployEmail: sendDeployEmail,
+                            uploadToAirWatch: uploadToAirWatch
+                        )
+                        secondSchemeFastlaneCommand = deploySecondScheme(
+                            pushOnGitMessage: pushOnGitMessage,
+                            updateJiraTickets: updateJiraTickets
+                        )
+                    }
+                    .disabled(disableDeploy)
+                    Button("Reset to file") {
+                        Defaults.shared.resetToFile()
                     }
                 }
                 
-                if useJira {
-                    SprintPicker(selected: $selectedSprint, result: $sprints)
+                FastlaneCommandView(command: $firstSchemeFastlaneCommand)
+                
+                if secondSelectedScheme != noSelection {
+                    FastlaneCommandView(command: $secondSchemeFastlaneCommand)
                 }
+                
+                if thirdSelectedScheme != noSelection {
+                    FastlaneCommandView(command: $thirdSchemeFastlaneCommand)
+                }
+                
+                Text(result)
             }
-            
-            ToggleSettings(
-                useGit: $useGit,
-                resetGit: $resetGit,
-                pushOnGitMessage: $pushOnGitMessage,
-                pushOnGitTag: $pushOnGitTag,
-                makeGitBranch: $makeGitBranch,
-                makeBitbucketPr: $makeBitbucketPr,
-                useFirebase: $useFirebase,
-                uploadToFirebase: $uploadToFirebase,
-                useCrashlytics: $useCrashlytics,
-                useDynatrace: $useDynatrace,
-                uploadDsymToDynatrace: $uploadDsymToDynatrace,
-                useSlack: $useSlack,
-                notifySlack: $notifySlack,
-                useJira: $useJira,
-                makeReleaseNotesFromJira: $makeReleaseNotesFromJira,
-                makeJiraRelease: $makeJiraRelease,
-                updateJiraTickets: $updateJiraTickets,
-                openTicketServiceNow: $openTicketServiceNow,
-                sendDeployEmail: $sendDeployEmail,
-                uploadToAirWatch: $uploadToAirWatch,
-                debugMode: $debugMode
-            )
-            
-            VStack(spacing: 10) {
-                Button("Deploy app") {
-                    result = execute()
-                }
-                .disabled(disableDeploy)
-                Button("Show fastlane command") {
-                    firstSchemeFastlaneCommand = deployFirstScheme(
-                        makeBitbucketPr: makeBitbucketPr,
-                        openTicketServiceNow: openTicketServiceNow,
-                        sendDeployEmail: sendDeployEmail,
-                        uploadToAirWatch: uploadToAirWatch
-                    )
-                    secondSchemeFastlaneCommand = deploySecondScheme(
-                        pushOnGitMessage: pushOnGitMessage,
-                        updateJiraTickets: updateJiraTickets
-                    )
-                }
-                .disabled(disableDeploy)
-                Button("Reset to file") {
-                    Defaults.shared.resetToFile()
-                }
-            }
-            
-            FastlaneCommandView(command: $firstSchemeFastlaneCommand)
-            
-            if secondSelectedScheme != noSelection {
-                FastlaneCommandView(command: $secondSchemeFastlaneCommand)
-            }
-            
-            Text(result)
         }
         .onAppear {
             updateDeployButtonActivity()
@@ -213,11 +223,18 @@ struct DeployApp: View {
                 gitTag = noSelection
             }
             
-            if firstSelectedScheme.isEmpty && secondSelectedScheme.isEmpty {
+            if firstSelectedScheme.isEmpty {
                 firstSelectedScheme = schemes.first ?? ""
+            }
+            
+            if secondSelectedScheme.isEmpty {
                 secondSelectedScheme = noSelection
             }
-          
+            
+            if thirdSelectedScheme.isEmpty {
+                thirdSelectedScheme = noSelection
+            }
+            
             if selectedXcode.isEmpty || selectedXcodeVersion.isEmpty {
                 let xcode = xcodes.first
                 selectedXcode = xcode?.0 ?? ""
@@ -228,6 +245,9 @@ struct DeployApp: View {
             updateFastlaneCommand()
         }
         .onChange(of: secondSelectedScheme) { _ in
+            updateFastlaneCommand()
+        }
+        .onChange(of: thirdSelectedScheme) { _ in
             updateFastlaneCommand()
         }
         .onChange(of: selectedXcode) { _ in
@@ -597,9 +617,32 @@ private extension DeployApp {
         pushOnGitMessage: Bool,
         updateJiraTickets: Bool
     ) -> FastlaneDeployArguments {
+        otherFastlaneArguments(
+            selectedScheme: secondSelectedScheme,
+            pushOnGitMessage: pushOnGitMessage,
+            updateJiraTickets: updateJiraTickets
+        )
+    }
+    
+    func thirdFastlaneArguments(
+        pushOnGitMessage: Bool,
+        updateJiraTickets: Bool
+    ) -> FastlaneDeployArguments {
+        otherFastlaneArguments(
+            selectedScheme: thirdSelectedScheme,
+            pushOnGitMessage: pushOnGitMessage,
+            updateJiraTickets: updateJiraTickets
+        )
+    }
+    
+    func otherFastlaneArguments(
+        selectedScheme: String,
+        pushOnGitMessage: Bool,
+        updateJiraTickets: Bool
+    ) -> FastlaneDeployArguments {
         let buildNumber = buildNumberArg
         return fastlaneArguments(
-            selectedScheme: secondSelectedScheme,
+            selectedScheme: selectedScheme,
             buildNumber: buildNumber,
             incrementBuildNumber: buildNumber == nil ? false : nil,
             pushOnGitMessage: pushOnGitMessage,
@@ -645,10 +688,14 @@ private extension DeployApp {
         
         let isSelectedSecondScheme = secondSelectedScheme != noSelection
         
-        let makeBitbucketPr = isSelectedSecondScheme ? false : self.makeBitbucketPr
-        let openTicketServiceNow = isSelectedSecondScheme ? false : self.openTicketServiceNow
-        let sendDeployEmail = isSelectedSecondScheme ? false : self.sendDeployEmail
-        let uploadToAirWatch = isSelectedSecondScheme ? false : self.uploadToAirWatch
+        let isSelectedThirdScheme = thirdSelectedScheme != noSelection
+        
+        let isSelectedOtherScheme = isSelectedSecondScheme || isSelectedThirdScheme
+        
+        let makeBitbucketPr = isSelectedOtherScheme ? false : self.makeBitbucketPr
+        let openTicketServiceNow = isSelectedOtherScheme ? false : self.openTicketServiceNow
+        let sendDeployEmail = isSelectedOtherScheme ? false : self.sendDeployEmail
+        let uploadToAirWatch = isSelectedOtherScheme ? false : self.uploadToAirWatch
         
         commands.append(deployFirstScheme(
             makeBitbucketPr: makeBitbucketPr, 
@@ -659,6 +706,10 @@ private extension DeployApp {
         
         if isSelectedSecondScheme {
             commands.append(deploySecondScheme(pushOnGitMessage: false, updateJiraTickets: false))
+        }
+        
+        if isSelectedThirdScheme {
+            commands.append(deployThirdScheme(pushOnGitMessage: false, updateJiraTickets: false))
         }
         
         if makeBitbucketPr {
@@ -693,6 +744,13 @@ private extension DeployApp {
         ))
     }
     
+    func deployThirdScheme(pushOnGitMessage: Bool, updateJiraTickets: Bool) -> String {
+        FastlaneCommand.deploy.fullCommand(with: thirdFastlaneArguments(
+            pushOnGitMessage: pushOnGitMessage,
+            updateJiraTickets: updateJiraTickets
+        ))
+    }
+    
     func update() {
         updateDeployButtonActivity()
         updateFastlaneCommand()
@@ -711,6 +769,14 @@ private extension DeployApp {
         if !secondSchemeFastlaneCommand.isEmpty {
             secondSchemeFastlaneCommand = ""
             secondSchemeFastlaneCommand = deploySecondScheme(
+                pushOnGitMessage: pushOnGitMessage,
+                updateJiraTickets: updateJiraTickets
+            )
+        }
+        
+        if !thirdSchemeFastlaneCommand.isEmpty {
+            thirdSchemeFastlaneCommand = ""
+            thirdSchemeFastlaneCommand = deployThirdScheme(
                 pushOnGitMessage: pushOnGitMessage,
                 updateJiraTickets: updateJiraTickets
             )

@@ -26,6 +26,7 @@ final class Defaults: ObservableObject {
         case xcode
         case firstScheme
         case secondScheme
+        case thirdScheme
         case versionNumber
         case automaticVersionNumber
         case buildNumber
@@ -86,6 +87,7 @@ final class Defaults: ObservableObject {
     @AppStorage(.xcode) var xcode = ""
     @AppStorage(.firstScheme) var firstScheme = ""
     @AppStorage(.secondScheme) var secondScheme = ""
+    @AppStorage(.thirdScheme) var thirdScheme = ""
     @AppStorage(.versionNumber) var versionNumber = ""
     @AppStorage(.automaticVersionNumber) var automaticVersionNumber = false
     @AppStorage(.buildNumber) var buildNumber = 0
@@ -169,6 +171,7 @@ final class Defaults: ObservableObject {
         xcode = ""
         firstScheme = ""
         secondScheme = ""
+        thirdScheme = ""
         versionNumber = ""
         automaticVersionNumber = false
         buildNumber = 0
