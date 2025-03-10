@@ -64,6 +64,9 @@ struct DeployApp: View {
     @Default(\.useSlack) private var useSlack: Bool
     @Default(\.notifySlack) private var notifySlack: Bool
     
+    @Default(\.useTeams) private var useTeams: Bool
+    @Default(\.notifyTeams) private var notifyTeams: Bool
+    
     @Default(\.openTicketServiceNow) private var openTicketServiceNow: Bool
     
     @Default(\.sendDeployEmail) private var sendDeployEmail: Bool
@@ -169,6 +172,8 @@ struct DeployApp: View {
                     uploadDsymToDynatrace: $uploadDsymToDynatrace,
                     useSlack: $useSlack,
                     notifySlack: $notifySlack,
+                    useTeams: $useTeams,
+                    notifyTeams: $notifyTeams,
                     useJira: $useJira,
                     makeReleaseNotesFromJira: $makeReleaseNotesFromJira,
                     makeJiraRelease: $makeJiraRelease,
@@ -354,6 +359,8 @@ extension DeployApp {
         @Binding var uploadDsymToDynatrace: Bool
         @Binding var useSlack: Bool
         @Binding var notifySlack: Bool
+        @Binding var useTeams: Bool
+        @Binding var notifyTeams: Bool
         @Binding var useJira: Bool
         @Binding var makeReleaseNotesFromJira: Bool
         @Binding var makeJiraRelease: Bool
@@ -389,6 +396,10 @@ extension DeployApp {
                 
                 if useSlack {
                     Toggle(" Notify Slack", isOn: $notifySlack)
+                }
+                
+                if useTeams {
+                    Toggle(" Notify Teams", isOn: $notifyTeams)
                 }
                 
                 if useJira {
@@ -581,7 +592,8 @@ private extension DeployApp {
             uploadToFirebase: uploadToFirebase,
             useCrashlytics: useCrashlytics,
             useDynatrace: uploadDsymToDynatrace,
-            notifySlack: notifySlack,
+            notifySlack: useSlack && notifySlack,
+            notifyTeams: useTeams && notifyTeams,
             makeReleaseNotesFromJira: makeReleaseNotesFromJira,
             makeJiraRelease: makeJiraRelease, 
             updateJiraTickets: updateJiraTickets,

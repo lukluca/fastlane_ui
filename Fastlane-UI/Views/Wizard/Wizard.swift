@@ -176,6 +176,8 @@ extension Wizard {
                 JiraItem(errorText: $errorText)
             case .slack:
                 SlackItem(errorText: $errorText)
+            case .teams:
+                TeamsItem(errorText: $errorText)
             case .completed:
                 CompletedItem()
             }
@@ -405,7 +407,7 @@ extension Wizard {
                 }
                 .toggleStyle(.checkbox)
                 
-                Text("If you wish to notify Slack about build results, please fill up '.slack_token' file with your Slack token. This file must be stored inside 'fastlane' project folder.")
+                Text("If you wish to notify Slack about build results, please fill up '.config' file with your Slack token. This file must be stored inside 'fastlane/.slack' project folder.")
                     .opacity(isChecked ? 1 : 0.5)
                 
                 Text(errorText)
@@ -416,6 +418,36 @@ extension Wizard {
             }.onChange(of: isChecked) { newValue in
                 useSlack = newValue
                 Defaults.shared.isSlackChoosen = true
+            }
+        }
+    }
+    
+    struct TeamsItem: View {
+        
+        @State private var isChecked = false
+        
+        @Binding var errorText: String
+        
+        @Default(\.useTeams) private var useTeams: Bool
+        
+        var body: some View {
+            VStack(spacing: 20) {
+                Toggle(isOn: $isChecked) {
+                    Text("Enable Teams")
+                }
+                .toggleStyle(.checkbox)
+                
+                Text("If you wish to notify Teams about build results, please fill up '.config' file with your Teams token. This file must be stored inside 'fastlane/.teams' project folder.")
+                    .opacity(isChecked ? 1 : 0.5)
+                
+                Text(errorText)
+                    .foregroundStyle(.red)
+                
+            }.onAppear {
+                isChecked = useTeams
+            }.onChange(of: isChecked) { newValue in
+                useTeams = newValue
+                Defaults.shared.isTeamsChoosen = true
             }
         }
     }
@@ -506,6 +538,12 @@ extension Wizard {
                     .assign(to: \.isDone, on: self)
                     .store(in: &bag)
                 self.state = state
+            case .teams:
+                let state = TeamsStepState()
+                state.$isDone
+                    .assign(to: \.isDone, on: self)
+                    .store(in: &bag)
+                self.state = state
               case .completed:
                 break
             }
@@ -523,6 +561,7 @@ extension Wizard.Step {
         case dynatrace
         case jira
         case slack
+        case teams
         case completed
         
         var isLast: Bool {
@@ -610,7 +649,17 @@ extension Wizard.Step.Kind {
                 if try SlackFolder.validate() {
                     return ""
                 } else {
-                    return "The folder does not contain a formatted credentials file!"
+                    return "The folder does not contain a formatted config file!"
+                }
+            } catch {
+                return error.localizedDescription
+            }
+        case .teams:
+            do {
+                if try SlackFolder.validate() {
+                    return ""
+                } else {
+                    return "The folder does not contain a formatted config file!"
                 }
             } catch {
                 return error.localizedDescription
@@ -849,6 +898,36 @@ final class SlackStepState: ObservableObject {
 }
 
 @MainActor
+final class TeamsStepState: ObservableObject {
+    
+    @Published var isDone = false
+    
+    private var bag = [AnyCancellable]()
+    
+    init() {
+        
+        isDone = TeamsFolder.validateEnabledPath()
+        
+        let isEnabled = Defaults.shared.objectWillChange.map {
+            Defaults.shared.useTeams
+        }
+            .removeDuplicates()
+            .filter { $0 }
+        
+        let isPathValid = Defaults.shared.objectWillChange.map {
+            Defaults.shared.projectFolder
+        }
+            .removeDuplicates()
+            .map { $0 != "" }
+            .filter { $0 }
+        
+        isEnabled.merge(with: isPathValid)
+            .assign(to: \.isDone, on: self)
+            .store(in: &bag)
+    }
+}
+
+@MainActor
 private final class StepCompleted: ObservableObject {
     
     @Published var isCompleted = false
@@ -905,6 +984,8 @@ private final class StepCompleted: ObservableObject {
                 return (try? JiraFolder.validate()) ?? false
             case .slack:
                 return (try? SlackFolder.validate()) ?? false
+            case .teams:
+                return (try? TeamsFolder.validate()) ?? false
             case .completed:
                 return nil
             }
@@ -1112,6 +1193,37 @@ private enum SlackFolder {
     
     static func containsCredentials() throws -> Bool {
         let path = projectFastlanePathComponent + "/.slack"
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
+    }
+}
+
+@MainActor
+private enum TeamsFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.isTeamsChoosen else {
+            return false
+        }
+        guard Defaults.shared.useTeams else {
+            return true
+        }
+        return try validatePath() && containsCredentials()
+    }
+    
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useTeams else {
+            return true
+        }
+        return validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        ProjectFolder.validatePath()
+    }
+    
+    static func containsCredentials() throws -> Bool {
+        let path = projectFastlanePathComponent + "/.teams"
         return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
     }
 }

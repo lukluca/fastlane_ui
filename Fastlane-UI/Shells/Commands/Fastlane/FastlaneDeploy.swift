@@ -29,6 +29,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
     let useCrashlytics: Bool
     let useDynatrace: Bool
     let notifySlack: Bool
+    let notifyTeams: Bool
     let makeReleaseNotesFromJira: Bool
     let makeJiraRelease: Bool
     let updateJiraTickets: Bool
@@ -163,6 +164,13 @@ struct FastlaneDeployArguments: FastlaneArguments {
         return "use_slack:\(notifySlack)"
     }
     
+    private var notifyTeamsArg: String? {
+        guard notifyTeams != defaultParameters.useTeams else {
+            return nil
+        }
+        return "use_teams:\(notifyTeams)"
+    }
+    
     private var makeReleaseNotesFromJiraArg: String? {
         guard makeReleaseNotesFromJira != defaultParameters.useJiraReleaseNotes else {
             return nil
@@ -239,6 +247,7 @@ struct FastlaneDeployArguments: FastlaneArguments {
             useCrashlyticsArg,
             useDynatraceArg,
             notifySlackArg,
+            notifyTeamsArg,
             makeJiraReleaseArg,
             sprintArg,
             updateJiraTicketsArg,
@@ -277,6 +286,7 @@ extension FastlaneDeployArguments {
         let useCrashlytics: Bool
         let useDynatrace: Bool
         let useSlack: Bool
+        let useTeams: Bool
         let useJiraReleaseNotes: Bool
         let makeJiraRelease: Bool
         let updateJiraTickets: Bool
@@ -301,6 +311,7 @@ extension FastlaneDeployArguments {
             var useCrashlytics: Bool?
             var useDynatrace: Bool?
             var useSlack: Bool?
+            var useTeams: Bool?
             var useJiraReleaseNotes: Bool?
             var makeJiraRelease: Bool?
             var updateJiraTickets: Bool?
@@ -336,6 +347,8 @@ extension FastlaneDeployArguments {
                     useDynatrace = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useSlack) {
                     useSlack = Bool(value)
+                } else if let value = purge(value: $0, parameter: .useTeams) {
+                    useTeams = Bool(value)
                 } else if let value = purge(value: $0, parameter: .useJiraReleaseNotes) {
                     useJiraReleaseNotes = Bool(value)
                 } else if let value = purge(value: $0, parameter: .makeJiraRelease) {
@@ -364,6 +377,7 @@ extension FastlaneDeployArguments {
             self.useCrashlytics = useCrashlytics ?? false
             self.useDynatrace = useDynatrace ?? false
             self.useSlack = useSlack ?? false
+            self.useTeams = useTeams ?? false
             self.useJiraReleaseNotes = useJiraReleaseNotes ?? false
             self.makeJiraRelease = makeJiraRelease ?? false
             self.updateJiraTickets = updateJiraTickets ?? false
@@ -389,6 +403,7 @@ extension FastlaneDeployArguments.DefaultParameters {
         case useCrashlytics
         case useDynatrace
         case useSlack
+        case useTeams
         case useJiraReleaseNotes
         case makeJiraRelease
         case updateJiraTickets
@@ -421,6 +436,8 @@ extension FastlaneDeployArguments.DefaultParameters {
                 "USE_DYNATRACE"
             case .useSlack:
                 "USE_SLACK"
+            case .useTeams:
+                "USE_TEAMS"
             case .useJiraReleaseNotes:
                 "USE_JIRA_RELEASE_NOTES"
             case .makeJiraRelease:

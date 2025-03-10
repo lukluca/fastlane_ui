@@ -21,6 +21,7 @@ final class Defaults: ObservableObject {
         case isDynatraceChoosen
         case isJiraChoosen
         case isSlackChoosen
+        case isTeamsChoosen
         //project
         case projectFolder
         case xcode
@@ -56,6 +57,9 @@ final class Defaults: ObservableObject {
         //slack
         case useSlack
         case notifySlack
+        //teams
+        case useTeams
+        case notifyTeams
         //jira
         case useJira
         case jiraCredentialsFolder
@@ -82,6 +86,7 @@ final class Defaults: ObservableObject {
     @AppStorage(.isDynatraceChoosen) var isDynatraceChoosen = false
     @AppStorage(.isJiraChoosen) var isJiraChoosen = false
     @AppStorage(.isSlackChoosen) var isSlackChoosen = false
+    @AppStorage(.isTeamsChoosen) var isTeamsChoosen = false
     //project
     @AppStorage(.projectFolder) var projectFolder = ""
     @AppStorage(.xcode) var xcode = ""
@@ -117,6 +122,9 @@ final class Defaults: ObservableObject {
     //slack
     @AppStorage(.useSlack) var useSlack = false
     @AppStorage(.notifySlack) var notifySlack = false
+    //teams
+    @AppStorage(.useTeams) var useTeams = false
+    @AppStorage(.notifyTeams) var notifyTeams = false
     //jira
     @AppStorage(.useJira) var useJira = false
     @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
@@ -149,6 +157,7 @@ final class Defaults: ObservableObject {
         useCrashlytics = defaultParameters.useCrashlytics
         uploadDsymToDynatrace = defaultParameters.useDynatrace
         notifySlack = defaultParameters.useSlack
+        notifyTeams = defaultParameters.useTeams
         makeReleaseNotesFromJira = defaultParameters.useJiraReleaseNotes
         makeJiraRelease = defaultParameters.makeJiraRelease
         updateJiraTickets = defaultParameters.updateJiraTickets
@@ -166,6 +175,7 @@ final class Defaults: ObservableObject {
         isDynatraceChoosen = false
         isJiraChoosen = false
         isSlackChoosen = false
+        isTeamsChoosen = false
         //project
         projectFolder = ""
         xcode = ""
