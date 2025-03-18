@@ -1050,7 +1050,7 @@ private enum BitbucketFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isBitBucketChoosen else {
-            return false
+            return true
         }
         guard Defaults.shared.makeBitbucketPr else {
             return true
@@ -1110,7 +1110,7 @@ private enum FirebaseFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isFirebaseChoosen else {
-            return false
+            return true
         }
         guard Defaults.shared.useFirebase else {
             return true
@@ -1141,7 +1141,7 @@ private enum DynatraceFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isDynatraceChoosen else {
-            return false
+            return true
         }
         guard Defaults.shared.useDynatrace else {
             return true
@@ -1171,7 +1171,7 @@ private enum SlackFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isSlackChoosen else {
-            return false
+            return true
         }
         guard Defaults.shared.useSlack else {
             return true
@@ -1202,7 +1202,7 @@ private enum TeamsFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isTeamsChoosen else {
-            return false
+            return true
         }
         guard Defaults.shared.useTeams else {
             return true
@@ -1233,7 +1233,7 @@ private enum JiraFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isJiraChoosen else {
-            return false
+            return true
         }
         guard Defaults.shared.useJira else {
             return true

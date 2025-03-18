@@ -13,7 +13,7 @@ let defaultShell: Shell = .zsh
 final class Defaults: ObservableObject {
     
     fileprivate enum Key: String, CaseIterable {
-        //wizard
+        // wizard
         case showWizard
         case isGitChoosen
         case isBitBucketChoosen
@@ -22,7 +22,7 @@ final class Defaults: ObservableObject {
         case isJiraChoosen
         case isSlackChoosen
         case isTeamsChoosen
-        //project
+        // project
         case projectFolder
         case xcode
         case firstScheme
@@ -32,7 +32,7 @@ final class Defaults: ObservableObject {
         case automaticVersionNumber
         case buildNumber
         case automaticBuildNumber
-        //git
+        // git
         case useGit
         case branchName
         case gitTag
@@ -43,42 +43,42 @@ final class Defaults: ObservableObject {
         case mainFolder
         case remoteURL
         case makeGitBranch
-        //bitbucket
+        // bitbucket
         case makeBitbucketPr
         case bitbucketCredentialsFolder
-        //firebase
+        // firebase
         case useFirebase
         case uploadToFirebase
         case testers
         case useCrashlytics
-        //dynatrace
+        // dynatrace
         case useDynatrace
         case uploadDsymToDynatrace
-        //slack
+        // slack
         case useSlack
         case notifySlack
-        //teams
+        // teams
         case useTeams
         case notifyTeams
-        //jira
+        // jira
         case useJira
         case jiraCredentialsFolder
         case makeReleaseNotesFromJira
         case makeJiraRelease
         case updateJiraTickets
         case debugMode
-        //settings
+        // settings
         case shell
         case needsSudo
-        //serviceNow
+        // serviceNow
         case openTicketServiceNow
-        //mail
+        // mail
         case sendDeployEmail
-        //AirWatch
+        // AirWatch
         case uploadToAirWatch
     }
     
-    //wizard
+    // wizard
     @AppStorage(.showWizard) var showWizard = true
     @AppStorage(.isGitChoosen) var isGitChoosen = false
     @AppStorage(.isBitBucketChoosen) var isBitBucketChoosen = false
@@ -87,7 +87,7 @@ final class Defaults: ObservableObject {
     @AppStorage(.isJiraChoosen) var isJiraChoosen = false
     @AppStorage(.isSlackChoosen) var isSlackChoosen = false
     @AppStorage(.isTeamsChoosen) var isTeamsChoosen = false
-    //project
+    // project
     @AppStorage(.projectFolder) var projectFolder = ""
     @AppStorage(.xcode) var xcode = ""
     @AppStorage(.firstScheme) var firstScheme = ""
@@ -97,7 +97,7 @@ final class Defaults: ObservableObject {
     @AppStorage(.automaticVersionNumber) var automaticVersionNumber = false
     @AppStorage(.buildNumber) var buildNumber = 0
     @AppStorage(.automaticBuildNumber) var automaticBuildNumber = false
-    //git
+    // git
     @AppStorage(.useGit) var useGit = false
     @AppStorage(.branchName) var branchName = ""
     @AppStorage(.gitTag) var gitTag = ""
@@ -108,38 +108,38 @@ final class Defaults: ObservableObject {
     @AppStorage(.mainFolder) var mainFolder = ""
     @AppStorage(.remoteURL) var remoteURL = ""
     @AppStorage(.makeGitBranch) var makeGitBranch = false
-    //bitbucket
+    // bitbucket
     @AppStorage(.makeBitbucketPr) var makeBitbucketPr = false
     @AppStorage(.bitbucketCredentialsFolder) var bitbucketCredentialsFolder = ""
-    //firebase
+    // firebase
     @AppStorage(.useFirebase) var useFirebase = false
     @AppStorage(.uploadToFirebase) var uploadToFirebase = false
     @AppStorage(.testers) var testers = ""
     @AppStorage(.useCrashlytics) var useCrashlytics = false
-    //dynatrace
+    // dynatrace
     @AppStorage(.useDynatrace) var useDynatrace = false
     @AppStorage(.uploadDsymToDynatrace) var uploadDsymToDynatrace = false
-    //slack
+    // slack
     @AppStorage(.useSlack) var useSlack = false
     @AppStorage(.notifySlack) var notifySlack = false
-    //teams
+    // teams
     @AppStorage(.useTeams) var useTeams = false
     @AppStorage(.notifyTeams) var notifyTeams = false
-    //jira
+    // jira
     @AppStorage(.useJira) var useJira = false
     @AppStorage(.jiraCredentialsFolder) var jiraCredentialsFolder = ""
     @AppStorage(.makeReleaseNotesFromJira) var makeReleaseNotesFromJira = false
     @AppStorage(.makeJiraRelease) var makeJiraRelease = false
     @AppStorage(.updateJiraTickets) var updateJiraTickets = false
     @AppStorage(.debugMode) var debugMode = false
-    //settings
+    // settings
     @AppStorage(.shell) var shell = defaultShell
     @AppStorage(.needsSudo) var needsSudo = false
-    //serviceNow
+    // serviceNow
     @AppStorage(.openTicketServiceNow) var openTicketServiceNow = false
-    //mail
+    // mail
     @AppStorage(.sendDeployEmail) var sendDeployEmail = false
-    //AirWatch
+    // AirWatch
     @AppStorage(.uploadToAirWatch) var uploadToAirWatch = false
     
     static let shared = Defaults()
@@ -176,7 +176,7 @@ final class Defaults: ObservableObject {
         isJiraChoosen = false
         isSlackChoosen = false
         isTeamsChoosen = false
-        //project
+        // project
         projectFolder = ""
         xcode = ""
         firstScheme = ""
@@ -186,7 +186,7 @@ final class Defaults: ObservableObject {
         automaticVersionNumber = false
         buildNumber = 0
         automaticBuildNumber = false
-        //git
+        // git
         useGit = false
         branchName = ""
         gitTag = ""
@@ -197,35 +197,38 @@ final class Defaults: ObservableObject {
         mainFolder = ""
         remoteURL = ""
         makeGitBranch = false
-        //bitbucket
+        // bitbucket
         bitbucketCredentialsFolder = ""
         makeBitbucketPr = false
-        //firebase
+        // firebase
         useFirebase = false
         uploadToFirebase = false
         testers = ""
         useCrashlytics = false
-        //dynatrace
+        // dynatrace
         useDynatrace = false
         uploadDsymToDynatrace = false
-        //slack
+        // slack
         useSlack = false
         notifySlack = false
-        //jira
+        // teams
+        useTeams = false
+        notifyTeams = false
+        // jira
         useJira = false
         jiraCredentialsFolder = ""
         makeReleaseNotesFromJira = false
         makeJiraRelease = false
         updateJiraTickets = false
         debugMode = false
-        //settings
+        // settings
         shell = defaultShell
         needsSudo = false
-        //serviceNow
+        // serviceNow
         openTicketServiceNow = false
-        //email
+        // email
         sendDeployEmail = false
-        //AirWatch
+        // AirWatch
         uploadToAirWatch = false
     }
 }
