@@ -82,6 +82,9 @@ struct Wizard: View {
                         func goToNextStep() {
                             isBackButtonDisabled = false
                             if let kind = Step.Kind(rawValue: currentStep.kind.rawValue + 1) {
+                                
+                                currentStep.chooseState()
+                                
                                 currentStep.kind = kind
                             } else {
                                 isNextButtonDisabled = true
@@ -467,10 +470,10 @@ extension Wizard {
         
         @Published var isDone = false
         
-        private var state: Any?
+        private var state: StepState?
         
         private var bag = [AnyCancellable]()
-    
+        
         @Published var kind: Kind {
             didSet {
                 state = nil
@@ -494,59 +497,16 @@ extension Wizard {
             kind = initial
         }
         
+        func chooseState() {
+            state?.choose()
+        }
+        
         private func bindIsDone() {
-            switch kind {
-            case .projectFolder:
-                let state = ProjectFolderStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-            case .git:
-                let state = GitFolderStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-            case .bitbucket:
-                let state = BitbucketFolderStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-            case .firebase:
-                let state = FirebaseFolderStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-            case .dynatrace:
-                let state = DynatraceFolderStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-            case .jira:
-                let state = JiraFolderStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-            case .slack:
-                let state = SlackStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-            case .teams:
-                let state = TeamsStepState()
-                state.$isDone
-                    .assign(to: \.isDone, on: self)
-                    .store(in: &bag)
-                self.state = state
-              case .completed:
-                break
-            }
+            let state = kind.stepState
+            state?.$isDone
+                .assign(to: \.isDone, on: self)
+                .store(in: &bag)
+            self.state = state
         }
     }
 }
@@ -668,6 +628,29 @@ extension Wizard.Step.Kind {
             return ""
         }
     }
+    
+    var stepState: StepState? {
+        switch self {
+        case .projectFolder:
+            ProjectFolderStepState()
+        case .git:
+            GitFolderStepState()
+        case .bitbucket:
+            BitbucketFolderStepState()
+        case .firebase:
+            FirebaseFolderStepState()
+        case .dynatrace:
+            DynatraceFolderStepState()
+        case .jira:
+            JiraFolderStepState()
+        case .slack:
+            SlackFolderStepState()
+        case .teams:
+            TeamsFolderStepState()
+        case .completed:
+            nil
+        }
+    }
 }
 
 extension Wizard.Step: ObservableObject {}
@@ -695,13 +678,19 @@ extension Wizard.Step: @preconcurrency Identifiable {
 }
 
 @MainActor
-final class ProjectFolderStepState: ObservableObject {
-    
+class StepState: ObservableObject {
     @Published var isDone = false
+    
+    func choose() {}
+}
+
+@MainActor
+final class ProjectFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = ProjectFolder.validatePath()
         
@@ -718,13 +707,12 @@ final class ProjectFolderStepState: ObservableObject {
 }
 
 @MainActor
-final class GitFolderStepState: ObservableObject {
-    
-    @Published var isDone = false
+final class GitFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = GitFolder.validateEnabledPath()
         
@@ -745,16 +733,19 @@ final class GitFolderStepState: ObservableObject {
             .assign(to: \.isDone, on: self)
             .store(in: &bag)
     }
+    
+    override func choose() {
+        Defaults.shared.isGitChoosen = true
+    }
 }
 
 @MainActor
-final class BitbucketFolderStepState: ObservableObject {
-    
-    @Published var isDone = false
+final class BitbucketFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = BitbucketFolder.validateEnabledPath()
         
@@ -775,16 +766,19 @@ final class BitbucketFolderStepState: ObservableObject {
             .assign(to: \.isDone, on: self)
             .store(in: &bag)
     }
+    
+    override func choose() {
+        Defaults.shared.isBitBucketChoosen = true
+    }
 }
 
 @MainActor
-final class FirebaseFolderStepState: ObservableObject {
-    
-    @Published var isDone = false
+final class FirebaseFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = FirebaseFolder.validateEnabledPath()
         
@@ -805,16 +799,19 @@ final class FirebaseFolderStepState: ObservableObject {
             .assign(to: \.isDone, on: self)
             .store(in: &bag)
     }
+    
+    override func choose() {
+        Defaults.shared.isFirebaseChoosen = true
+    }
 }
 
 @MainActor
-final class DynatraceFolderStepState: ObservableObject {
-    
-    @Published var isDone = false
+final class DynatraceFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = DynatraceFolder.validateEnabledPath()
         
@@ -835,16 +832,19 @@ final class DynatraceFolderStepState: ObservableObject {
             .assign(to: \.isDone, on: self)
             .store(in: &bag)
     }
+    
+    override func choose() {
+        Defaults.shared.isDynatraceChoosen = true
+    }
 }
 
 @MainActor
-final class JiraFolderStepState: ObservableObject {
-    
-    @Published var isDone = false
+final class JiraFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = JiraFolder.validateEnabledPath()
         
@@ -865,16 +865,19 @@ final class JiraFolderStepState: ObservableObject {
             .assign(to: \.isDone, on: self)
             .store(in: &bag)
     }
+    
+    override func choose() {
+        Defaults.shared.isJiraChoosen = true
+    }
 }
 
 @MainActor
-final class SlackStepState: ObservableObject {
-    
-    @Published var isDone = false
+final class SlackFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = SlackFolder.validateEnabledPath()
         
@@ -895,16 +898,19 @@ final class SlackStepState: ObservableObject {
             .assign(to: \.isDone, on: self)
             .store(in: &bag)
     }
+    
+    override func choose() {
+        Defaults.shared.isSlackChoosen = true
+    }
 }
 
 @MainActor
-final class TeamsStepState: ObservableObject {
-    
-    @Published var isDone = false
+final class TeamsFolderStepState: StepState {
     
     private var bag = [AnyCancellable]()
     
-    init() {
+    override init() {
+        super.init()
         
         isDone = TeamsFolder.validateEnabledPath()
         
@@ -925,6 +931,10 @@ final class TeamsStepState: ObservableObject {
             .assign(to: \.isDone, on: self)
             .store(in: &bag)
     }
+    
+    override func choose() {
+        Defaults.shared.isTeamsChoosen = true
+    }
 }
 
 @MainActor
@@ -937,22 +947,33 @@ private final class StepCompleted: ObservableObject {
     private var bag = [AnyCancellable]()
     
     private let project = ProjectFolderStepState()
-    private let bitbucket = BitbucketFolderStepState()
-    private let jira = JiraFolderStepState()
-    private let firebase = FirebaseFolderStepState()
+    private lazy var stepStates: [StepState] = {
+        Wizard.Step.Kind.allCases.compactMap {
+            $0.stepState
+        }
+    }()
     
     init() {
         
-        project.$isDone
-            .merge(with: bitbucket.$isDone)
-            .merge(with: jira.$isDone)
-            .merge(with: firebase.$isDone)
-            .filter { $0 }
-            .count()
-            .removeDuplicates()
-            .assign(to: \.count, on: self)
-            .store(in: &bag)
+        let isDone = project.$isDone
+        var merge: Publishers.MergeMany<Published<Bool>.Publisher>?
         
+        stepStates.forEach { state in
+            if let previous = merge {
+                merge = previous.merge(with: state.$isDone)
+            } else {
+                merge = isDone.merge(with: state.$isDone)
+            }
+        }
+        
+        if let merge {
+            merge.filter { $0 }
+                .count()
+                .removeDuplicates()
+                .assign(to: \.count, on: self)
+                .store(in: &bag)
+        }
+         
         $count
             .map { $0 == (Wizard.Step.Kind.allCases.count - 1) }
             .assign(to: \.isCompleted, on: self)
@@ -971,23 +992,23 @@ private final class StepCompleted: ObservableObject {
         Wizard.Step.Kind.allCases.compactMap {
             switch $0 {
             case .projectFolder:
-                return (try? ProjectFolder.validate()) ?? false
+                (try? ProjectFolder.validate()) ?? false
             case .git:
-                return (try? GitFolder.validate()) ?? false
+                (try? GitFolder.validateStep()) ?? false
             case .bitbucket:
-                return (try? BitbucketFolder.validate()) ?? false
+                (try? BitbucketFolder.validateStep()) ?? false
             case .firebase:
-                return (try? FirebaseFolder.validate()) ?? false
+                (try? FirebaseFolder.validateStep()) ?? false
             case .dynatrace:
-                return (try? DynatraceFolder.validate()) ?? false
+                (try? DynatraceFolder.validateStep()) ?? false
             case .jira:
-                return (try? JiraFolder.validate()) ?? false
+                (try? JiraFolder.validateStep()) ?? false
             case .slack:
-                return (try? SlackFolder.validate()) ?? false
+                (try? SlackFolder.validateStep()) ?? false
             case .teams:
-                return (try? TeamsFolder.validate()) ?? false
+                (try? TeamsFolder.validateStep()) ?? false
             case .completed:
-                return nil
+                nil
             }
         }
     }
@@ -1019,14 +1040,24 @@ private enum GitFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isGitChoosen else {
+            return true
+        }
+        return try privateValidate()
+    }
+    
+    static func validateStep() throws -> Bool {
+        guard Defaults.shared.isGitChoosen else {
             return false
         }
+        return try privateValidate()
+    }
+    
+    private static func privateValidate() throws -> Bool {
         guard Defaults.shared.useGit else {
             return true
         }
         return try validatePath() && containsGitRepo()
     }
-    
     
     static func validateEnabledPath() -> Bool {
         guard Defaults.shared.useGit else {
@@ -1052,6 +1083,18 @@ private enum BitbucketFolder {
         guard Defaults.shared.isBitBucketChoosen else {
             return true
         }
+        return try privateValidate()
+    }
+    
+    static func validateStep() throws -> Bool {
+        guard Defaults.shared.isBitBucketChoosen else {
+            return false
+        }
+        
+        return try privateValidate()
+    }
+    
+    private static func privateValidate() throws -> Bool {
         guard Defaults.shared.makeBitbucketPr else {
             return true
         }
@@ -1112,12 +1155,22 @@ private enum FirebaseFolder {
         guard Defaults.shared.isFirebaseChoosen else {
             return true
         }
+        return try privateValidate()
+    }
+    
+    static func validateStep() throws -> Bool {
+        guard Defaults.shared.isFirebaseChoosen else {
+            return false
+        }
+        return try privateValidate()
+    }
+    
+    private static func privateValidate() throws -> Bool {
         guard Defaults.shared.useFirebase else {
             return true
         }
         return try validatePath() && containsGoogleCredentials()
     }
-    
     
     static func validateEnabledPath() -> Bool {
         guard Defaults.shared.useFirebase else {
@@ -1143,6 +1196,17 @@ private enum DynatraceFolder {
         guard Defaults.shared.isDynatraceChoosen else {
             return true
         }
+        return try privateValidate()
+    }
+    
+    static func validateStep() throws -> Bool {
+        guard Defaults.shared.isDynatraceChoosen else {
+            return false
+        }
+        return try privateValidate()
+    }
+    
+    private static func privateValidate() throws -> Bool {
         guard Defaults.shared.useDynatrace else {
             return true
         }
@@ -1167,78 +1231,26 @@ private enum DynatraceFolder {
 }
 
 @MainActor
-private enum SlackFolder {
-    
-    static func validate() throws -> Bool {
-        guard Defaults.shared.isSlackChoosen else {
-            return true
-        }
-        guard Defaults.shared.useSlack else {
-            return true
-        }
-        return try validatePath() && containsCredentials()
-    }
-    
-    
-    static func validateEnabledPath() -> Bool {
-        guard Defaults.shared.useSlack else {
-            return true
-        }
-        return validatePath()
-    }
-    
-    private static func validatePath() -> Bool {
-        ProjectFolder.validatePath()
-    }
-    
-    static func containsCredentials() throws -> Bool {
-        let path = projectFastlanePathComponent + "/.slack"
-        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
-    }
-}
-
-@MainActor
-private enum TeamsFolder {
-    
-    static func validate() throws -> Bool {
-        guard Defaults.shared.isTeamsChoosen else {
-            return true
-        }
-        guard Defaults.shared.useTeams else {
-            return true
-        }
-        return try validatePath() && containsCredentials()
-    }
-    
-    
-    static func validateEnabledPath() -> Bool {
-        guard Defaults.shared.useTeams else {
-            return true
-        }
-        return validatePath()
-    }
-    
-    private static func validatePath() -> Bool {
-        ProjectFolder.validatePath()
-    }
-    
-    static func containsCredentials() throws -> Bool {
-        let path = projectFastlanePathComponent + "/.teams"
-        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
-    }
-}
-
-@MainActor
 private enum JiraFolder {
     
     static func validate() throws -> Bool {
         guard Defaults.shared.isJiraChoosen else {
             return true
         }
+        return try privateValidate()
+    }
+    
+    static func validateStep() throws -> Bool {
+        guard Defaults.shared.isJiraChoosen else {
+            return false
+        }
+        return try privateValidate()
+    }
+    
+    private static func privateValidate() throws -> Bool {
         guard Defaults.shared.useJira else {
             return true
         }
-        
         return try validatePath() && areCredentialsPresent()
     }
     
@@ -1285,5 +1297,87 @@ private enum JiraFolder {
         }
         
         return false
+    }
+}
+
+@MainActor
+private enum SlackFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.isSlackChoosen else {
+            return true
+        }
+        return try privateValidate()
+    }
+    
+    static func validateStep() throws -> Bool {
+        guard Defaults.shared.isSlackChoosen else {
+            return false
+        }
+        return try privateValidate()
+    }
+    
+    private static func privateValidate() throws -> Bool {
+        guard Defaults.shared.useSlack else {
+            return true
+        }
+        return try validatePath() && containsCredentials()
+    }
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useSlack else {
+            return true
+        }
+        return validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        ProjectFolder.validatePath()
+    }
+    
+    static func containsCredentials() throws -> Bool {
+        let path = projectFastlanePathComponent + "/.slack"
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
+    }
+}
+
+@MainActor
+private enum TeamsFolder {
+    
+    static func validate() throws -> Bool {
+        guard Defaults.shared.isTeamsChoosen else {
+            return true
+        }
+        return try privateValidate()
+    }
+    
+    static func validateStep() throws -> Bool {
+        guard Defaults.shared.isTeamsChoosen else {
+            return false
+        }
+        return try privateValidate()
+    }
+    
+    private static func privateValidate() throws -> Bool {
+        guard Defaults.shared.useTeams else {
+            return true
+        }
+        return try validatePath() && containsCredentials()
+    }
+    
+    static func validateEnabledPath() -> Bool {
+        guard Defaults.shared.useTeams else {
+            return true
+        }
+        return validatePath()
+    }
+    
+    private static func validatePath() -> Bool {
+        ProjectFolder.validatePath()
+    }
+    
+    static func containsCredentials() throws -> Bool {
+        let path = projectFastlanePathComponent + "/.teams"
+        return try FileManager.default.contentsOfDirectory(atPath: path).contains { $0 == "config" }
     }
 }
