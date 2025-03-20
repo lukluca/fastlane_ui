@@ -103,9 +103,12 @@ struct DeployApp: View {
     
     var body: some View {
         ScrollView {
+            
+            
+            
             VStack(spacing: 30) {
                 
-                VStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 10) {
                     
                     if !selectedXcodeVersion.isEmpty {
                         XcodePicker(selected: $selectedXcodeVersion, xcodes: xcodeVersions)
@@ -126,19 +129,27 @@ struct DeployApp: View {
                     
                     if useGit {
                         
-                        GitPicker(
-                            selected: $branchName,
-                            title: "Git Branch:",
-                            values: gitBranches) {
-                                gitBranches = GitBranches().values
-                            }
+                        HStack {
+                            Text("Build from")
+                            Text("(you can choose a branch or a tag in mutual exclusion)").font(.subheadline)
+                        }
                         
-                        GitPicker(
-                            selected: $gitTag,
-                            title: "Git Tag:",
-                            values: gitTags) {
-                                gitTags = GitTags().values
-                            }
+                        VStack {
+                            GitPicker(
+                                selected: $branchName,
+                                title: "Git Branch:",
+                                values: gitBranches) {
+                                    gitBranches = GitBranches().values
+                                }
+                            
+                            GitPicker(
+                                selected: $gitTag,
+                                title: "Git Tag:",
+                                values: gitTags) {
+                                    gitTags = GitTags().values
+                                }
+                        }.padding(.leading, 15)
+                        
                     }
                     
                     if useFirebase && uploadToFirebase {
@@ -893,9 +904,29 @@ private struct GitTags {
     let values: [String]
     
     init() {
-        let path = Defaults.shared.projectFolder + "/" + gitPathComponent + "/refs/tags"
-        let tags = (try? FileManager.default.contentsOfDirectory(atPath: path))?.sorted() ?? []
-        self.values = [noSelection] + tags
+        let gitPath = Defaults.shared.projectFolder + "/" + gitPathComponent
+        let refsPath = gitPath + "/refs/tags"
+        let tags = (try? FileManager.default.contentsOfDirectory(atPath: refsPath))?.sorted() ?? []
+        
+        if tags.isEmpty {
+            let packedRefs = gitPath + "/packed-refs"
+            let contents = (try? String(contentsOfFile: packedRefs)) ?? ""
+            
+            let refsTags = contents.split(separator: "\n").filter {
+                $0.contains(" refs/tags/")
+            }.map {
+                
+                var str = String($0)
+                if let dotRange = str.range(of: "refs/tags/") {
+                    str.removeSubrange(str.startIndex..<dotRange.lowerBound)
+                }
+                return String(str.dropFirst("refs/tags/".count))
+            }
+            
+            self.values = [noSelection] + refsTags
+        } else {
+            self.values = [noSelection] + tags
+        }
     }
 }
 
