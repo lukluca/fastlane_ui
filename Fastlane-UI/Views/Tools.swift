@@ -14,6 +14,8 @@ struct Tools: View {
     
     @Default(\.needsSudo) private var needsSudo: Bool
     
+    @State private var showingResetAlert = false
+    
     @State private var result = ""
     
     var body: some View {
@@ -25,9 +27,18 @@ struct Tools: View {
                                 isSelected: $shell)
                 }
                 Section("Wizard") {
-                    Button("Erease data", role: .destructive) {
-                        Defaults.shared.reset()
+                    Button("Erease data") {
+                        showingResetAlert = true
                     }
+                    .alert("Please be aware!", isPresented: $showingResetAlert) {
+                        Button("Erease data", role: .destructive) {
+                            Defaults.shared.reset()
+                        }
+                        Button("Cancel", role: .cancel) { }
+                    } message: {
+                        Text("This will erase all data to factory default!")
+                    }
+                    
                     Button("Show wizard") {
                         Defaults.shared.showWizard = true
                     }
