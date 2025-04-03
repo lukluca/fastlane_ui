@@ -3,6 +3,17 @@ GUI for Fastlane tool.
 
 This App is intended to use only for deployng a Xcode project 
 
+Currently the fastfile script supports:
+
+ * Git
+ * Bitbucket
+ * Firebase
+ * Crashlytics
+ * Dynatrace
+ * Jira
+ * Slack
+ * Teams
+
 TODO list
 
 - ~~Complete tools page with fastlane commands (install, install plugin, update, update plugin);~~
@@ -14,7 +25,7 @@ TODO list
 - ~~Git branches as dropdown;~~
 - ~~Xcode schemas to read from Xcode project;~~
 - Version and build number prefill from Xcode project
-- Add support for Dynatrace; (WIP)
+- ~~Add support for Dynatrace;~~
 - ~~Add support for Git Flow;~~
 - Add custom git naming; (WIP)
 
