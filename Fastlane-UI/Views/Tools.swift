@@ -27,11 +27,11 @@ struct Tools: View {
                                 isSelected: $shell)
                 }
                 Section("Wizard") {
-                    Button("Erease data") {
+                    Button("Erase data") {
                         showingResetAlert = true
                     }
                     .alert("Please be aware!", isPresented: $showingResetAlert) {
-                        Button("Erease data", role: .destructive) {
+                        Button("Erase data", role: .destructive) {
                             Defaults.shared.reset()
                         }
                         Button("Cancel", role: .cancel) { }
