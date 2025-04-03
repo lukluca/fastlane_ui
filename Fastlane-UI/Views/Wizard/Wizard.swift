@@ -335,8 +335,14 @@ extension Wizard {
                 }
                 .toggleStyle(.checkbox)
                 
-                Text("If you wish to use Dynatrace, inside the .dynatrace subfolder of fastlane folder there must be a 'config' file filled with the Dynatrace project data.")
-                    .opacity(isChecked ? 1 : 0.5)
+                Text("""
+                    If you wish to use Dynatrace, inside the .dynatrace subfolder of fastlane folder there must be a 'config' file filled with the Dynatrace project data. The file must have this structure\n\n
+                    APP_ID=\"YOUR_APP_ID\"\n
+                    SERVER=\"YOUR_SERVER\"\n
+                    API_TOKEN=\"API_TOKEN"\n\n
+                    Please replace values with valid one!
+                    """)
+                .opacity(isChecked ? 1 : 0.5)
                 
                 Text(errorText)
                     .foregroundStyle(.red)
