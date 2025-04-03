@@ -1,7 +1,7 @@
 # fastlane_ui
 GUI for Fastlane tool. 
 
-This App is intended to use only for deployng a Xcode project 
+This App is intended to use only for deployng a Xcode project.
 
 Currently the fastfile script supports:
 
@@ -28,6 +28,7 @@ TODO list
 - ~~Add support for Dynatrace;~~
 - ~~Add support for Git Flow;~~
 - Add custom git naming; (WIP)
+- Rewrite wizard and complete teams and slack description.
 
 Maybe:
 - Export script as fastlane plugin;
