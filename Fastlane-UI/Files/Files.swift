@@ -19,7 +19,8 @@ extension Files {
         
         return try decoder.decode(
             T.self,
-            from: JSONSerialization.data(withJSONObject: dict))
+            from: JSONSerialization.data(withJSONObject: dict)
+        )
     }
     
     static func save<T>(_ value: T, to file: String) throws where T : Encodable {
@@ -64,7 +65,6 @@ private struct LowercaseCamelKey: CodingKey {
             self.stringValue = components.reduce("") { partialResult, nextValue in
               partialResult.isEmpty ? String(nextValue) : (partialResult + nextValue.capitalized)
             }
-            
         }
     }
     
@@ -114,7 +114,9 @@ private extension Dictionary where Key == String, Value == String {
             return (components[0], final.joined(separator: "="))
         }
         
-        self = Dictionary(keysAndValues,
-                          uniquingKeysWith: { (lhs, rhs) in lhs })
+        self = Dictionary(
+            keysAndValues,
+            uniquingKeysWith: { (lhs, rhs) in lhs }
+        )
     }
 }

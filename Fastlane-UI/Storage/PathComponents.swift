@@ -32,6 +32,10 @@ var jiraReleaseNotesStatusPathComponent: String {
     jiraPathComponent + "/" + "release_notes_status"
 }
 
+var jiraTicketsManagementPathComponent: String {
+    jiraPathComponent + "/" + "tickets_management"
+}
+
 var dynatracePathComponent: String {
     fastlanePathComponent + "/" + ".dynatrace"
 }

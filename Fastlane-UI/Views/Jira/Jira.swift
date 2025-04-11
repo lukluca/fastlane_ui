@@ -9,10 +9,13 @@ import SwiftUI
 
 struct Jira: View {
     
+    @Binding var useSprintForQuery: Bool
+    @Binding var useBranchForQuery: Bool
+    
     var body: some View {
         VStack {
             List {
-                Section("Tickets status managment") {
+                Section("Tickets status management") {
                     TiketsStatus()
                 }
                 Section("Release notes") {
@@ -21,6 +24,13 @@ struct Jira: View {
                 
                 Section("Make version") {
                     MakeVersion()
+                }
+                
+                Section("Query") {
+                    Query(
+                        useSprint: $useSprintForQuery,
+                        useBranch: $useBranchForQuery
+                    )
                 }
             }
         }

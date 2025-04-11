@@ -12,6 +12,7 @@
 		4A17F45E2AD3351C006094FA /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A17F45D2AD3351C006094FA /* ListView.swift */; };
 		4A3767862AAA298500880FBA /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3767852AAA298500880FBA /* View+.swift */; };
 		4A37678B2AAB724B00880FBA /* RadioButton in Frameworks */ = {isa = PBXBuildFile; productRef = 4A37678A2AAB724B00880FBA /* RadioButton */; };
+		4A4C49622DA904C8005E271C /* JiraQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4C49612DA9047C005E271C /* JiraQuery.swift */; };
 		4A51832C2B051AFD0080355F /* Wizard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51832B2B051AFD0080355F /* Wizard.swift */; };
 		4A51E72F2A6AC03600813308 /* Fastlane_UIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */; };
 		4A51E7312A6AC03600813308 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A51E7302A6AC03600813308 /* ContentView.swift */; };
@@ -80,6 +81,7 @@
 		4A17F45B2AD31B5F006094FA /* Sequence+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+.swift"; sourceTree = "<group>"; };
 		4A17F45D2AD3351C006094FA /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		4A3767852AAA298500880FBA /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
+		4A4C49612DA9047C005E271C /* JiraQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraQuery.swift; sourceTree = "<group>"; };
 		4A51832B2B051AFD0080355F /* Wizard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wizard.swift; sourceTree = "<group>"; };
 		4A51E72B2A6AC03600813308 /* Fastlane-UI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fastlane-UI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A51E72E2A6AC03600813308 /* Fastlane_UIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fastlane_UIApp.swift; sourceTree = "<group>"; };
@@ -367,9 +369,10 @@
 			isa = PBXGroup;
 			children = (
 				4ACC352E2AB87A8A00DC013E /* Jira.swift */,
+				4AA3E77A2B88C74D00E19B19 /* JiraMakeVersion.swift */,
+				4A4C49612DA9047C005E271C /* JiraQuery.swift */,
 				4A7F6BDD2AA71DEC000FE841 /* JiraReleaseNotes.swift */,
 				4ACC35322AB87D9200DC013E /* JiraTiketsStatus.swift */,
-				4AA3E77A2B88C74D00E19B19 /* JiraMakeVersion.swift */,
 			);
 			path = Jira;
 			sourceTree = "<group>";
@@ -547,6 +550,7 @@
 				4A7F6BDE2AA71DEC000FE841 /* JiraReleaseNotes.swift in Sources */,
 				4AE8645F2B6A611200C5846D /* BitbucketView.swift in Sources */,
 				4A3767862AAA298500880FBA /* View+.swift in Sources */,
+				4A4C49622DA904C8005E271C /* JiraQuery.swift in Sources */,
 				4A6A63BF2BAAF5A000332B88 /* Network.swift in Sources */,
 				4AC20C072B4DB4B300F69A0F /* String+.swift in Sources */,
 				4A7F6BDC2AA62497000FE841 /* DeployApp.swift in Sources */,

@@ -89,6 +89,7 @@ struct DeployApp: View {
     
     @State private var selectedSprint: Network.Jira.Sprint = .none
     
+    @Binding var useSprintForJiraQuery: Bool
     @Binding var sprints: Result<[Network.Jira.Sprint], Error>?
     
     private var otherSchemes: [String] {
@@ -164,7 +165,7 @@ struct DeployApp: View {
                         }
                     }
                     
-                    if useJira {
+                    if useJira && useSprintForJiraQuery {
                         SprintPicker(selected: $selectedSprint, result: $sprints)
                     }
                 }
@@ -422,8 +423,11 @@ extension DeployApp {
                 }
                 
                 Toggle(" Open ticket service now", isOn: $openTicketServiceNow)
+                    .hidden()
                 Toggle(" Send deploy email", isOn: $sendDeployEmail)
+                    .hidden()
                 Toggle(" Upload to AirWatch", isOn: $uploadToAirWatch)
+                    .hidden()
                 Toggle(" Enable debug mode", isOn: $debugMode)
             }
         }
@@ -979,7 +983,7 @@ private struct XcodeVersions {
 
 struct DeployApp_Previews: PreviewProvider {
     static var previews: some View {
-        DeployApp(sprints: .constant(nil))
+        DeployApp(useSprintForJiraQuery: .constant(true), sprints: .constant(nil))
     }
 }
 

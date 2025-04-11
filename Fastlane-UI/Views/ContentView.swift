@@ -51,11 +51,17 @@ struct ContentView: View {
     
     @Default(\.showWizard) private var showWizard: Bool
     
+    @Binding var useSprintForJiraQuery: Bool
+    @Binding var useBranchForJiraQuery: Bool
+    
     var body: some View {
         if showWizard {
             Wizard()
         } else {
-            SegementContent()
+            SegementContent(
+                useSprintForJiraQuery: $useSprintForJiraQuery,
+                useBranchForJiraQuery: $useBranchForJiraQuery
+            )
         }
     }
 }
@@ -65,6 +71,9 @@ extension ContentView {
     struct SegementContent: View {
         
         @State private var selectedSegment : Segment = .deployApp
+        
+        @Binding var useSprintForJiraQuery: Bool
+        @Binding var useBranchForJiraQuery: Bool
         
         var body: some View {
             Picker("", selection: $selectedSegment) {
@@ -76,7 +85,11 @@ extension ContentView {
             .padding()
            
             Spacer()
-            SegmentView(selectedSement: $selectedSegment)
+            SegmentView(
+                selectedSement: $selectedSegment,
+                useSprintForJiraQuery: $useSprintForJiraQuery,
+                useBranchForJiraQuery: $useBranchForJiraQuery
+            )
             Spacer()
         }
     }
@@ -87,11 +100,17 @@ struct SegmentView: View {
     @Binding var selectedSement: Segment
     
     @State private var sprints: Result<[Network.Jira.Sprint], Error>?
+    
+    @Binding var useSprintForJiraQuery: Bool
+    @Binding var useBranchForJiraQuery: Bool
 
     var body: some View {
         switch selectedSement {
         case .deployApp:
-            DeployApp(sprints: $sprints)
+            DeployApp(
+                useSprintForJiraQuery: $useSprintForJiraQuery,
+                sprints: $sprints
+            )
         case .git:
             GitView()
         case .bitbucket:
@@ -99,7 +118,10 @@ struct SegmentView: View {
         case .firebase:
             Firebase()
         case .jira:
-            Jira()
+            Jira(
+                useSprintForQuery: $useSprintForJiraQuery,
+                useBranchForQuery: $useBranchForJiraQuery
+            )
         case .slack:
             Slack()
         case .dynatrace:
